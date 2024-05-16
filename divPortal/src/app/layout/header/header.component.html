@@ -1,0 +1,49 @@
+<nav class="navbar topnavbar" role="navigation">
+    <div class="d-inline-block">
+        <div class="d-inline-block" (click)="logoClick()"> 
+            <img class="img-fluid" src="assets/img/logo/elter_div_logo.png" style="width: 150px; height: 36px;">
+        </div>
+        <div class="d-inline-block mt-2 ml-2" *ngIf="pageHaveCollapsedSidebar">
+            <a class=" d-none d-md-block d-lg-block d-xl-block text-primary-color-blue" trigger-resize="" (click)="toggleCollapsedSideabar()" *ngIf="!isCollapsedText()">
+                <em class="fas fa-bars mt-2"></em>
+            </a>
+            <a class="d-md-none text-primary-color-blue " (click)="settings.toggleLayoutSetting('asideToggled'); $event.stopPropagation()">
+                <em class="fas fa-bars mt-2"></em>
+            </a>
+        </div>
+    </div>
+
+   
+
+    <div class="d-inline-block justify-content-end  mt-2 mr-2">
+        <div class="d-inline-block text-primary-color-blue m-2 header-item"  (click)="show('map')">
+            Map
+        </div>
+        <div class="d-inline-block text-primary-color-blue">
+            |
+        </div>
+        <div class="d-inline-block text-primary-color-blue m-2 header-item"  (click)="show('metadata-catalogue')">
+            Metadata Catalogue
+        </div>
+        <div class="d-inline-block text-primary-color-blue">
+            |
+        </div>
+        
+        <div class="d-inline-block text-primary-color-blue m-2 header-item"  (click)="show('about')">
+            About
+        </div>
+      
+        <div class="d-inline-block text-primary-color-blue">
+            |
+        </div>
+        <div class="d-inline-block text-primary-color-blue m-2 header-item"  (click)="show('termsAndCondititions')">
+            Terms and condititions
+        </div>
+            
+        <div class="d-inline-block ">
+            <a class="" (click)="toggleOffsidebar(); $event.stopPropagation()">
+                <em [ngClass]="ngClassOffsidebar()"></em>
+            </a>
+        </div>
+    </div>
+</nav>

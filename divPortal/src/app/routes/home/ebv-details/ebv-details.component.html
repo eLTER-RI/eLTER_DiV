@@ -1,0 +1,354 @@
+<div class="card-body">
+  <div
+    id="detailsTimeseriesScroll"
+    malihu-scrollbar
+    [scrollbarOptions]="scrollbarOptions"
+    class="mt-0 pt-0"
+  >
+<!-- <div class="mt-0 pt-0" style="height: 85vh; overflow-y: auto;">  -->
+  <div class="tabs">
+    <div class="tab" *ngFor="let ebv of ebvs; index as i">
+      <input type="checkbox" [checked]="openEbv[i]">
+      <label class="tab-label" (click)="clickOnTab(i)"> 
+        {{ ebv?.title }}</label>
+      <div class="tab-content" *ngIf="openEbv[i]">
+        <app-loading *ngIf="!ebvDetails[i]"></app-loading>
+        <div  *ngIf="ebvDetails[i]" class="mb-1 pb-1">
+        <div class="h6 text-secundary-color-green-dark mb-3 mt-1">
+          Id: {{ ebvDetails[i]?.id }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Naming Authority
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.namingAuthority }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">Title</div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.title }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Date Created
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.dateCreated }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">Summary</div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.summary }}
+        </div>
+
+        <div
+          class="h6 text-secundary-color-green-dark mb-0"
+          *ngIf="ebvDetails[i]?.references"
+        >
+          References
+        </div>
+        <div
+          class="mt-0 mb-1"
+          *ngFor="let reference of ebvDetails[i]?.references"
+        >
+          {{ reference }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">Source</div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.source }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Coverage Content Type
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.coverageContentType }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Processing Level
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.processingLevel }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">Project</div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.project }}
+        </div>
+
+        <div
+          class="h6 text-secundary-color-green-dark mb-0"
+          *ngIf="ebvDetails[i]?.projectUrl"
+        >
+          Project Url
+        </div>
+        <div
+          class="mt-0 mb-1"
+          *ngFor="let projectUrl of ebvDetails[i]?.projectUrl"
+        >
+          {{ projectUrl }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Creator Name
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.creator?.creatorName }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Creator Email
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.creator?.creatorEmail }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Creator Institution
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.creator?.creatorInstitution }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Creator Country
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.creator?.creatorCountry }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Contributor Name
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.contributorName }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">License</div>
+        <div class="mt-0 mb-1">
+          <a href="{{ ebvDetails[i]?.license }}" target="_blank">{{
+            ebvDetails[i]?.license
+          }}</a>
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Publisher Name
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.publisher?.publisherName }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Publisher Email
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.publisher?.publisherEmail }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Publisher Institution
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.publisher?.publisherInstitution }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Publisher Country
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.publisher?.publisherCountry }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">Ebv Class</div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.ebv?.ebvClass }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">Ebv Name</div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.ebv?.ebvName }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Ebv Entity Type
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.ebvEntity?.ebvEntityType }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Ebv Entity Scope
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.ebvEntity?.ebvEntityScope }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Ebv Entity Classification Name
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.ebvEntity?.ebvEntityClassificationName }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Ebv Entity Classification Url
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.ebvEntity?.ebvEntityClassificationUrl }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Ebv Metric Name
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.ebvMetric?.metric0?.name }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Ebv Metric Description
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.ebvMetric?.metric0?.description }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Ebv Metric Unit
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.ebvMetric?.metric0?.unit }}
+        </div>
+
+        <div
+          class="h6 text-secundary-color-green-dark mb-0"
+          *ngIf="ebvDetails[i]?.ebvMetric?.metric1"
+        >
+          Ebv Metric 2 Name
+        </div>
+        <div class="mt-0 mb-1" *ngIf="ebvDetails[i]?.ebvMetric?.metric1">
+          {{ ebvDetails[i]?.ebvMetric?.metric1?.name }}
+        </div>
+
+        <div
+          class="h6 text-secundary-color-green-dark mb-0"
+          *ngIf="ebvDetails[i]?.ebvMetric?.metric1"
+        >
+          Ebv Metric 2 Description
+        </div>
+        <div class="mt-0 mb-1" *ngIf="ebvDetails[i]?.ebvMetric?.metric1">
+          {{ ebvDetails[i]?.ebvMetric?.metric1?.description }}
+        </div>
+
+        <div
+          class="h6 text-secundary-color-green-dark mb-0"
+          *ngIf="ebvDetails[i]?.ebvMetric?.metric1"
+        >
+          Ebv Metric 2 Unit
+        </div>
+        <div class="mt-0 mb-1" *ngIf="ebvDetails[i]?.ebvMetric?.metric1">
+          {{ ebvDetails[i]?.ebvMetric?.metric1?.unit }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Ebv Spatial Scope
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.ebvSpatial?.ebvSpatialScope }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Ebv Spatial Description
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.ebvSpatial?.ebvSpatialDescription }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Geospatial Lat Units
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.geospatialLatUnits }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Geospatial Lon Units
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.geospatialLonUnits }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Time Coverage Resolution
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.timeCoverage?.timeCoverageResolution }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Time Coverage Start
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.timeCoverage?.timeCoverageStart }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Time Coverage End
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.timeCoverage?.timeCoverageEnd }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">Ebv Domain</div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.ebvDomain }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">Comment</div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.comment }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Dataset Pathname
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.dataset?.pathname }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Dataset Download
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.dataset?.download }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Dataset Metadata JSON
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.dataset?.metadataJson }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          Dataset Metadata XML
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.dataset?.metadataXml }}
+        </div>
+
+        <div class="h6 text-secundary-color-green-dark mb-0">
+          File Download
+        </div>
+        <div class="mt-0 mb-1">
+          {{ ebvDetails[i]?.file?.download }}
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+<div>
+
+    <app-loading *ngIf="!ebvs"></app-loading>
+  </div>

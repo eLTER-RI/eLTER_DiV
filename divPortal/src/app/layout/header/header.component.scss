@@ -1,0 +1,21 @@
+@media (max-width: 767px) {
+    .hidden-mobile {
+        display:none;
+    }
+    .show-mobile {
+        display:block;
+    }
+  }
+
+  @media (min-width: 767px) {
+    .hidden-mobile {
+        display:block;
+    }
+    .show-mobile {
+        display:none;
+    }
+  }
+
+  .header-item:hover{
+    cursor: pointer;
+  }

@@ -1,0 +1,19 @@
+<div *ngIf="ebvs">
+    <app-ebv-details [ebvs]="ebvs" [hidden]="ebvs.length == 0"></app-ebv-details>
+</div>
+
+<div *ngIf="siteId">
+    <app-site-details [siteId]="siteId" ></app-site-details>
+</div>
+
+<div *ngIf="stationId">
+    <app-station-details [stationId]="stationId" ></app-station-details>
+</div>
+
+<div *ngIf="html" class="m-4">
+    <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(html)" class="m-1"></div>
+</div>
+
+<div *ngIf="showHideLayers">
+  <app-show-layares-details [selectedLayers]="showHideLayers"></app-show-layares-details>
+</div>

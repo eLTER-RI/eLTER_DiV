@@ -1,0 +1,5 @@
+<div class="m-2">
+    <div *ngIf="hoverFooter" [innerHTML]="sanitizer.bypassSecurityTrustHtml(footerOnHoverText)"></div>
+    <div *ngIf="!hoverFooter" [innerHTML]="sanitizer.bypassSecurityTrustHtml(footerText)"></div>
+</div>
+

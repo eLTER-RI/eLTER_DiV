@@ -1,0 +1,109 @@
+<div id="map" [ngStyle]="{'height': mapHeight+'px'}" ></div>
+
+<div *ngIf="markedLayer?.geoUrlLegend" style="flex-direction: column;" class="form-row m-0 p-1 legend" malihu-scrollbar [scrollbarOptions]="scrollbarOptionsLegend">
+    <div>
+        <img *ngIf="urlMarkedLayerLegend && !showBiggerZoom" [src]="urlMarkedLayerLegend | safe"/>
+        <img *ngIf="urlMarkedLayerLegendBiggerZoom && showBiggerZoom" [src]="urlMarkedLayerLegendBiggerZoom | safe"/>
+    </div>
+</div>
+
+<div class="time-of-layer-background" *ngIf="markedLayer?.times != undefined && markedLayer?.times != null && markedLayer.times.length > 0">
+    <div class="time-of-layer">
+        <pagination-template #p="paginationApi" id="custom" (pageChange)="config.currentPage = $event">
+
+            <button type="button" *ngIf="isIntervalOn" class="btn round-button btn-sm m-1" (click)="setIntervalForLayerWithTime('stop')">
+                <em class="fa fas fa-stop"></em> 
+            </button>
+            <button type="button" *ngIf="!isIntervalOn" class="btn round-button btn-sm m-1" (click)="setIntervalForLayerWithTime('play')">
+                <em class="fa fas fa-play"></em>
+            </button>
+            <button type="button" class="btn round-button  btn-sm m-1" (click)="timeOfLayerChanged('first',null)">
+                <em class="fa fas fa-angle-double-left"></em>
+            </button>
+            <button type="button" *ngIf="!p.isFirstPage()" (click)="p.previous();  timeOfLayerChanged('next',null)" class="btn round-button btn-sm m-1">
+                    <em class="fa fas fa-angle-left"></em> 
+            </button> 
+            <span class="page-number" *ngFor="let page of p.pages; index as i" [class.current]="p.getCurrent() === page.value">
+                    <span (click)="p.setCurrent(page.value); timeOfLayerChanged('move',page.value)" *ngIf="p.getCurrent() !== page.value" class="h5 m-1">
+                        {{markedLayer.times[page.value - 1] | date}} </span>
+                    <span class="h4 current-time-layer" *ngIf="p.getCurrent() === page.value"><strong class="m-2">{{ markedLayer.times[page.value -1] | date }}</strong></span>
+            </span>
+            <button type="button" class="btn round-button btn-sm m-1" *ngIf="!p.isLastPage()" (click)="p.next();  timeOfLayerChanged('prev',null)">
+                <em class="fa fas fa-angle-right"></em>
+            </button>
+            <button type="button" class="btn round-button btn-sm m-1"  (click)="timeOfLayerChanged('last',null)">
+                <em class="fa fas fa-angle-double-right"></em>
+            </button>
+    
+        </pagination-template>
+
+        <span *ngFor="let meal of markedLayer.times | paginate: config"> </span>
+    </div>
+</div>
+
+<div class="over-map-top-right-side">
+    <div class="row m-0 p-0">
+
+        <button class="btn btn-xs btn-secondary mr-1" tooltip="Zoom in" placement="bottom"
+            (click)="zoomIn();">
+            <i class="fas fa-search-plus"></i>
+        </button>
+
+        <button class="btn btn-xs btn-secondary mr-1" tooltip="Zoom out" placement="bottom"
+            (click)="zoomOut();">
+            <i class="fas fa-search-minus"></i>
+        </button>
+
+        <button class="btn btn-xs btn-secondary mr-1" tooltip="Initial position" placement="bottom"
+            (click)="setCenterView();">
+            <i class="fas fa-home"></i>
+        </button>
+        
+        <button class="btn btn-xs btn-secondary" 
+            (click)="changeScale();"
+            placement="bottom"
+            tooltip="Change scale">
+            <i class="fas fa-ruler-horizontal"></i>
+        </button>
+       
+
+    </div>
+</div>
+
+<div class="over-map-top-right-side-2">
+    <div class="row m-0 p-0">
+        <button 
+            [ngClass]="[(measureType == 'LineString')? 'bg-orange': '', 'btn btn-xs btn-secondary mr-1']" 
+            (click)="measure('LineString');"
+            placement="bottom"
+            tooltip="Draw line">
+            <i class="fas fa-window-minimize"></i>
+        </button>
+        
+        
+        <button 
+            [ngClass]="[(measureType == 'Polygon')? 'bg-orange': '', 'btn btn-xs btn-secondary mr-1']" 
+            (click)="measure('Polygon');"
+            placement="bottom"
+            tooltip="Draw polygon">
+            <i class="fas fa-draw-polygon"></i>
+        </button>
+
+
+        <button class="btn btn-xs btn-secondary mr-1"
+            (click)="measureCancel();"
+            placement="bottom"
+            tooltip="Cancel measurement">
+            <i class="fas fa-eraser"></i>
+        </button>
+
+        
+    </div>
+</div>
+
+<div class="navigation-box" (click)="btn_navigateToDiagram()" type="button">
+    <div class="navigation-box-header text-white">
+        Go to diagram
+    </div>
+    <img src="assets/img/navigation/diagram.png"  class="navigation-box-body"/>
+</div>

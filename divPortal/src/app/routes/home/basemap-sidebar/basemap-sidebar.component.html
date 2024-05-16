@@ -1,0 +1,16 @@
+<div [ngClass]="showBaseMaps ? 'selected-div' : ''">
+    <div class="m-2">
+        <div class="h4">
+            <a type="button" (click)="showBaseMaps = !showBaseMaps"><em [ngClass]="showBaseMaps ? 'fas fa-angle-up' : 'fas fa-angle-down'" class="pr-sm"></em>
+                BASE MAP
+            </a>
+        </div>
+        <div [hidden]="!showBaseMaps"
+            [ngClass]="['panel-body p-0 b-0 mb-1 ', (chosenBaseMap?.name === bm.name)?'bg-blue':'']" 
+            (click)="chooseBaseMap(bm)"
+            *ngFor="let bm of basemaps">
+            <img [src]="bm?.imgUrl" class="thumb48 mr-2"/>
+            {{bm.name}}
+        </div>
+    </div>
+</div>

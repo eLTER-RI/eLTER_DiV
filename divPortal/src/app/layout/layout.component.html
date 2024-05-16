@@ -1,0 +1,25 @@
+<div class="wrapper">
+    <!-- top navbar-->
+    <app-header class="topnavbar-wrapper"></app-header>
+    <!-- sidebar-->
+    <app-sidebar class="aside-container"></app-sidebar>
+    <!-- offsidebar-->
+    <app-offsidebar class="offsidebar" (clickOutside)="clickOutsideOffsidebar()"></app-offsidebar>
+    <!-- Main section-->
+    <section class="section-container">
+        <!-- Page content-->
+        <div class="content-wrapper">
+            <router-outlet></router-outlet>
+        </div>
+    </section>
+    <!-- Page footer-->
+    <footer class="footer-container" 
+        app-footer 
+        (mouseenter)="mouseoverFooter()" 
+        (mouseleave)="mouseoutFooter()"
+        [hoverFooter]="hoverFooter" 
+        [footerText]="footerHtml?.html" 
+        [footerOnHoverText]="footerOnHoverHtml?.html"
+        [ngStyle]="getStyleForFooter()"></footer>
+
+</div>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="ecosense">
+		<class>com.ecosense.entity.Activity</class>
+		<class>com.ecosense.entity.Country</class>
+		<class>com.ecosense.entity.Site</class>
+		<class>com.ecosense.entity.Phenomenon</class>
+		<class>com.ecosense.entity.Procedure</class>
+		<class>com.ecosense.entity.SosPath</class>
+		<class>com.ecosense.entity.Station</class>
+		<class>com.ecosense.entity.TimeSeries</class>
+	</persistence-unit>
+</persistence>
+

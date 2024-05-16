@@ -1,0 +1,87 @@
+<div [ngClass]="showEbv ? 'selected-div' : ''">
+    <div class="m-2">
+        <div class="h4">
+            <a type="button" (click)="showEbv = !showEbv"><em [ngClass]="showEbv ? 'fas fa-angle-up' : 'fas fa-angle-down'" class="pr-sm"></em>
+                EBVs
+            </a>
+        </div>
+
+        <div *ngIf="showEbv">
+            <label class="ml-2 mb-0 mt-1">EBVs Class</label>
+    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="ebvClasses" [(ngModel)]="ebvFilter.ebvClass"
+        name="ebvClass"  bindLabel="name" (change)="ebvClassChanged()">
+
+        <ng-template ng-label-tmp let-item="item">
+            {{item.name}}
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+            {{item.name}}
+        </ng-template>
+    </ng-select>
+
+    <label class="ml-2 mb-0 mt-2">EBVs Name</label>
+    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="ebvNames" name="ebvNames" [(ngModel)]="ebvFilter.ebvName"
+         bindLabel="name" [disabled]="!ebvNames">
+
+        <ng-template ng-label-tmp let-item="item">
+            {{item.name}}
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+            {{item.name}}
+        </ng-template>
+    </ng-select>
+
+    <label class="ml-2 mb-0 mt-2">Entity Type</label>
+    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="entityTypes" [(ngModel)]="ebvFilter.entityType"
+        name="entityTypes"  bindLabel="name">
+
+        <ng-template ng-label-tmp let-item="item">
+            {{item.name}}
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+            {{item.name}}
+        </ng-template>
+    </ng-select>
+
+    <label class="ml-2 mb-0 mt-2">Spatial Scopes</label>
+    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="spatialScopes" [(ngModel)]="ebvFilter.spatialScope"
+        name="spatialScopes"  bindLabel="name">
+
+        <ng-template ng-label-tmp let-item="item">
+            {{item.name}}
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+            {{item.name}}
+        </ng-template>
+    </ng-select>
+
+
+    <label class="ml-2 mb-0 mt-1">Date</label>
+    <input class="form-control ml-1 mr-1" name="dp" ngModel bsDatepicker #dp="bsDatepicker"
+        [(ngModel)]="ebvFilter.date" 
+        [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD.MM.YYYY.' }">
+
+
+    <label class="ml-2 mb-0 mt-1">Creator</label>
+    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="creators" name="creators" [(ngModel)]="ebvFilter.creator"
+        >
+
+        <ng-template ng-label-tmp let-item="item">
+            {{item}}
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+            {{item}}
+        </ng-template>
+    </ng-select>
+
+
+    <div class="text-right mr-1 mt-3">
+        <button class="d-inline mb-2 btn btn-md btn-labeled bg-blue" (click)="btn_fiter()">
+            <em class="fa fas fa-search"></em>
+            Search
+        </button>
+    </div>
+
+        </div>
+    </div>
+</div>

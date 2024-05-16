@@ -1,0 +1,8 @@
+ <div [ngStyle]="{'height': divHeight+'px'}"> 
+    <iframe [hidden]="isLoading"  width="100%" height="100%" frameBorder="0"  [src]="metadataURL | safe" allowfullscreen>
+    </iframe>
+   
+    
+    <app-loading  *ngIf="isLoading"></app-loading>
+</div>
+

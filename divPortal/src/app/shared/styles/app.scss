@@ -1,0 +1,233 @@
+/*!
+ *
+ * Angle - Bootstrap Admin Template
+ *
+ * Version: 4.8.1
+ * Author: @themicon_co
+ * Website: http://themicon.co
+ * License: https://wrapbootstrap.com/help/licenses
+ *
+ */
+
+// Bootstrap
+@import "bootstrap/functions";
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+// Variables
+@import "app/variables";
+// Layout
+@import "app/layout";
+@import "app/layout-extra";
+@import "app/layout-animation";
+@import "app/top-navbar";
+@import "app/sidebar";
+@import "app/offsidebar";
+@import "app/user-block";
+@import "app/settings";
+// Common
+@import "app/typo";
+@import "app/bootstrap-reset";
+@import "app/bootstrap-custom";
+@import "app/button-extra";
+@import "app/placeholder";
+@import "app/cards";
+@import "app/circles";
+@import "app/dropdown-extra";
+@import "app/half-float";
+@import "app/animate";
+@import "app/slim-scroll";
+@import "app/inputs";
+@import "app/utils";
+@import "app/print";
+@import "~@ng-select/ng-select/themes/default.theme.css";
+@import '~ngx-toastr/toastr.css';
+
+// Elements
+// @import "app/spinner";
+// Charts
+// @import "app/radial-bar";
+// @import "app/chart-flot";
+// @import "app/chart-easypie";
+// Form elements
+// @import "app/form-select2";
+// @import "app/form-tags-input";
+// @import "app/file-upload";
+// @import "app/summernote";
+// @import "app/typeahead";
+// Tables
+// @import "app/table-extras";
+// @import "app/table-angulargrid";
+// Maps
+// @import "app/gmap";
+// @import "app/vector-map";
+// Extras
+// @import "app/timeline";
+// @import "app/todo";
+// @import "app/calendar";
+// @import "app/mailbox";
+// @import "app/plans";
+
+
+.selected-div {
+    border: solid 1px;
+    border-color: $elter-primary-orange;
+    margin-right: 5px;
+}
+
+.selected-submenu {
+    border: solid 1px;
+    border-color: $elter-primary-blue;
+    margin-right: 5px;
+}
+
+.bg-orange {
+    background-color: $elter-primary-orange;
+    color: white;
+}
+
+.bg-orange:hover {
+    color: white;
+}
+
+.bg-blue {
+    background-color: $elter-primary-blue;
+    color: white;
+}
+
+.bg-blue:hover {
+    color: white;
+}
+
+.text-primary-color-blue {
+    color: $elter-primary-blue;
+}
+
+.text-primary-color-orange {
+    color: $elter-primary-orange;
+}
+
+.text-secundary-color-green-dark {
+    color: $elter-secondary-dark-green;
+}
+
+
+
+.accordion {
+    background-color: $elter-primary-orange;
+    text-decoration-color: white;
+    text-emphasis-color: white;
+    cursor:pointer;
+}
+
+.selectedLayer {
+    border: 2px solid;
+    padding: 6px;
+    border-color:  $elter-primary-blue;
+    box-shadow: 2px 3px 3px  $elter-primary-blue;
+  }
+
+.sidebar-item {
+  border: 1px solid;
+  border-color:  $elter-primary-blue;
+  margin: 1px;
+  padding: 1px;
+}
+
+
+
+.tab input[type=checkbox] {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+// Layout
+.row {
+  display:flex;
+  .col {
+    flex:1;
+    &:last-child {
+      margin-left: 1em;
+    }
+  }
+}
+/* Accordion styles */
+.tabs {
+  margin: 5px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 4px -2px rgba(0,0,0,0.5);
+}
+.tab {
+  width: 100%;
+  color: white;
+  overflow: hidden;
+  &-label {
+    display: flex;
+    justify-content: space-between;
+    padding: 1em;
+    background: $elter-primary-orange;
+    font-weight: bold;
+    cursor: pointer;
+    /* Icon */
+    &:hover {
+      background: darken($elter-primary-orange, 10%);
+    }
+    &::after {
+      content: "\276F";
+      width: 1em;
+      height: 1em;
+      text-align: center;
+      transition: all .35s;
+    }
+  }
+  &-content {
+    max-height: 0;
+    padding: 0 1em;
+    color: darkslategray;
+    background: white;
+    transition: all .35s;
+  }
+  &-close {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1em;
+    font-size: 0.75em;
+    background: $elter-primary-orange;
+    cursor: pointer;
+    &:hover {
+      background: darken($elter-primary-orange, 10%);
+    }
+  }
+}
+
+// :checked
+input:checked {
+  + .tab-label {
+    background: darken($elter-primary-orange, 10%);
+    &::after {
+      transform: rotate(90deg);
+    }
+  }
+  ~ .tab-content {
+    max-height: 100%;
+    padding: 1em;
+  }
+
+  .navigation-box-header {
+    background-color:   $elter-primary-blue;
+    text-decoration-color: $elter-primary-blue;
+    text-emphasis-color: white;
+    text-align: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
+  input {
+    width: 90%;
+  }
+  
+  a:hover {
+    cursor: pointer;
+  }
+
+}

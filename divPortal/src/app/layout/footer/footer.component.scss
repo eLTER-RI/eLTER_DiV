@@ -1,0 +1,13 @@
+div .only-show-on-hover-not {
+    visibility: hidden;
+}
+div:hover .only-show-on-hover-not  {
+    visibility: visible;
+}
+
+div .only-show-on-hover {
+    visibility: visible;
+}
+div:hover .only-show-on-hover  {
+    visibility: hidden;
+}

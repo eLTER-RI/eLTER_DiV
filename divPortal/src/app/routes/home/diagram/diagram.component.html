@@ -1,0 +1,42 @@
+<div id="graphScroll" class="graph-scroller m-2" malihu-scrollbar [scrollbarOptions]="scrollbarOptionsGraph">
+    <div *ngFor="let chartDetails of chartsDetails; index as i" id="chartDetails.phenomenon.id">
+        <div class="pb-5">
+            <div class="phenomenonTitle" >
+            <label class="mt-0 mb-0 dark-green-color"> <b> {{chartDetails?.phenomenon?.label}} </b></label>
+            </div>
+            <div id="{{chartDetails.phenomenon.id}}" style="width: 100%; height: 500px" class="mb-2 mr-2 mb-3"></div>
+            <div>
+                <input
+                    class="dateIntervalPicker"
+                    matInput
+                    ngxDaterangepickerMd
+                    [showCancel]="true"
+                    placeholder="Choose date"
+                    startKey="startDate"
+                    endKey="endDate"
+                    [alwaysShowCalendars]="true"
+                    [keepCalendarOpeningWithRange]="true"
+                    [ranges]="ranges"
+                    [locale]="{applyLabel: 'ok', format: 'DD. MM. YYYY.'}"
+                    [timePicker]="true"
+                    [timePicker24Hour]="true"
+                    [maxDate]="maxDate"
+                    [showDropdowns]="true"
+                    drops="up"
+                    [(ngModel)]="chartDetails.selectedDateInterval"
+                />
+                <button class="d-inline mb-2 ml btn btn-sm basic-button" (click)="getMeasurementsForDate(i, chartDetails.phenomenon.id)">
+                    Show
+                    <em class="fa fas icon-arrow-right-circle pl"></em>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="navigation-box" (click)="btn_navigateToHome()">
+    <div class="navigation-box-header text-white">
+        Go to map
+    </div>
+    <img src="assets/img/navigation/home.png"  class="navigation-box-body"/>
+</div>

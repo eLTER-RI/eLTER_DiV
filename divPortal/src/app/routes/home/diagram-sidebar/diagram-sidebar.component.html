@@ -1,0 +1,45 @@
+<div class="aside-inner  mt-5">
+    <div class="container mb-3">
+        <div>
+            <div class="row text-white ml-2">
+                <div class="container">
+                    <div class="float-left">
+                        <span class="h4">Legend</span>
+                    </div>
+                    <div class="float-right">
+                        <button class="d-inline mb-2 btn btn-xs bg-orange" (click)="btn_clearAll()">
+                            <em class="fa fas fa-trash-alt"></em>
+                            Clear all
+                        </button>
+                    </div>
+                </div>
+
+            </div> 
+
+            <div id="timeseriesScroll" malihu-scrollbar [scrollbarOptions]="scrollbarOptionsTimeseries">
+                <div class="showFilter mb-2" 
+                    *ngFor="let ts of timeseries; index as i" type="button" 
+                    [ngStyle]="getStyleForTimeseries(ts)" 
+                    (click)="btn_selectOrDeselectTimeseries(ts, i)">
+
+                    <div class="mb-1 ml-1 mr-1 pt-1 location" type="button" (click)="btn_showStationOnMap(ts)" [ngStyle]="{color: ts.color}">
+                         <em class="fa fas icon-location-pin"></em><b> {{ts.station.name}} </b>
+                    </div>
+                    <div class="mb-1 ml-1 mr-1"> ({{ts.uom}}) </div>
+                    <div class="mb-1 ml-1 mr-1 procedure">{{ts.phenomenon.label}} </div>
+                    <div class="mb-1 ml-1 mr-1 procedure">{{ts.procedure}} </div>
+                    <div class="mb-1 ml-2 mr-1">
+                        <span (click)="showValues[i] = !showValues[i]" class="ml-0 mr-1">info<em class="fa fas fa-info mr-2 ml-1 location" ></em> </span>
+                        <span (click)="btn_removeTimeseries(ts, i)" class="ml-1" >remove <em class="fa fas fa-times mr-1 location"></em></span>
+                    </div>
+                    <div  *ngIf="showValues[i]">
+                        <hr class="mt-0 mb-1"/>
+                        <div class="mb-1 ml-2 mr-1 pt-0"> First value at {{ts.firstTime | date:'medium'}}  ({{ts.firstValue}} {{ts.uom}})</div>
+                        <div class="pb-1 ml-2 mr-1"> Last value at {{ts.lastTime | date:'medium'}} ({{ts.lastValue}} {{ts.uom}})</div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </div>
+
+</div>
