@@ -70,7 +70,6 @@ export class LayersSidebarComponent implements OnInit {
               }
 
   ngOnInit(): void {
-    this.showLayers = true;
     this.styleCache = {};
 
     this.addSelectedLayersSubscription = this.offsidebarService.selectedLayers.subscribe( state => {

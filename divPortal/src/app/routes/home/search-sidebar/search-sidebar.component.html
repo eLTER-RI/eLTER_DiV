@@ -1,0 +1,56 @@
+<div [ngClass]="showDivFilter ? 'selected-div' : ''">
+    <div class="m-2">
+        <div class="h4">
+            <a type="button" (click)="showDivFilter = !showDivFilter"><em [ngClass]="showDivFilter ? 'fas fa-angle-up' : 'fas fa-angle-down'" class="pr-sm"></em>
+                Search
+            </a>
+        </div>
+
+        <div *ngIf="showDivFilter">
+            <label class="ml-2 mb-0 mt-1">Sites</label>
+    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="sites" [(ngModel)]="divFilter.sites"
+        name="sites" bindLabel="name">
+
+        <ng-template ng-label-tmp let-item="item">
+            {{item.name}}
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+            {{item.name}}
+        </ng-template>
+    </ng-select>
+
+    <label class="ml-2 mb-0 mt-2">Standard Observation</label>
+    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="standardObservations" name="standardObservations" [(ngModel)]="divFilter.standardObservations"
+         bindLabel="name">
+
+        <ng-template ng-label-tmp let-item="item">
+            {{item.name}}
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+            {{item.name}}
+        </ng-template>
+    </ng-select>
+
+    <label class="ml-2 mb-0 mt-2">Habitats</label>
+    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="habitats" [(ngModel)]="divFilter.habitats"
+        name="habitats"  bindLabel="name">
+
+        <ng-template ng-label-tmp let-item="item">
+            {{item.name}}
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+            {{item.name}}
+        </ng-template>
+    </ng-select>
+
+
+    <div class="text-right mr-1 mt-3">
+        <button class="d-inline mb-2 btn btn-md btn-labeled bg-blue" (click)="btn_filter()">
+            <em class="fa fas fa-search"></em>
+            Search
+        </button>
+    </div>
+
+        </div>
+    </div>
+</div>

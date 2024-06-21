@@ -9,8 +9,7 @@ export class MetadataCatalogueComponent implements OnInit {
 
   isLoading: boolean = true;
 
-   metadataURL = "https://dip.lter-europe.net/geonetwork/srv/eng/catalog.search#/search";
-  // metadataURL = "https://www.youtube.com/embed/p485kUNpPvE&t=1s";
+  metadataURL = "https://div.elter-ri.eu/geonetwork/srv/eng/catalog.search#/search";
 
   divHeight;
 

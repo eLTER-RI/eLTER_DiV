@@ -22,6 +22,7 @@ import {NgxPaginationModule} from 'ngx-pagination';
 import { ShowLayaresDetailsComponent } from './show-layares-details/show-layares-details.component';
 import { MalihuScrollbarModule } from 'ngx-malihu-scrollbar';
 import { MetadataCatalogueComponent } from './metadata-catalogue/metadata-catalogue.component';
+import { SearchSidebarComponent } from './search-sidebar/search-sidebar.component';
 
 
 
@@ -41,7 +42,7 @@ import { MetadataCatalogueComponent } from './metadata-catalogue/metadata-catalo
         RouterModule,
     ],
     declarations: [HomeComponent, HomeSidebarComponent, BaseMapSidebarComponent, LayersSidebarComponent, EbvSidebarComponent, 
-        EbvDetailsComponent, SiteDetailsComponent, StationDetailsComponent, DiagramComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent],
+        EbvDetailsComponent, SiteDetailsComponent, StationDetailsComponent, DiagramComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent, SearchSidebarComponent],
     exports: [
         RouterModule,HomeSidebarComponent, EbvDetailsComponent, SiteDetailsComponent, StationDetailsComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent
     ],
