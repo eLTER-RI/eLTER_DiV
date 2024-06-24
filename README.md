@@ -2,23 +2,22 @@
   <img src="divPortal/src/assets/img/logo/elter_div_logo.png" alt="eLTER Project Logo" width="300" height="auto"/>
 </p>
 
-# Title TODO
+# eLTER DiV
 
 ![](https://img.shields.io/badge/license-EUPL--1.2-green)
 ![](https://img.shields.io/badge/angular-12.0.5-green)
 ![](https://img.shields.io/badge/Java-14-green)
 
-# Description TODO
+# Description
+The web app that visualise that provides search of meta data for sites, standard observations and habitats and provides visualisation of data e.g. maps and diagrams of earth observation or timeseries data.
 
 
 -   [Installation and usage](#installation-and-usage)
 -   [Coding style](#coding-style)
--   [Data standards](#data-standards)
 -   [File naming nomenclature](#file-naming-nomenclature)
 -   [Reproducibility](#reproducibility)
 -   [Authors](#authors)
 -   [License](#license)
--   [Citation](#citation)
 -   [Acknowledgments](#acknowledgments)
 
 ## Installation and usage
@@ -77,14 +76,6 @@ Contributors are expected to adhere to these guidelines when writing code for th
 -   Variables/Functions: camelCase
 -   Constants: UPPER_CASE
 
-## Data standards
-
-This project adheres to eLTER data standards. Please ensure all data
-complies with these standards and is deposited appropriately in
-[Zenodo](https://zenodo.org/communities/elter) or
-[B2SHARE](https://b2share.eudat.eu/communities/LTER) repositories as per
-eLTER community guidelines.
-
 
 ## File naming nomenclature
 
@@ -112,12 +103,19 @@ List of contributors to the project.
 
 | Author | Affiliation | e-mail |
 | :---: | :---: | :---: |
+| Vladan Minić | [Biosense Institute](https://biosens.rs/en) | [minic\@biosense.rs](mailto:minic@biosense.rs) |
 | Mina Bjelica | [Biosense Institute](https://biosens.rs/en) | [minab\@biosense.rs](mailto:minab@biosense.rs) |
 | Milica Milovanović | [Biosense Institute](https://biosens.rs/en) | [milicam\@biosense.rs](mailto:milicam@biosense.rs) |
 
-## Licence TODO
 
-## Citation TODO
+## Licence
+-   This project is licensed under the [EUPL    License](https://eupl.eu/) - see the [LICENSE](LICENSE) file for
+    details.
 
-## Acknowledgments TODO
 
+## Acknowledgments
+Development & maintenance funded through:
+
+<p align="center">
+  <img src="divPortal/src/assets/img/logo/eLTER_PLUS_Logo.png" alt="eLTER Project Logo" width="300" height="auto"/>
+</p>
