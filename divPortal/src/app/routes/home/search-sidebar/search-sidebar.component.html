@@ -1,55 +1,107 @@
-<div [ngClass]="showDivFilter ? 'selected-div' : ''">
+<div [ngClass]="showDivFilterAndSearch ? 'selected-div' : ''">
     <div class="m-2">
         <div class="h4">
-            <a type="button" (click)="showDivFilter = !showDivFilter"><em [ngClass]="showDivFilter ? 'fas fa-angle-up' : 'fas fa-angle-down'" class="pr-sm"></em>
-                Search
+            <a type="button" (click)="showDivFilterAndSearch = !showDivFilterAndSearch"><em [ngClass]="showDivFilterAndSearch ? 'fas fa-angle-up' : 'fas fa-angle-down'" class="pr-sm"></em>
+                Filter and search
             </a>
         </div>
 
-        <div *ngIf="showDivFilter">
-            <label class="ml-2 mb-0 mt-1">Sites</label>
-    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="sites" [(ngModel)]="divFilter.sites"
-        name="sites" bindLabel="name">
+        <div *ngIf="showDivFilterAndSearch">
 
-        <ng-template ng-label-tmp let-item="item">
-            {{item.name}}
-        </ng-template>
-        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
-            {{item.name}}
-        </ng-template>
-    </ng-select>
+            <div class="panel-body p-0 b-0 mb-1 sidebar-item">
+                <div>
+                    <span class="col-1 mr-0">
+                        <em class="fa icon-menu mt-1" style="color: transparent;"></em> 
+                    </span>
+                    <label class="col-7 ml-0 pl-0"  (click)="showFilter = !showFilter">
+                        <em [ngClass]="showFilter ? 'fas fa-angle-up' : 'fas fa-angle-down'" class="pr-sm"></em>     
+                        Filter
+                    </label>
 
-    <label class="ml-2 mb-0 mt-2">Standard Observation</label>
-    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="standardObservations" name="standardObservations" [(ngModel)]="divFilter.standardObservations"
-         bindLabel="name">
+                    <div *ngIf="showFilter">
+                        <label class="ml-2 mb-0 mt-1">Sites</label>
+                        <ng-select class="ml-1 mr-2" [clearable]="true" [items]="sites" [(ngModel)]="divFilter.sites"
+                            [multiple]="true" name="sites" bindLabel="item" bindValue="item">
+            
+                            <ng-template ng-label-tmp let-item="item">
+                                {{item}}
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+                                {{item}}
+                            </ng-template>
+                        </ng-select>
+            
+                        <label class="ml-2 mb-0 mt-2">Standard Observation</label>
+                        <ng-select class="ml-1 mr-2" [clearable]="true" [items]="standardObservations" [(ngModel)]="divFilter.standardObservations"
+                            [multiple]="true" name="standardObservations" bindLabel="name" bindValue="name" [groupBy]="'standardObservationType'">
+            
+                            <ng-template ng-label-tmp let-item="item">
+                                {{item.name}}
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+                                {{item.name}}
+                            </ng-template>
+                        </ng-select>
+            
+                        <label class="ml-2 mb-0 mt-2">Habitats</label>
+                        <ng-select class="ml-1 mr-2" [clearable]="true" [items]="habitats" [(ngModel)]="divFilter.habitats"
+                            [multiple]="true" name="habitats"  bindLabel="name" bindValue="name">
+            
+                            <ng-template ng-label-tmp let-item="item">
+                                {{item.name}}
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+                                {{item.name}}
+                            </ng-template>
+                        </ng-select>
+            
+            
+                        <div class="text-right mr-1 mt-3">
+                            <button class="d-inline mb-2 btn btn-md btn-labeled bg-blue mr-2" 
+                                    (click)="filterReset()">
+                                <em class="fa fas fa-trash"></em> Reset
+                            </button>
 
-        <ng-template ng-label-tmp let-item="item">
-            {{item.name}}
-        </ng-template>
-        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
-            {{item.name}}
-        </ng-template>
-    </ng-select>
+                            <button class="d-inline mb-2 btn btn-md btn-labeled bg-blue" 
+                                    (click)="filterAndSearch('filter')">
+                                <em class="fa fas fa-search"></em> Filter
+                            </button>
+                        </div>
+                    </div>
 
-    <label class="ml-2 mb-0 mt-2">Habitats</label>
-    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="habitats" [(ngModel)]="divFilter.habitats"
-        name="habitats"  bindLabel="name">
+                </div>
+            </div>
 
-        <ng-template ng-label-tmp let-item="item">
-            {{item.name}}
-        </ng-template>
-        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
-            {{item.name}}
-        </ng-template>
-    </ng-select>
+            <div class="panel-body p-0 b-0 mb-1 sidebar-item">
+                <div>
+                    <span class="col-1 mr-0">
+                        <em class="fa icon-menu mt-1" style="color: transparent;"></em> 
+                    </span>
+                    <label class="col-7 ml-0 pl-0"  (click)="showSearch = !showSearch">
+                        <em [ngClass]="showSearch ? 'fas fa-angle-up' : 'fas fa-angle-down'" class="pr-sm"></em>     
+                        Search
+                    </label>
 
+                    <div *ngIf="showSearch">
+                        <label class="ml-2 mb-0 mt-1">Full text search</label>
+                        <input class="form-control ml-1 mr-2" [(ngModel)]="divFilter.searchText"
+                               name="searchQuery" bindLabel="searchQuery"/>
+            
+                        <div class="text-right mr-1 mt-3">
+                            <button class="d-inline mb-2 btn btn-md btn-labeled bg-blue mr-2" 
+                                    (click)="searchReset()">
+                                <em class="fa fas fa-trash"></em> Reset
+                            </button>
 
-    <div class="text-right mr-1 mt-3">
-        <button class="d-inline mb-2 btn btn-md btn-labeled bg-blue" (click)="btn_filter()">
-            <em class="fa fas fa-search"></em>
-            Search
-        </button>
-    </div>
+                            <button class="d-inline mb-2 btn btn-md btn-labeled bg-blue" 
+                                    (click)="filterAndSearch('search')">
+                                <em class="fa fas fa-search"></em> Search
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
 
         </div>
     </div>

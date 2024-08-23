@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -13,13 +14,18 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.ecosense.dto.BoundingBoxDTO;
+import com.ecosense.dto.DivFilterDTO;
 import com.ecosense.dto.PointDTO;
 import com.ecosense.dto.PolygonDTO;
 import com.ecosense.dto.SimpleResponseDTO;
+import com.ecosense.dto.StandardObservationDTO;
 import com.ecosense.dto.input.FilterSiteIDTO;
 import com.ecosense.dto.output.ActivityODTO;
 import com.ecosense.dto.output.CountryODTO;
@@ -36,7 +42,10 @@ import com.ecosense.repository.DeimsApiRepository;
 import com.ecosense.repository.SiteJpaRepo;
 import com.ecosense.repository.SiteRepo;
 import com.ecosense.service.SiteService;
+import com.ecosense.utils.SolrData;
 import com.ecosense.utils.Utils;
+import com.ecosense.utils.VocabsData;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @Service
 @Transactional
@@ -56,6 +65,9 @@ public class SiteServiceImpl implements SiteService {
 	
 	@Autowired
 	private CountryRepo countryRepo;
+
+	@Autowired
+	private RestTemplate restTemplate;
 	
 	@Override
 	public SiteDetailsODTO getSiteInfo(Integer siteId) throws SimpleException, SQLException, IOException {
@@ -312,6 +324,96 @@ public class SiteServiceImpl implements SiteService {
 		
 		GeoJsonWriter writer = new GeoJsonWriter();
 		return writer.write(site.getPolygon());
+	}
+
+	public SitesODTO filterAndSearchSites(DivFilterDTO divFilterDTO) throws SimpleException, IOException {
+		SitesODTO response = new SitesODTO();
+		List<SiteODTO> sites = new ArrayList<>();
+		BoundingBoxDTO boundingBox = new BoundingBoxDTO(Double.MAX_VALUE, Double.MAX_VALUE, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+
+		JsonNode resultNode = null;
+
+		String url = SolrData.BASE_URL + "/select?q=data:(";
+
+		List<String> searchParameters = new ArrayList<>();
+		if (divFilterDTO.getHabitats() != null && !divFilterDTO.getHabitats().isEmpty()) {
+			searchParameters.addAll(divFilterDTO.getHabitats());
+		}
+		if (divFilterDTO.getSites() != null && !divFilterDTO.getSites().isEmpty()) {
+			searchParameters.addAll(divFilterDTO.getSites());
+		}
+		if (divFilterDTO.getStandardObservations() != null && !divFilterDTO.getStandardObservations().isEmpty()) {
+			searchParameters.addAll(divFilterDTO.getStandardObservations());
+		}
+		if (divFilterDTO.getSearchText() != null && !divFilterDTO.getSearchText().isEmpty()) {
+			searchParameters.addAll(Arrays.asList(divFilterDTO.getSearchText()));
+		}
+
+		int i = 0;
+		for (String param : searchParameters) {
+			if (i != 0) {
+				url += " OR ";
+			}
+			url += '"' + param + '"';
+
+			i++;
+		}
+
+		url += ")&fl=id";
+
+        try {
+			ResponseEntity<JsonNode> siteResponse = restTemplate.exchange(url, HttpMethod.GET, null, JsonNode.class);
+			resultNode = siteResponse.getBody();
+
+		} catch (Exception e) {
+			System.out.println(url + " <- SERVIS KOJI PUKNE");
+			return response;
+		}
+
+		JsonNode siteIdListNode = resultNode.get("response").get("docs");
+
+		for (JsonNode siteIdNode : siteIdListNode) {
+			String siteSuffix = siteIdNode.get("id").asText();
+
+			Site site = siteRepo.getSite(siteSuffix);
+
+			if (site != null) {
+
+				SiteODTO siteDTO = new SiteODTO();
+				siteDTO.setId(site.getId());
+				siteDTO.setIdSuffix(site.getIdSuffix());
+				siteDTO.setTitle(site.getTitle());
+
+				Point point  = (Point) site.getPoint();
+				double lng = point.getCoordinate().x;
+				double lat = point.getCoordinate().y;
+				siteDTO.setPoint(new PointDTO(lat, lng));
+
+				Geometry polygon = site.getPolygon();
+				Boolean isPoygon = true;
+
+				siteDTO.setArea(polygon.getArea());
+				
+				StringWriter writer = new StringWriter();
+				GeoJsonWriter geoJsonWriter = new GeoJsonWriter();
+				geoJsonWriter.write(polygon, writer);
+				String polygonJson = writer.toString();
+				
+				BoundingBoxDTO siteBbox = new BoundingBoxDTO(polygon.getEnvelopeInternal().getMinX(), polygon.getEnvelopeInternal().getMinY(),
+						polygon.getEnvelopeInternal().getMaxX(), polygon.getEnvelopeInternal().getMaxY());
+				
+				siteDTO.setPolygon(new PolygonDTO(polygonJson, siteBbox, isPoygon));
+				
+				boundingBox = Utils.setBB(siteBbox, boundingBox);
+
+				sites.add(siteDTO);
+			}
+		}
+
+		response.setSites(sites);
+		response.setBoundingBox(boundingBox);
+
+        return response;
 	}
 	
 }

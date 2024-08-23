@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecosense.dto.DivFilterDTO;
 import com.ecosense.dto.SimpleResponseDTO;
 import com.ecosense.dto.input.FilterSiteIDTO;
 import com.ecosense.dto.output.ActivityODTO;
@@ -228,4 +229,26 @@ public class SiteController {
 		}
 	}
 	
+	@RequestMapping(value="/filterAndSearch", method = RequestMethod.POST, 
+					produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
+	public Response filterAndSearch(@RequestBody DivFilterDTO divFilterDTO) {
+	SimpleResponseDTO response = new SimpleResponseDTO();
+	SitesODTO sites = null;
+	try {
+		
+		sites = siteService.filterAndSearchSites(divFilterDTO);
+
+	} catch(SimpleException se) {
+		response.setStatus(se.getSimpleResponseStatus());
+	} catch(Exception e) {
+		e.printStackTrace();
+		response.setStatus(SimpleResponseDTO.GENERAL_SERVER_ERROR);
+	}
+	if (response.getStatus() == SimpleResponseDTO.OK) {
+		return Response.ok(sites, MediaType.APPLICATION_JSON).build();
+	}
+	else {
+		return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
+	}
+	}
 }

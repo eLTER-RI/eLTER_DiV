@@ -1,0 +1,6 @@
+<div *ngIf="!siteIds || siteIds.length == 0" class="pl-3 pt-3 text-primary-color-orange">
+    <h3 class="text-center"> No search results </h3>
+</div>
+<div *ngFor="let siteId of siteIds">
+    <app-site-details [siteId]="siteId" [open]="siteIds?.length == 1"> </app-site-details>
+</div>

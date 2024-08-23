@@ -1,13 +1,19 @@
 <app-loading *ngIf="!siteDetails"></app-loading>
 
-<div class="card-body" *ngIf="siteDetails !== undefined">
+<div class="card-body pb-1 pt-1" *ngIf="siteDetails !== undefined">
     <div class="row" *ngIf="siteDetails">
-        <div class="text-left mb-2 mt-0 col-11">
-            <div class="h6 text-primary-color-orange mb-3 mt-2"><b>{{siteDetails?.siteName}} ({{siteDetails?.shortName}}) - {{siteDetails?.siteType}}</b></div>
+        <div (click)="openCloseSiteDetail()" 
+             [ngClass]="{'text-left mb-2 mt-0 col-12': true, 'b': siteDetails.open}" 
+             [ngStyle]="{'background-color': siteDetails.open ? 'antiquewhite' : '', 'cursor': 'pointer'}">
+            <div class="h6 text-primary-color-orange mb-1 mt-1" style="cursor: pointer">
+                <b>{{siteDetails?.siteName}} ({{siteDetails?.shortName}}) - {{siteDetails?.siteType}}</b>
+                <em [hidden]="siteDetails.open" class="fas fa-angle-down pl-3"></em>
+                <em [hidden]="!siteDetails.open" class="fas fa-angle-up pl-3"></em>
+            </div>
         </div>
     </div>
 
-    <div id="detailsTimeseriesScroll"  malihu-scrollbar [scrollbarOptions]="scrollbarOptions" class="mt-0 pt-0">
+    <div [hidden]="!siteDetails.open" id="detailsTimeseriesScroll"  malihu-scrollbar [scrollbarOptions]="scrollbarOptions" class="mt-0 pt-0">
         <div class="tabs">
         <div class="tab">
             <input type="checkbox" [checked]="menuItem == 'basic'">

@@ -54,10 +54,16 @@ public class DeimsApiRepositoryImpl implements DeimsApiRepository {
 	public List<Site> getAllSites() throws SimpleException {
 		List<Site>  sites = new ArrayList<>();
 		
-		ResponseEntity<JsonNode> sitesResponse = restTemplate.exchange(
+		ResponseEntity<JsonNode> sitesResponse = null;
+		try {
+			sitesResponse = restTemplate.exchange(
 				DEIMSData.API_SITE_SEARCH + DEIMSData.NETWORK + DEIMSData.SUFFIX_ID_FOR_LTER_EUROPE + DEIMSData.VERIFIED, 
 				HttpMethod.GET, null, JsonNode.class);
-		
+		} catch(Exception e) {
+			System.out.println(DEIMSData.API_SITE_SEARCH + DEIMSData.NETWORK + DEIMSData.SUFFIX_ID_FOR_LTER_EUROPE + DEIMSData.VERIFIED + " <- SERVIS KOJI PUKNE");
+			throw new SimpleException(SimpleResponseDTO.DEIMS_API_ERROR);
+		}
+
 	    JsonNode sitesNode = sitesResponse.getBody();
 	    
 	    for(JsonNode oneSiteNode : sitesNode) { 
@@ -101,8 +107,15 @@ public class DeimsApiRepositoryImpl implements DeimsApiRepository {
 	public SiteDetailsODTO getSiteInfo(String siteIdSuffix) throws SimpleException, SQLException, IOException {
 		SiteDetailsODTO siteInfoDTO = new SiteDetailsODTO();
 		
-		ResponseEntity<JsonNode> siteResponse = restTemplate.exchange(DEIMSData.API_SITE_SEARCH + "/" + siteIdSuffix, 
-				HttpMethod.GET, null, JsonNode.class);
+		ResponseEntity<JsonNode> siteResponse = null;
+
+		try {
+			siteResponse = restTemplate.exchange(DEIMSData.API_SITE_SEARCH + "/" + siteIdSuffix, 
+												 HttpMethod.GET, null, JsonNode.class);
+		} catch(Exception e) {
+			System.out.println(DEIMSData.API_SITE_SEARCH + "/" + siteIdSuffix + " <- SERVIS KOJI PUKNE");
+			throw new SimpleException(SimpleResponseDTO.DEIMS_API_ERROR);
+		}
 
 	    JsonNode siteNode = siteResponse.getBody();
 	    siteInfoDTO.setTitle(siteNode.get("title").asText());
@@ -500,9 +513,17 @@ public class DeimsApiRepositoryImpl implements DeimsApiRepository {
 	@Override
 	public Site getPolygon(String siteIdSuffix) throws SimpleException {
 		Site site = new Site();
-		ResponseEntity<JsonNode> siteResponse = restTemplate.exchange(DEIMSData.API_SITE_SEARCH + "/" + siteIdSuffix, 
-				HttpMethod.GET, null, JsonNode.class);
-		
+
+		ResponseEntity<JsonNode> siteResponse = null;
+
+		try {
+			siteResponse = restTemplate.exchange(DEIMSData.API_SITE_SEARCH + "/" + siteIdSuffix, 
+												 HttpMethod.GET, null, JsonNode.class);
+		} catch(Exception e) {
+			System.out.println(DEIMSData.API_SITE_SEARCH + "/" + siteIdSuffix + " <- SERVIS KOJI PUKNE");
+			throw new SimpleException(SimpleResponseDTO.DEIMS_API_ERROR);
+		}
+
 		JsonNode siteNode = siteResponse.getBody();
 		JsonNode attributes = siteNode.get("attributes");
 		JsonNode geographic = attributes.get("geographic");
@@ -560,13 +581,20 @@ public class DeimsApiRepositoryImpl implements DeimsApiRepository {
 	}
 	
 	@Override
-	public List<Activity> getActivities(String siteIdSuffix) {
+	public List<Activity> getActivities(String siteIdSuffix) throws SimpleException {
 		
 		List<Activity> activities = new ArrayList<>();
 		
-		ResponseEntity<JsonNode> siteResponse = restTemplate.exchange(DEIMSData.API_SITE_SEARCH + "/" + siteIdSuffix, 
-				HttpMethod.GET, null, JsonNode.class);
-		
+		ResponseEntity<JsonNode> siteResponse = null;
+
+		try {
+			siteResponse = restTemplate.exchange(DEIMSData.API_SITE_SEARCH + "/" + siteIdSuffix, 
+											     HttpMethod.GET, null, JsonNode.class);
+		} catch(Exception e) {
+			System.out.println(DEIMSData.API_SITE_SEARCH + "/" + siteIdSuffix + " <- SERVIS KOJI PUKNE");
+			throw new SimpleException(SimpleResponseDTO.DEIMS_API_ERROR);
+		}
+
 		JsonNode siteNode = siteResponse.getBody();
 		JsonNode attributesNode = siteNode.get("attributes");
 		JsonNode focusDesignScaleNode = attributesNode.get("focusDesignScale");
@@ -586,11 +614,18 @@ public class DeimsApiRepositoryImpl implements DeimsApiRepository {
 	}
 
 	@Override
-	public List<Country> getCountries(String siteIdSuffix) {
+	public List<Country> getCountries(String siteIdSuffix) throws SimpleException {
 		List<Country> countries = new ArrayList<>();
 		
-		ResponseEntity<JsonNode> siteResponse = restTemplate.exchange(DEIMSData.API_SITE_SEARCH + "/" + siteIdSuffix, 
+		ResponseEntity<JsonNode> siteResponse = null;
+
+		try {
+			siteResponse = restTemplate.exchange(DEIMSData.API_SITE_SEARCH + "/" + siteIdSuffix, 
 				HttpMethod.GET, null, JsonNode.class);
+		} catch(Exception e) {
+			System.out.println(DEIMSData.API_SITE_SEARCH + "/" + siteIdSuffix + " <- SERVIS KOJI PUKNE");
+			throw new SimpleException(SimpleResponseDTO.DEIMS_API_ERROR);
+		}
 		
 		JsonNode siteNode = siteResponse.getBody();
 		JsonNode attributes = siteNode.get("attributes");
