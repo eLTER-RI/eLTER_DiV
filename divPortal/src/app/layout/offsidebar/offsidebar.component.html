@@ -2,8 +2,8 @@
     <app-ebv-details [ebvs]="ebvs" [hidden]="ebvs.length == 0"></app-ebv-details>
 </div>
 
-<div *ngIf="siteId">
-    <app-site-details [siteId]="siteId" ></app-site-details>
+<div *ngIf="(siteIds && siteIds.length > 0) || showSitesEvenIfEmpty">
+    <app-site-details-list [siteIds]="siteIds" ></app-site-details-list>
 </div>
 
 <div *ngIf="stationId">

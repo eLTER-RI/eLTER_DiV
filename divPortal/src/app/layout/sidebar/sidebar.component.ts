@@ -9,7 +9,7 @@ import { Component, OnInit, Injector, OnDestroy, OnChanges, SimpleChanges } from
 })
 export class SidebarComponent implements OnInit {
     
-    scrollbarOptions = {  theme: 'light-thick', scrollButtons: { enable: true },  setHeight: '95vh'};
+    scrollbarOptions = {  theme: 'light-thick', scrollButtons: { enable: true },  setHeight: '95vh', alwaysShowScrollbar: 1, autoHideScrollbar: false};
     showHome: boolean;
     showDiagram: boolean;
 

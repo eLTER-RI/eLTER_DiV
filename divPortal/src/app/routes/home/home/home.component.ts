@@ -58,6 +58,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     repositionMapSubscription: Subscription;
 
+    markSiteOnMapSubscription: Subscription;
+
     showBiggerZoom: boolean;
 
     urlMarkedLayerLegend;
@@ -175,6 +177,16 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.repositionMap();
             }
         });
+
+        this.markSiteOnMapSubscription = this.homeService.markSiteOnMapObservable.subscribe( obj => {
+            if (obj != null && obj.siteId) {
+                if (obj.markOnMap) {
+                    this.showSitePolygon(obj.siteId);
+                } else {
+                    this.removeSitePolygonLayer();
+                }
+            }
+        });
     }
 
     initMap() {
@@ -230,7 +242,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                         if (feature.features[0]) {
                             let idStr = feature.features[0].id;
                             idStr = idStr.substring(6);
-                            this.openSiteDetails(idStr);
+                            this.showAndOpenSiteDetails(idStr);
                         }
                       });
                   }
@@ -239,7 +251,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.map.forEachFeatureAtPixel(e.pixel, f => {
                 //@ts-ignore
                 const features = f.values_.features;
-                
+
                 let feature;
                 if (features && features.length == 1 && this.markedLayer?.code == 'sites') {
                     feature = features[0].id_;
@@ -249,7 +261,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                 if (feature) {
                     if (feature.indexOf('site_points') > -1 && this.markedLayer?.code == 'sites') {
                         const id = feature.substring(12);
-                        this.openSiteDetails(id);
+                        this.showAndOpenSiteDetails(id, this.markedLayer?.searchFilterType);
                     } else if (feature.indexOf('station') > -1 && this.markedLayer?.code == 'station') {
                         const id = feature.substring(8);
                         this.offsidebarService.showStation({
@@ -275,14 +287,30 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.map.addLayer(this.measureLayer);
     }
 
-    openSiteDetails(idStr: string) {
+    turnOffAllLayers() {
+        console.log(this.layers)
+        this.layers.forEach(l => {
+            this.turnOnOffLayer(l, 'turnOff', null);       
+        });
+    }
+
+    showAndOpenSiteDetails(idStr: string, openOnly: boolean = false) {
         this.removeSitePolygonLayer();                    
 
         const id = Number(idStr);
-        this.offsidebarService.showSite({
-            action: 'showSite',
-            site: id
-        });
+
+        if (openOnly) {
+            this.offsidebarService.openSite({
+                action: 'openSite',
+                sites: [id],
+            });
+        } else {
+            this.offsidebarService.showSites({
+                action: 'showSites',
+                sites: [id],
+            });
+        }
+
         this.offsidebarOpen();
 
         this.showSitePolygon(id);

@@ -115,7 +115,6 @@ public class SiteRepoImpl implements SiteRepo {
 			parametars.put("title", filterIDTO.getTitle());
 		}
 		
-		System.out.println(querySB.toString());
 		Query query = em.createQuery(querySB.toString());
 		
 		for (String key : parametars.keySet()) {

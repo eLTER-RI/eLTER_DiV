@@ -1,8 +1,12 @@
 import { SiteDetails } from './../../../shared/model/site-details-response-db';
-import { Site } from './../../../shared/model/site-db';
 import { SharedService } from './../../../shared/service/shared.service';
-import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { DarDB } from 'src/app/shared/model/dar-db';
+import { OffsidebarService } from 'src/app/layout/offsidebar/offsidebar.service';
+import { Subscription } from 'rxjs';
+import { HomeService } from '../home/home.service';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-site-details',
@@ -12,16 +16,23 @@ import { DarDB } from 'src/app/shared/model/dar-db';
 export class SiteDetailsComponent implements OnInit, OnChanges {
 
   @Input() siteId: number;
+  @Input() open: boolean;
 
   siteDetails: SiteDetails;
   darsData: DarDB[];
   menuItem: string;
   submenuItem: string;
 
-  
- scrollbarOptions = {  theme: 'dark-thick', scrollButtons: { enable: true },  setHeight: '80vh'};
+  siteOpenDetailsSubscription: Subscription;
+  closeAllSiteDetailsSubscription: Subscription;
 
-  constructor(private sharedService: SharedService) { }
+  scrollbarOptions = {  theme: 'dark-thick', scrollButtons: { enable: true },  setHeight: '80vh'};
+
+  constructor(private sharedService: SharedService,
+              private offsidebarService: OffsidebarService,
+              private homeService: HomeService,
+              private toastrService: ToastrService,
+              private translateService: TranslateService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.loadSites();
@@ -31,16 +42,40 @@ export class SiteDetailsComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.siteOpenDetailsSubscription = this.offsidebarService.currOpenSite.subscribe( site => {
+      if (site && site.action == 'openSite') {
+        if (site.sites[0] == this.siteId) {
+          if (this.siteDetails) {
+            this.siteDetails.open = true;
+            this.open = true;
+          }
+        } else {
+          if (this.siteDetails) {
+            this.siteDetails.open = false;
+            this.open = false;
+          }
+        }
+      }
+    });
 
+    this.closeAllSiteDetailsSubscription = this.offsidebarService.closeAllSiteDetailsObservable.subscribe( obj => {
+      if (this.siteDetails) {
+        this.siteDetails.open = false;
+      }
+    });
   }
 
   async loadSites() {
     const response = await this.sharedService.get('site/getSiteDetails?siteId='+this.siteId);
-    this.siteDetails = response.entity;
-
-    const response2 = await this.sharedService.get('dar/get?deimsUUID='+this.siteDetails.id);
-    this.darsData = response2.entity;
-    console.log(this.darsData);
+    if (response.status != 200) {
+      this.toastrService.error(this.translateService.instant('exception.' + response.entity.status + ''), "Error"); 
+    } else {
+      this.siteDetails = response.entity;
+      this.siteDetails.open = this.open;
+      
+      const response2 = await this.sharedService.get('dar/get?deimsUUID='+this.siteDetails.id);
+      this.darsData = response2.entity;
+    }
   }
 
   // async loadDar() {
@@ -66,6 +101,12 @@ export class SiteDetailsComponent implements OnInit, OnChanges {
     // if (this.menuItem === 'satellite') {
     //   this.mScrollbarService.scrollTo('#detailsTimeseriesScroll', 'bottom', this.scrollbarOptions);
     // }
+  }
+
+  openCloseSiteDetail() {
+    this.siteDetails.open = !this.siteDetails.open;
+
+    this.homeService.markSiteOnMap(this.siteId, this.siteDetails.open);
   }
 
   showOperationTab() {

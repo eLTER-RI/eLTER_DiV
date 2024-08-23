@@ -12,8 +12,6 @@ import com.ecosense.entity.Country;
 import com.ecosense.entity.Site;
 import com.ecosense.exception.SimpleException;
 
-import org.locationtech.jts.geom.Geometry;
-
 @Repository
 public interface DeimsApiRepository {
 
@@ -23,7 +21,7 @@ public interface DeimsApiRepository {
 
 	Site getPolygon(String siteIdSuffix) throws SimpleException;
 
-	List<Activity> getActivities(String siteIdSuffix);
+	List<Activity> getActivities(String siteIdSuffix) throws SimpleException;
 
-	List<Country> getCountries(String siteIdSuffix);
+	List<Country> getCountries(String siteIdSuffix) throws SimpleException;
 }

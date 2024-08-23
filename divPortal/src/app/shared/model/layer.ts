@@ -35,4 +35,6 @@ export class Layer {
     authUsername: string;
 	authPassword: string;
 
+    searchFilterType: boolean;
+
 }

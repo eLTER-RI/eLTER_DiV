@@ -21,6 +21,12 @@ export class HomeService {
 	private repositionMapBehaviorSubject = new BehaviorSubject<any>(null);
 	repositionMapObserbable = this.repositionMapBehaviorSubject.asObservable();
 
+	private hideAllLayersBehaviorSubject = new BehaviorSubject<any>(undefined);
+	hideAllLayersObservable = this.hideAllLayersBehaviorSubject.asObservable();
+
+	private markSiteOnMapBehaviorSubject = new BehaviorSubject<any>(undefined);
+	markSiteOnMapObservable = this.markSiteOnMapBehaviorSubject.asObservable();
+
   	constructor() { }
 
 	changeBaseMap(basemap) {
@@ -41,6 +47,14 @@ export class HomeService {
 
 	repositionMap(action) {
 		this.repositionMapBehaviorSubject.next(action);
+	}
+
+	hideAllLayers() {
+		this.hideAllLayersBehaviorSubject.next({});
+	}
+
+	markSiteOnMap(siteId: number, markOnMap: boolean) {
+		this.markSiteOnMapBehaviorSubject.next({siteId: siteId, markOnMap: markOnMap});
 	}
 
 }

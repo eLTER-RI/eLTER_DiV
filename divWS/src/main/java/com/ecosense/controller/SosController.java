@@ -37,7 +37,7 @@ public class SosController {
 	@RequestMapping(value = "/getAllStations", method = RequestMethod.GET)
 	public Response getAllStations() {
 		SimpleResponseDTO response = new SimpleResponseDTO();
-		StationsODTO stations = null;
+		StationsODTO stations = null; 
 		try {
 			stations = sosApiService.getStations();
 

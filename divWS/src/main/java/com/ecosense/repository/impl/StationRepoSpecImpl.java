@@ -44,7 +44,6 @@ public class StationRepoSpecImpl implements StationRepoSpec {
 			 parameters.put("sosPathUrls", filterStationIDTO.getSosPathUrls());
 		 }
 		 
-		 System.out.println(querySB.toString());
 		 Query query = em.createQuery(querySB.toString(), Station.class);
 		 for(String key : parameters.keySet()) {
 			 query.setParameter(key, parameters.get(key));

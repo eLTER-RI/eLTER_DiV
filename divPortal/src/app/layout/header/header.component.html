@@ -1,7 +1,7 @@
 <nav class="navbar topnavbar" role="navigation">
     <div class="d-inline-block">
         <div class="d-inline-block" (click)="logoClick()"> 
-            <img class="img-fluid" src="assets/img/logo/elter_div_logo.png" style="width: 150px; height: 36px;">
+            <img class="img-fluid" src="assets/img/logo/elter_div_leaf.png" style="width: 60px; height: 60px;">
         </div>
         <div class="d-inline-block mt-2 ml-2" *ngIf="pageHaveCollapsedSidebar">
             <a class=" d-none d-md-block d-lg-block d-xl-block text-primary-color-blue" trigger-resize="" (click)="toggleCollapsedSideabar()" *ngIf="!isCollapsedText()">
@@ -19,12 +19,12 @@
         <div class="d-inline-block text-primary-color-blue m-2 header-item"  (click)="show('map')">
             Map
         </div>
-        <div class="d-inline-block text-primary-color-blue">
+        <!-- <div class="d-inline-block text-primary-color-blue">
             |
-        </div>
-        <div class="d-inline-block text-primary-color-blue m-2 header-item"  (click)="show('metadata-catalogue')">
+        </div> -->
+        <!-- <div class="d-inline-block text-primary-color-blue m-2 header-item"  (click)="show('metadata-catalogue')">
             Metadata Catalogue
-        </div>
+        </div> -->
         <div class="d-inline-block text-primary-color-blue">
             |
         </div>

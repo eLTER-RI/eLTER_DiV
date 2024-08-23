@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.ecosense.dto.DivFilterDTO;
 import com.ecosense.dto.input.FilterSiteIDTO;
 import com.ecosense.dto.output.ActivityODTO;
 import com.ecosense.dto.output.CountryODTO;
@@ -37,5 +38,7 @@ public interface SiteService {
 	SiteDetailsODTO getSiteInfo(Integer siteId) throws SimpleException, SQLException, IOException;
 
 	String getGeoJsonPolygon(Integer id);
+
+	SitesODTO filterAndSearchSites(DivFilterDTO divFilterDTO) throws SimpleException, IOException;
 	
 }

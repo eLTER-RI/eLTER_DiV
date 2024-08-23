@@ -1,4 +1,7 @@
 {
+    "exception": {
+        "5": "There is a problem in a communication with the DEIMS API. Please come back later."
+    },
     "header": {
         "search": {
             "PLACEHOLDER": "Type and hit enter.."

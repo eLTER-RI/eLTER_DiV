@@ -39,6 +39,8 @@ export class SiteDetails {
     relatedResources: UrlNameDTO[];
     protectionLevel: UrlNameDTO[];
 
+    open: boolean = false;
+
     constructor() { }
 }
 

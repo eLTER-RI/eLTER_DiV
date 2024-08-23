@@ -23,6 +23,7 @@ import { ShowLayaresDetailsComponent } from './show-layares-details/show-layares
 import { MalihuScrollbarModule } from 'ngx-malihu-scrollbar';
 import { MetadataCatalogueComponent } from './metadata-catalogue/metadata-catalogue.component';
 import { SearchSidebarComponent } from './search-sidebar/search-sidebar.component';
+import { SiteDetailsListComponent } from './site-details-list/site-details-list.component';
 
 
 
@@ -42,9 +43,9 @@ import { SearchSidebarComponent } from './search-sidebar/search-sidebar.componen
         RouterModule,
     ],
     declarations: [HomeComponent, HomeSidebarComponent, BaseMapSidebarComponent, LayersSidebarComponent, EbvSidebarComponent, 
-        EbvDetailsComponent, SiteDetailsComponent, StationDetailsComponent, DiagramComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent, SearchSidebarComponent],
+        EbvDetailsComponent, SiteDetailsComponent, StationDetailsComponent, DiagramComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent, SearchSidebarComponent, SiteDetailsListComponent],
     exports: [
-        RouterModule,HomeSidebarComponent, EbvDetailsComponent, SiteDetailsComponent, StationDetailsComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent
+        RouterModule,HomeSidebarComponent, EbvDetailsComponent, SiteDetailsComponent, StationDetailsComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent, SiteDetailsListComponent
     ],
     providers: [ DatePipe, SlicePipe]
 })

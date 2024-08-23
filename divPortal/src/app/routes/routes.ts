@@ -7,7 +7,7 @@ import { LayoutComponent } from '../layout/layout.component';
 export const routes: Routes = [
 
     {
-        path: '',
+        path: '', 
         component: LayoutComponent,
         children: [
             { path: '', redirectTo: 'home', pathMatch: 'full' },

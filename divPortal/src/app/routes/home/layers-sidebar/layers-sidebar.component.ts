@@ -54,6 +54,7 @@ export class LayersSidebarComponent implements OnInit {
   showSiteFilter: boolean;
 
   addSelectedLayersSubscription: Subscription;
+  hideAllLayersSubscription: Subscription;
 
   showLayerIcon: boolean[] = [];
 
@@ -72,13 +73,25 @@ export class LayersSidebarComponent implements OnInit {
   ngOnInit(): void {
     this.styleCache = {};
 
+    this.readCodebook();
+
+    this.initSubscriptions();
+  }
+
+  initSubscriptions() {
     this.addSelectedLayersSubscription = this.offsidebarService.selectedLayers.subscribe( state => {
       if (state && state.action == 'addSelectedLayers') {
         this.addSelectedLayers(state.layers);
       } 
     });
 
-    this.readCodebook();
+    this.hideAllLayersSubscription = this.homeService.hideAllLayersObservable.subscribe( obj => {
+      this.allLayers?.forEach(lay => {
+        if (lay.showMap) {
+          this.btn_showOrHideLayersOnMap(lay);
+        }
+      });
+    });
   }
 
   turnOnLayerAfterRouting() {
