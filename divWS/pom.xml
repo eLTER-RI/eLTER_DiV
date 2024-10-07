@@ -112,7 +112,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version><!--$NO-MVN-MAN-VER$-->
+            <version>2.10.5.1</version>
         </dependency>
 
         <dependency>
@@ -141,7 +141,7 @@
         <dependency>
 		    <groupId>org.jsoup</groupId>
 		    <artifactId>jsoup</artifactId>
-		    <version>1.10.2</version>
+		    <version>1.14.2</version>
 		</dependency>
         
     </dependencies>
