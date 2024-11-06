@@ -1,16 +1,15 @@
 import { HomeService } from './../../routes/home/home/home.service';
 import { EbvDB } from './../../shared/model/ebv-db';
-import { EbvDetail } from './../../shared/model/ebvdetail';
 import { OffsidebarService } from './offsidebar.service';
-import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { SettingsService } from '../../core/settings/settings.service';
 import { ThemesService } from '../../core/themes/themes.service';
-import { TranslatorService } from '../../core/translator/translator.service';
 import { Subscription } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
-import { delay } from 'lodash';
-import { Site } from 'src/app/shared/model/site-db';
+import { SearchSidebarService } from 'src/app/routes/home/search-sidebar/search-sidebar.service';
+import { Dataset } from 'src/app/shared/model/dataset';
+import { Page } from 'src/app/shared/model/Page';
 
 @Component({
     selector: 'app-offsidebar',
@@ -19,11 +18,16 @@ import { Site } from 'src/app/shared/model/site-db';
 })
 export class OffsidebarComponent implements OnInit, OnDestroy {
 
+    visibleTab: string;
+
     currentTheme: any;
 
     siteIds?: number[];
     sitesSubscription: Subscription;
-    showSitesEvenIfEmpty: boolean;
+
+    datasets: Dataset[];
+    datasetSubscription: Subscription;
+    datasetPage: Page;
 
     ebvs?: EbvDB[];
     ebvSubscription: Subscription;
@@ -37,14 +41,19 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
     showHideLayers?: any[];
     showHideLayersSubscription: Subscription;
 
+    tabNameSubscription: Subscription;
+
     constructor(public themes: ThemesService, 
                 public offsidebarService: OffsidebarService,
+                public searchSidebarService: SearchSidebarService,
                 private settings: SettingsService,
                 public sanitizer: DomSanitizer,
                 private homeService: HomeService) {
     }
 
     ngOnInit() { //ovde dodati da se skloni polygon
+        this.visibleTab = 'sites';
+
         this.ebvSubscription = this.offsidebarService.currEbvs.subscribe( ebv => {
             if (ebv && ebv.action == 'showEBVs') {
                 this.showEbv(ebv.ebvs);
@@ -53,6 +62,12 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
         this.sitesSubscription = this.offsidebarService.currSites.subscribe( sites => {
             if (sites && sites.action == 'showSites') {
                 this.showSites(sites.sites);
+            }
+        });
+        this.datasetSubscription = this.offsidebarService.currDatasets.subscribe( datasets => {
+            if (datasets && datasets.action == 'showDatasets') {
+                this.datasetPage = datasets.page;
+                this.showDatasets(datasets.datasets);
             }
         });
         this.stationSubscription = this.offsidebarService.currStation.subscribe( station => {
@@ -70,7 +85,6 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
                 this.showHideAllLayers(state.layers);
             }
         });
-
     }
 
     async showHideAllLayers(layers) {
@@ -81,6 +95,7 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
 
         delete this.ebvs;
         delete this.siteIds;
+        delete this.datasets;
         delete this.stationId;
         delete this.html;
 
@@ -92,11 +107,13 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
     showEbv(ebv) {
         this.ebvs = ebv;
 
+        this.visibleTab = null;
+
         delete this.showHideLayers;
         delete this.siteIds;
+        delete this.datasets;
         delete this.stationId;
         delete this.html;
-        this.showSitesEvenIfEmpty = null;
 
         this.homeService.actionChanged({
             action: 'removeSitePolygon'
@@ -105,9 +122,22 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
 
     showSites(siteIds) {
         this.siteIds = siteIds;
-        this.showSitesEvenIfEmpty = true;
         if (this.siteIds && this.siteIds.length > 1) {
             this.offsidebarService.closeAllSiteDetails();
+        }
+
+        this.visibleTab = 'sites';
+
+        delete this.showHideLayers;
+        delete this.ebvs;
+        delete this.stationId;
+        delete this.html;
+    }
+
+    showDatasets(datasets) {
+        this.datasets = datasets;
+        if (this.datasets && this.datasets.length > 1) {
+            this.offsidebarService.closeAllDatasetDetails();
         }
 
         delete this.showHideLayers;
@@ -119,11 +149,13 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
     showStation(station) {
         this.stationId = station;
 
+        this.visibleTab = null;
+
         delete this.showHideLayers;
         delete this.siteIds;
+        delete this.datasets;
         delete this.ebvs;
         delete this.html;
-        this.showSitesEvenIfEmpty = null;
     }
 
     openOffsidebar(){
@@ -141,14 +173,19 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
         delete this.ebvs;
         delete this.stationId;
         delete this.siteIds;
-        this.showSitesEvenIfEmpty = null;
     }
 
     setTheme() {
         this.themes.setTheme(this.currentTheme);
     }
 
-   
+    tabClicked(tabName: string) {
+        let sameTabClicked = tabName == this.visibleTab;
+        this.visibleTab = tabName;
+        if (!sameTabClicked) {
+            this.searchSidebarService.turnOnLayerWithCode({code: this.visibleTab});
+        }
+    }
 
     ngOnDestroy() {
         this.ebvSubscription.unsubscribe();

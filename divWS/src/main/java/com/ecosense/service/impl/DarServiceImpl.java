@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class DarServiceImpl implements DarService {
 
     @Autowired
+    @Qualifier("sslTrustRestTemplate")
     private RestTemplate restTemplate;
 
     @Override

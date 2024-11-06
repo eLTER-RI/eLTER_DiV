@@ -24,8 +24,8 @@ export class HomeService {
 	private hideAllLayersBehaviorSubject = new BehaviorSubject<any>(undefined);
 	hideAllLayersObservable = this.hideAllLayersBehaviorSubject.asObservable();
 
-	private markSiteOnMapBehaviorSubject = new BehaviorSubject<any>(undefined);
-	markSiteOnMapObservable = this.markSiteOnMapBehaviorSubject.asObservable();
+	private markSitesOnMapBehaviorSubject = new BehaviorSubject<any>(undefined);
+	markSitesOnMapObservable = this.markSitesOnMapBehaviorSubject.asObservable();
 
   	constructor() { }
 
@@ -53,8 +53,8 @@ export class HomeService {
 		this.hideAllLayersBehaviorSubject.next({});
 	}
 
-	markSiteOnMap(siteId: number, markOnMap: boolean) {
-		this.markSiteOnMapBehaviorSubject.next({siteId: siteId, markOnMap: markOnMap});
+	markSitesOnMap(siteIds: number[], markOnMap: boolean) {
+		this.markSitesOnMapBehaviorSubject.next({siteIds: siteIds, markOnMap: markOnMap});
 	}
 
 }

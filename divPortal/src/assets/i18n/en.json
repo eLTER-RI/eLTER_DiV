@@ -1,6 +1,7 @@
 {
     "exception": {
-        "5": "There is a problem in a communication with the DEIMS API. Please come back later."
+        "5": "There is a problem in a communication with the DEIMS API. Please come back later.",
+        "6": "There is a problem in a communication with the Invenio API. Please come back later."
     },
     "header": {
         "search": {

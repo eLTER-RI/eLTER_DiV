@@ -85,5 +85,9 @@ public class Utils {
 		
 		return polygon32634;
 	}
+
+	public static Integer getTotalPageNum(Integer totalElements, Integer numPerPage) {
+		return (totalElements + (numPerPage -1)) / numPerPage;
+	}
 	
 }

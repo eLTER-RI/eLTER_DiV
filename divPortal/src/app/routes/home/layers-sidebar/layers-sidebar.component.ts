@@ -179,6 +179,7 @@ export class LayersSidebarComponent implements OnInit {
       delete this.markedLayer;
     } else {
       this.markedLayer = layer;
+      this.markedLayer.codeForSidebar = 'layers-sidebar';
       if (!layer.showMap) {
         this.btn_showOrHideLayersOnMap(layer);
       }
@@ -190,15 +191,24 @@ export class LayersSidebarComponent implements OnInit {
 
   }
 
-  btn_showOrHideLayersOnMap(layer: Layer) {
+  btn_showOrHideLayersOnMap(layer: Layer, directlyFromButton: boolean = false) {
       layer.showMap = !layer.showMap;
 
       if (layer.showMap) {
+        this.offsidebarService.setLayerCodeForSidebar('layers-sidebar');
+        if (directlyFromButton) {
+          this.offsidebarService.clearSitesAndDatasets();
+        }
         this.markedLayer = layer;
       } else {
+        this.offsidebarService.setLayerCodeForSidebar(null);
         if (this.markedLayer == layer) {
           delete this.markedLayer;
         }
+      }
+
+      if (this.markedLayer) {
+        this.markedLayer.codeForSidebar = 'layers-sidebar';
       }
 
       this.homeService.markOneLayer({
@@ -267,7 +277,7 @@ export class LayersSidebarComponent implements OnInit {
       }
 
       this.homeService.turnOnOffLayer(state);
-    
+
       this.refreshZIndex();
   }
 
@@ -356,6 +366,7 @@ export class LayersSidebarComponent implements OnInit {
 											color: '#fff',
 										}),
 									}),
+                  zIndex: 10
 								});
 								styleCache[size] = style;
 							}
@@ -366,7 +377,8 @@ export class LayersSidebarComponent implements OnInit {
                 image: new Icon(({
                   anchor: [0.5, 1],
                   src: "assets/img/map/marker-orange.png"
-                }))
+                })),
+                zIndex: 20
               })
 
               return style;

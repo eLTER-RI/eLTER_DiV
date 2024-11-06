@@ -231,24 +231,25 @@ public class SiteController {
 	
 	@RequestMapping(value="/filterAndSearch", method = RequestMethod.POST, 
 					produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
-	public Response filterAndSearch(@RequestBody DivFilterDTO divFilterDTO) {
-	SimpleResponseDTO response = new SimpleResponseDTO();
-	SitesODTO sites = null;
-	try {
-		
-		sites = siteService.filterAndSearchSites(divFilterDTO);
+		public Response filterAndSearch(@RequestBody DivFilterDTO divFilterDTO) {
+		SimpleResponseDTO response = new SimpleResponseDTO();
+		SitesODTO sites = null;
+		try {
+			
+			sites = siteService.filterAndSearchSites(divFilterDTO);
 
-	} catch(SimpleException se) {
-		response.setStatus(se.getSimpleResponseStatus());
-	} catch(Exception e) {
-		e.printStackTrace();
-		response.setStatus(SimpleResponseDTO.GENERAL_SERVER_ERROR);
+		} catch(SimpleException se) {
+			response.setStatus(se.getSimpleResponseStatus());
+		} catch(Exception e) {
+			e.printStackTrace();
+			response.setStatus(SimpleResponseDTO.GENERAL_SERVER_ERROR);
+		}
+		if (response.getStatus() == SimpleResponseDTO.OK) {
+			return Response.ok(sites, MediaType.APPLICATION_JSON).build();
+		}
+		else {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
+		}
 	}
-	if (response.getStatus() == SimpleResponseDTO.OK) {
-		return Response.ok(sites, MediaType.APPLICATION_JSON).build();
-	}
-	else {
-		return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
-	}
-	}
+
 }

@@ -1,0 +1,21 @@
+<div *ngIf="datasets?.length == 0" class="pl-3 pt-3 text-primary-color-orange">
+    <h3 class="text-center"> No search results </h3>
+</div>
+
+<app-loading *ngIf="!datasets"></app-loading>
+
+<div *ngFor="let dataset of datasets">
+    <app-dataset-details [datasetDetail]="dataset" [open]="datasets?.length == 1"> </app-dataset-details>
+</div>
+
+<div class="card-footer d-flex justify-content-center bg-transparent" *ngIf="page?.totalPages > 1">
+    <pagination 
+        [totalItems]="page?.totalElements" 
+        [itemsPerPage]="page?.size" 
+        [maxSize]="page.size"
+        previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;"
+        [(ngModel)]="page.currentPage" [boundaryLinks]="true" (pageChanged)="pageChanged($event)" 
+        (click)="$event.stopPropagation()"
+        class="pagination-sm m-0">
+    </pagination>
+</div>

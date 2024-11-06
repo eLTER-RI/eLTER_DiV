@@ -19,6 +19,7 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -47,6 +48,37 @@ public class EcosenseApplication {
         Proxy proxy = new Proxy(Type.HTTP, new InetSocketAddress("proxy.uns.ac.rs", 8080));
         requestFactory.setProxy(proxy);
         return new RestTemplate(requestFactory);
+    }
+
+    // TODO delete when dar not in use
+    @Bean(name = "sslTrustRestTemplate")
+    public RestTemplate sslTrustRestTemplate() throws Exception {
+
+        // Create SSLContext that trusts all certificates
+        SSLContext sslContext = SSLContextBuilder
+            .create()
+            .loadTrustMaterial((chain, authType) -> true)  // Trust all certificates
+            .build();
+
+        // Define the proxy 
+        HttpHost proxy = new HttpHost("proxy.uns.ac.rs", 8080, "http");
+
+        // Create an HttpClient that uses the SSLContext
+        CloseableHttpClient httpClient = HttpClients.custom()
+            .setSSLContext(sslContext)
+            .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)  // Disable hostname verification
+            .setProxy(proxy)
+            .build();
+
+        // Create HttpComponentsClientHttpRequestFactory and set the custom HttpClient
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+
+        // Set timeout values (optional)
+        factory.setReadTimeout(10000000); // Set a long read timeout, per your comment
+        factory.setConnectTimeout(10000000); // Optional connect timeout
+
+        // Build the RestTemplate using the factory with SSL and proxy configuration
+        return new RestTemplate(factory);
     }
 
     @Bean(name = "nonSSLRestTemplate")

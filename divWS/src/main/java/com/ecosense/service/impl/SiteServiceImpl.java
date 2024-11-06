@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -25,7 +24,6 @@ import com.ecosense.dto.DivFilterDTO;
 import com.ecosense.dto.PointDTO;
 import com.ecosense.dto.PolygonDTO;
 import com.ecosense.dto.SimpleResponseDTO;
-import com.ecosense.dto.StandardObservationDTO;
 import com.ecosense.dto.input.FilterSiteIDTO;
 import com.ecosense.dto.output.ActivityODTO;
 import com.ecosense.dto.output.CountryODTO;
@@ -44,7 +42,6 @@ import com.ecosense.repository.SiteRepo;
 import com.ecosense.service.SiteService;
 import com.ecosense.utils.SolrData;
 import com.ecosense.utils.Utils;
-import com.ecosense.utils.VocabsData;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @Service
@@ -136,8 +133,6 @@ public class SiteServiceImpl implements SiteService {
 		List<Site> sites = siteRepo.getAllPolygons();
 		List<SiteODTO> sitesDTO = new ArrayList<>();
 		
-		BoundingBoxDTO boundingBox = new BoundingBoxDTO(Double.MAX_VALUE, Double.MAX_VALUE, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
-		
 		for (Site site : sites) {
 			SiteODTO siteDTO = new SiteODTO();
 			siteDTO.setId(site.getId());
@@ -165,13 +160,10 @@ public class SiteServiceImpl implements SiteService {
 			
 			siteDTO.setPolygon(new PolygonDTO(polygonJson, siteBbox, isPoygon));
 			
-			boundingBox = Utils.setBB(siteBbox, boundingBox);
-			
 			sitesDTO.add(siteDTO);
 		}
 		Collections.sort(sitesDTO);
 		
-		resultODTO.setBoundingBox(boundingBox);
 		return resultODTO;
 	}
 	
@@ -367,6 +359,7 @@ public class SiteServiceImpl implements SiteService {
 
 		} catch (Exception e) {
 			System.out.println(url + " <- SERVIS KOJI PUKNE");
+			// e.printStackTrace();
 			return response;
 		}
 
@@ -415,5 +408,5 @@ public class SiteServiceImpl implements SiteService {
 
         return response;
 	}
-	
+
 }

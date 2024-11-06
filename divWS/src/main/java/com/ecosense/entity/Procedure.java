@@ -97,7 +97,5 @@ public class Procedure implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
 
 }

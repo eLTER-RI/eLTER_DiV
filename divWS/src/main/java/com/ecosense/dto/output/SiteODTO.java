@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import com.ecosense.dto.PointDTO;
 import com.ecosense.dto.PolygonDTO;
@@ -95,6 +96,14 @@ public class SiteODTO implements Serializable , Comparable<SiteODTO>{
 		this.layersSuffixId = layersSuffixId;
 	}
 
+	public PolygonDTO getCircle() {
+		return circle;
+	}
+
+	public void setCircle(PolygonDTO circle) {
+		this.circle = circle;
+	}
+
 	@Override
 	public int compareTo(SiteODTO o) {
 		if (o.getArea() == null || this.getArea() == null) {
@@ -109,17 +118,17 @@ public class SiteODTO implements Serializable , Comparable<SiteODTO>{
 			return 0;
 	}
 
-	public PolygonDTO getCircle() {
-		return circle;
+	@Override
+	public final int hashCode() {
+		return Objects.hash(id);
 	}
 
-	public void setCircle(PolygonDTO circle) {
-		this.circle = circle;
+	@Override
+	public boolean equals(Object obj) {
+		SiteODTO other = (SiteODTO) obj;
+		if (!id.equals(other.id))
+			return false;
+		return true;
 	}
-	
-	
-	
-	
-	
-	
+
 }

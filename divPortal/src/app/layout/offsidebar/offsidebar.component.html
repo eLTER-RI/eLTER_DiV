@@ -2,8 +2,33 @@
     <app-ebv-details [ebvs]="ebvs" [hidden]="ebvs.length == 0"></app-ebv-details>
 </div>
 
-<div *ngIf="(siteIds && siteIds.length > 0) || showSitesEvenIfEmpty">
+<div *ngIf="visibleTab" class="row mx-0 mt-2 ps-0 border-bottom border-secondary mb-3" >
+    <button 
+        [ngClass]="['btn btn-sm col-2 ms-0 me-0 ps-0 pe-0 border-warning', visibleTab === 'sites'?'bg-warning':'btn-default']"
+        type="button"
+        (click)="tabClicked('sites')">
+        <span class="btn-label">
+            <i class="fas fa-list"></i>
+        </span>
+        Sites
+    </button>
+    <button 
+        [ngClass]="['btn btn-sm col-2 ms-0 me-0 ps-0 pe-0 border-warning', visibleTab === 'datasets'?'bg-warning':'btn-default']"
+        type="button"
+        (click)="tabClicked('datasets')">
+        <span class="btn-label">
+            <i class="fas fa-list"></i>
+        </span>
+        Datasets
+    </button>
+</div>
+
+<div *ngIf="visibleTab == 'sites'">
     <app-site-details-list [siteIds]="siteIds" ></app-site-details-list>
+</div>
+
+<div *ngIf="visibleTab == 'datasets'">
+    <app-dataset-details-list [datasets]="datasets" [page]="datasetPage"></app-dataset-details-list> 
 </div>
 
 <div *ngIf="stationId">

@@ -27,6 +27,9 @@ import { LineString, Polygon } from 'ol/geom';
 import Draw, { createBox, createRegularPolygon } from 'ol/interaction/Draw';
 import { getArea, getLength } from 'ol/sphere';
 import { cloneDeep } from 'lodash';
+import { transform } from 'ol/proj';
+import { SearchSidebarService } from '../search-sidebar/search-sidebar.service';
+import Cluster from 'ol/source/Cluster';
 
 @Component({
     selector: 'app-home',
@@ -58,7 +61,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     repositionMapSubscription: Subscription;
 
-    markSiteOnMapSubscription: Subscription;
+    markSitesOnMapSubscription: Subscription;
 
     showBiggerZoom: boolean;
 
@@ -118,6 +121,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     constructor(private settings: SettingsService,
                 private homeService: HomeService,
                 private offsidebarService: OffsidebarService,
+                private searchSidebarService: SearchSidebarService,
                 private router: Router,
                 private sharedService: SharedService,
                 public sanitizer: DomSanitizer,
@@ -178,10 +182,12 @@ export class HomeComponent implements OnInit, OnDestroy {
             }
         });
 
-        this.markSiteOnMapSubscription = this.homeService.markSiteOnMapObservable.subscribe( obj => {
-            if (obj != null && obj.siteId) {
+        this.markSitesOnMapSubscription = this.homeService.markSitesOnMapObservable.subscribe( obj => {
+            if (obj != null && obj.siteIds) {
                 if (obj.markOnMap) {
-                    this.showSitePolygon(obj.siteId);
+                    obj.siteIds.forEach(siteId => {
+                        this.showSitePolygon(siteId);
+                    });
                 } else {
                     this.removeSitePolygonLayer();
                 }
@@ -242,7 +248,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                         if (feature.features[0]) {
                             let idStr = feature.features[0].id;
                             idStr = idStr.substring(6);
-                            this.showAndOpenSiteDetails(idStr);
+                            this.showAndOpenSiteAndDatasetDetails(idStr); // open both site and dataset results
                         }
                       });
                   }
@@ -253,15 +259,23 @@ export class HomeComponent implements OnInit, OnDestroy {
                 const features = f.values_.features;
 
                 let feature;
-                if (features && features.length == 1 && this.markedLayer?.code == 'sites') {
+                if (features && features.length == 1 && (this.markedLayer?.code == 'sites' || this.markedLayer?.code == 'sitesDataset')) {
                     feature = features[0].id_;
                 } else {
                     feature = f.getId()?.toString();
                 }
                 if (feature) {
-                    if (feature.indexOf('site_points') > -1 && this.markedLayer?.code == 'sites') {
+                    if (feature.indexOf('site_points') > -1) {
                         const id = feature.substring(12);
-                        this.showAndOpenSiteDetails(id, this.markedLayer?.searchFilterType);
+                        if (this.markedLayer?.code == 'sites') {
+                            this.offsidebarService.setLayerCodeForSidebar(this.markedLayer?.codeForSidebar);
+                            if (this.markedLayer?.codeForSidebar == 'layers-sidebar') { // polygon from layer-sidebar clicked
+                                this.searchSidebarService.searchDatasets({searchParam: id});
+                            }
+                            this.showAndOpenSiteDetails(id, this.markedLayer?.searchFilterType);
+                        } else if (this.markedLayer?.code == 'sitesDataset') {
+                            this.showAndOpenSiteDatasetDetails(id);
+                        }
                     } else if (feature.indexOf('station') > -1 && this.markedLayer?.code == 'station') {
                         const id = feature.substring(8);
                         this.offsidebarService.showStation({
@@ -288,10 +302,32 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     turnOffAllLayers() {
-        console.log(this.layers)
         this.layers.forEach(l => {
             this.turnOnOffLayer(l, 'turnOff', null);       
         });
+    }
+
+    showAndOpenSiteAndDatasetDetails(idStr: string) {
+        const id = Number(idStr);
+
+        if (this.markedLayer?.codeForSidebar == 'layers-sidebar') { // polygon from layer-sidebar clicked
+            this.searchSidebarService.searchDatasets({searchParam: id});
+        }
+
+        this.removeSitePolygonLayer();  
+        this.offsidebarService.showSites({
+            action: 'showSites',
+            sites: [id]
+        });
+
+        this.offsidebarService.openDataset({
+            action: 'openDataset',
+            sites: [id],
+        });
+
+        this.offsidebarOpen();
+
+        this.showSitePolygon(id);
     }
 
     showAndOpenSiteDetails(idStr: string, openOnly: boolean = false) {
@@ -307,7 +343,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         } else {
             this.offsidebarService.showSites({
                 action: 'showSites',
-                sites: [id],
+                sites: [id]
             });
         }
 
@@ -316,30 +352,60 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.showSitePolygon(id);
     }
 
-    async showSitePolygon(id: number) {
-        const response = await this.sharedService.get('site/getGeoJsonPolygon?id=' + id);
-        const geoJSON = response.entity;
+    showAndOpenSiteDatasetDetails(idStr: string) {
+        this.removeSitePolygonLayer();                    
 
-        this.sitePoygonLayer = new VectorLayer({
-            source: new VectorSource({
-                features: new GeoJSON().readFeatures(geoJSON, { 
-                    dataProjection: 'EPSG:4326',
-                    featureProjection:'EPSG:3857' }),
-            }),
-            style: new Style({
-                fill: new Fill({
-                    color: 'rgba(150, 206, 88, 0.8)'
-                }),
-                stroke: new Stroke({
-                    color: 'rgba(150, 206, 88)',
-                    width: 2
-                })
-            }),
-            zIndex: -1
+        const id = Number(idStr);
+
+        this.offsidebarService.openDataset({
+            action: 'openDataset',
+            sites: [id],
         });
 
-        this.layers.push(this.sitePoygonLayer);
-        this.map.addLayer(this.sitePoygonLayer);
+        this.offsidebarOpen();
+
+        this.showSitePolygon(id);
+    }
+
+    async showSitePolygon(id: number) {
+        let layerAlreadyExists = false;
+        if (this.sitePoygonLayer) {
+            layerAlreadyExists = this.sitePoygonLayer.values_.source.getFeatureById(id) !== null;
+        }
+
+        if (!layerAlreadyExists) {
+            const response = await this.sharedService.get('site/getGeoJsonPolygon?id=' + id);
+            const geoJSON = response.entity;
+
+            this.sitePoygonLayer = new VectorLayer({
+                source: new VectorSource({
+                    features: new GeoJSON().readFeatures(geoJSON, { 
+                        dataProjection: 'EPSG:4326',
+                        featureProjection:'EPSG:3857' 
+                    }).map((feature) => {
+                        feature.setId(id); // Set a unique ID for each feature
+                        return feature;
+                    }),
+                }),
+                style: new Style({
+                    fill: new Fill({
+                        color: 'rgba(150, 206, 88, 0.8)'
+                    }),
+                    stroke: new Stroke({
+                        color: 'rgba(150, 206, 88)',
+                        width: 2
+                    })
+                }),
+                zIndex: -1
+            });
+
+            this.layers.push(this.sitePoygonLayer);
+            this.map.addLayer(this.sitePoygonLayer);
+
+            const extent = this.sitePoygonLayer.values_.source.getExtent();
+            this.map.getView().fit(extent);
+            this.map.getView().setZoom(this.map.getView().getZoom() - 0.7);
+        }
     }
 
     removeSitePolygonLayer() {
@@ -393,47 +459,66 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (this.map == null || this.map == undefined) {
             this.initMap();
         }
+
         if (action == 'turnOn') {
-            if (layer.layerTile != null && layer.layerTile != undefined && this.layers.indexOf(layer.layerTile) == -1) {
-                this.layers.push(layer.layerTile);
-                this.map.addLayer(layer.layerTile);
+            if (layer?.layerTile != null && layer?.layerTile != undefined && this.layers.indexOf(layer?.layerTile) == -1) {
+                this.layers.push(layer?.layerTile);
+                this.map.addLayer(layer?.layerTile);
             }
 
-            if (layer.layerTileBiggerZoom != null && layer.layerTileBiggerZoom != undefined  && this.layers.indexOf(layer.layerTileBiggerZoom) == -1) {
-                this.layers.push(layer.layerTileBiggerZoom);
-                this.map.addLayer(layer.layerTileBiggerZoom);
+            if (layer?.layerTileBiggerZoom != null && layer?.layerTileBiggerZoom != undefined  && this.layers.indexOf(layer?.layerTileBiggerZoom) == -1) {
+                this.layers.push(layer?.layerTileBiggerZoom);
+                this.map.addLayer(layer?.layerTileBiggerZoom);
             }
 
-            if (layer.layerVector != null && layer.layerVector != undefined  && this.layers.indexOf(layer.layerVector) == -1) {
-                this.layers.push(layer.layerVector);
-                this.map.addLayer(layer.layerVector);
+            if (layer?.layerVector != null && layer?.layerVector != undefined  && this.layers.indexOf(layer?.layerVector) == -1) {
+                this.layers.push(layer?.layerVector);
+                this.map.addLayer(layer?.layerVector);
             }
+
+            this.fitMapToExtent(layer);
         } else if (action == 'turnOff') {
-            if (layer.layerTile != null && layer.layerTile != undefined) {
+            if (layer?.layerTile != null && layer?.layerTile != undefined) {
                 this.layers.splice(layer.layerTile);
                 this.map.removeLayer(layer.layerTile);
             }
 
-            if (layer.layerTileBiggerZoom != null && layer.layerTileBiggerZoom != undefined) {
+            if (layer?.layerTileBiggerZoom != null && layer?.layerTileBiggerZoom != undefined) {
                 this.layers.splice(layer.layerTileBiggerZoom);
                 this.map.removeLayer(layer.layerTileBiggerZoom);
             }
             
-            if (layer.layerVector != null && layer.layerVector != undefined) {
+            if (layer?.layerVector != null && layer?.layerVector != undefined) {
                 this.layers.splice(layer.layerVector);
                 this.map.removeLayer(layer.layerVector);
             }
         } 
-
-        if (bbox) {
-            console.log(bbox)
-            let loc1 = [bbox.minX, bbox.minY];
-            let loc2 = [bbox.maxX, bbox.maxY];
-            //@ts-ignore
-            this.extent = new boundingExtent([loc1, loc2]);
-            this.map.getView().fit(this.extent);
-        }
     } 
+
+    fitMapToExtent(layer:Layer) {
+        let extent: [number, number, number, number] = [Infinity, Infinity, -Infinity, -Infinity];
+        let extents = [];
+
+        setTimeout(() => {
+            const clusterSource = layer.layerVector.values_.source as Cluster;
+            const features = clusterSource.getFeatures();
+            for (const feature of features) {
+                extents.push(feature?.getGeometry()?.getExtent());
+            }
+
+            for (const featureExtent of extents) {
+                extent = [
+                    Math.min(extent[0], featureExtent[0]),
+                    Math.min(extent[1], featureExtent[1]),
+                    Math.max(extent[2], featureExtent[2]),
+                    Math.max(extent[3], featureExtent[3])
+                ];
+            }
+
+            this.map.getView().fit(extent);
+            this.map.getView().setZoom(this.map.getView().getZoom() - 0.7);
+        }, 1000);
+    }
 
     repositionMap(): void {
 		window.scroll({
@@ -593,7 +678,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     measure(type) {
         this.measureType = type;
-        console.log(this.measureType, "this.measureType")
         this.saveMarkedLayerForMeasure = cloneDeep(this.markedLayer);
         //@ts-ignore
         delete this.markedLayer;

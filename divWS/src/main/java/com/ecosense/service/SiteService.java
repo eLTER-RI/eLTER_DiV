@@ -40,5 +40,5 @@ public interface SiteService {
 	String getGeoJsonPolygon(Integer id);
 
 	SitesODTO filterAndSearchSites(DivFilterDTO divFilterDTO) throws SimpleException, IOException;
-	
+
 }

@@ -24,6 +24,8 @@ import { MalihuScrollbarModule } from 'ngx-malihu-scrollbar';
 import { MetadataCatalogueComponent } from './metadata-catalogue/metadata-catalogue.component';
 import { SearchSidebarComponent } from './search-sidebar/search-sidebar.component';
 import { SiteDetailsListComponent } from './site-details-list/site-details-list.component';
+import { DatasetDetailsListComponent } from './dataset-details-list/dataset-details-list.component';
+import { DatasetDetailsComponent } from './dataset-details/dataset-details.component';
 
 
 
@@ -43,9 +45,9 @@ import { SiteDetailsListComponent } from './site-details-list/site-details-list.
         RouterModule,
     ],
     declarations: [HomeComponent, HomeSidebarComponent, BaseMapSidebarComponent, LayersSidebarComponent, EbvSidebarComponent, 
-        EbvDetailsComponent, SiteDetailsComponent, StationDetailsComponent, DiagramComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent, SearchSidebarComponent, SiteDetailsListComponent],
+        EbvDetailsComponent, SiteDetailsComponent, StationDetailsComponent, DiagramComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent, SearchSidebarComponent, SiteDetailsListComponent, DatasetDetailsListComponent, DatasetDetailsComponent],
     exports: [
-        RouterModule,HomeSidebarComponent, EbvDetailsComponent, SiteDetailsComponent, StationDetailsComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent, SiteDetailsListComponent
+        RouterModule,HomeSidebarComponent, EbvDetailsComponent, SiteDetailsComponent, StationDetailsComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent, SiteDetailsListComponent, DatasetDetailsListComponent
     ],
     providers: [ DatePipe, SlicePipe]
 })

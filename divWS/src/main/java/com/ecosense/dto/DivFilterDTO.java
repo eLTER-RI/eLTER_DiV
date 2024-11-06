@@ -15,6 +15,10 @@ public class DivFilterDTO implements Serializable {
 
     private String searchText;
 
+    private List<Integer> siteIds;
+
+    private Integer page;
+
     public DivFilterDTO() { }
 
     public List<String> getSites() {
@@ -47,6 +51,22 @@ public class DivFilterDTO implements Serializable {
 
     public void setSearchText(String searchText) {
         this.searchText = searchText;
+    }
+
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    public List<Integer> getSiteIds() {
+        return siteIds;
+    }
+
+    public void setSiteIds(List<Integer> siteIds) {
+        this.siteIds = siteIds;
     }
 
 }

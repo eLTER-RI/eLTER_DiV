@@ -123,8 +123,6 @@ public class SiteRepoImpl implements SiteRepo {
 		
 		List<Object[]> sites = query.getResultList();
 		
-		System.out.println("duzina liste --> "+sites.size());
-		
 		return sites;
 	}
 	

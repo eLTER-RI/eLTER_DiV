@@ -1,499 +1,499 @@
 <app-loading *ngIf="!siteDetails"></app-loading>
 
 <div class="card-body pb-1 pt-1" *ngIf="siteDetails !== undefined">
-    <div class="row" *ngIf="siteDetails">
-        <div (click)="openCloseSiteDetail()" 
-             [ngClass]="{'text-left mb-2 mt-0 col-12': true, 'b': siteDetails.open}" 
-             [ngStyle]="{'background-color': siteDetails.open ? 'antiquewhite' : '', 'cursor': 'pointer'}">
-            <div class="h6 text-primary-color-orange mb-1 mt-1" style="cursor: pointer">
+
+    <div class="tabs">
+        <div class="tab">
+            <input type="checkbox" [checked]="siteDetails.open">
+            <label class="tab-label" (click)="openCloseSiteDetail()">
                 <b>{{siteDetails?.siteName}} ({{siteDetails?.shortName}}) - {{siteDetails?.siteType}}</b>
-                <em [hidden]="siteDetails.open" class="fas fa-angle-down pl-3"></em>
-                <em [hidden]="!siteDetails.open" class="fas fa-angle-up pl-3"></em>
+            </label>
+
+            <div *ngIf="siteDetails.open" class="tab-content">
+                <div [hidden]="!siteDetails.open" id="detailsTimeseriesScroll"  malihu-scrollbar [scrollbarOptions]="scrollbarOptions" class="mt-0 pt-0">
+                    <div class="tabs">
+                        <div class="tab">
+                            <input type="checkbox" [checked]="menuItem == 'basic'">
+                            <label class="tab-label" (click)="clickOnTab('basic')">
+                                Basic information
+                            </label>
+                            <div *ngIf="menuItem == 'basic'" class="tab-content">
+                                <div class="h6 text-secundary-color-green-dark mb-3 mt-2" *ngIf="siteDetails?.id">Source: <a href="https://deims.org/{{siteDetails?.id}}" target="_blank">{{siteDetails?.id}}</a></div>
+
+                                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.siteName">Site name </div>
+                                <div class="mt-0 mb-1">
+                                    {{siteDetails?.siteName}}
+                                </div>
+
+                                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.shortName">Short name </div>
+                                <div class="mt-0 mb-1">
+                                    {{siteDetails?.shortName}}
+                                </div>
+
+                                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.country">Country </div>
+                                <div class="mt-0 mb-1">
+                                    {{siteDetails?.country}}
+                                </div>
+
+                                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.contact?.siteUrl">Web Address </div>
+                                <div class="mt-0 mb-1" *ngFor="let siteUrl of siteDetails.contact.siteUrl">
+                                    <a href="{{siteUrl?.url}}" target="_blank">{{siteUrl.url}}</a>
+                                </div>
+
+                                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.contact?.siteManagers">Site Manager </div>
+
+                                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.contact?.operatingOrganisation">Operating organisation</div>
+                                <div class="mt-0 mb-1" *ngFor="let operatingOrganisation of siteDetails?.contact?.operatingOrganisation">
+                                    <div *ngIf="operatingOrganisation?.name" class="mb-1 mt-0">
+                                        {{operatingOrganisation?.name}} {{operatingOrganisation?.type ? '-' : ''}} {{operatingOrganisation?.type}}
+                                    </div>
+                                </div>
+
+                                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.contact?.fundingAgency">Funding agency: </div>
+                                <div *ngFor="let fundingAgency of siteDetails?.contact?.fundingAgency"  class="mt-0">
+                                    <div *ngIf="fundingAgency?.name" class="mb-1 mt-0">
+                                    {{fundingAgency?.name}} {{fundingAgency?.type ? '-' : ''}} {{fundingAgency?.type}}
+                                    </div>
+                                
+                                </div>
+
+                                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.description && siteDetails?.description !== 'null'"> Description </div>
+                                <div class="mt-0 mb-1"  *ngIf="siteDetails?.description && siteDetails?.description !== 'null'">
+                                    {{siteDetails?.description}}
+                                </div>
+
+                                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.changed">Last modified </div>
+                                <div  class="mt-0 mb-1">
+                                    {{siteDetails?.changed | date:'medium'}}
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="tab">
+                            <input type="checkbox" [checked]="menuItem == 'network'">
+                            <label class="tab-label" (click)="clickOnTab('network')">
+                                Affiliation and Network Specific Information
+                            </label>
+                            <div *ngIf="menuItem === 'network'" class="tab-content">
+                                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.belongsTo">Affiliation </div>
+                                <div *ngFor="let belongsTo of siteDetails?.belongsTo"  class="mt-0">
+                                    <a href="{{belongsTo?.url}}" target="_blank">{{belongsTo?.name}}</a>
+                                </div>
+
+                                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.projects">Projects</div>
+                                <div  class="mt-0">
+                                    <div class="mt-0" *ngFor="let project of siteDetails?.projects"> 
+                                        <a *ngIf="!project?.url">{{project.name}} </a>
+                                        <a href="{{project?.url}}" *ngIf="project.url" target="_blank">{{project?.name}} </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="tab">
+                            <input type="checkbox" [checked]="menuItem == 'general'">
+                            <label class="tab-label" (click)="clickOnTab('general')">
+                                General Characteristics and Status
+                            </label>
+                            <div *ngIf="menuItem == 'general'" class="tab-content">
+                                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.status">Status </div>
+                                <div  class="mt-0">
+                                    <a target="_blank" href="{{siteDetails?.status?.url}}">{{siteDetails?.status?.name}}</a>
+                                </div>
+                    
+                                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.yearEstablished">Year established </div>
+                                <div  class="mt-0">
+                                    {{siteDetails?.yearEstablished}}
+                                </div>
+                    
+                                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.observingCapabilities"> Observing Capabilities</div>
+                                <div  class="mt-0 mb-1">
+                                    <a target="_blank" *ngFor="let observingCapabilities of siteDetails?.observingCapabilities" href="{{observingCapabilities?.url}}">
+                                        {{observingCapabilities?.name}}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="tab">
+                            <input type="checkbox" [checked]="menuItem == 'geographic'">
+                            <label class="tab-label" (click)="clickOnTab('geographic')">
+                                Geographic
+                            </label>
+                            <div class="tab-content"  *ngIf="menuItem === 'geographic'">
+                                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.geographic?.sizeValue">Size </div>
+                                <div  class="mt-0" *ngIf="siteDetails?.geographic?.sizeValue">
+                                    {{siteDetails?.geographic?.sizeValue}} {{siteDetails?.geographic?.sizeUnit}}
+                                </div>
+                    
+                                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.geographic?.elevationAvg">Elevation (average) </div>
+                                <div  class="mt-0" *ngIf="siteDetails?.geographic?.elevationAvg">
+                                    {{siteDetails?.geographic?.elevationAvg}} {{siteDetails?.geographic?.elevationUnit}}
+                                </div>
+                    
+                                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.geographic?.elevationMin">Elevation (min) </div>
+                                <div  class="mt-0" *ngIf="siteDetails?.geographic?.elevationAvg">
+                                    {{siteDetails?.geographic?.elevationMin}} {{siteDetails?.geographic?.elevationUnit}}
+                                </div>
+                    
+                                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.geographic?.elevationMax">Elevation (max) </div>
+                                <div  class="mt-0" *ngIf="siteDetails?.geographic?.elevationMax">
+                                    {{siteDetails?.geographic?.elevationMax}} {{siteDetails?.geographic?.elevationUnit}}
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="tab">
+                            <input type="checkbox" [checked]="menuItem == 'details'">
+                            <label class="tab-label" (click)="clickOnTab('details')">
+                                Site details
+                            </label>
+                            <div class="tab-content" *ngIf="menuItem === 'details'">
+
+                                <div class="tabs">
+                                    <div class="tab">
+                                    <input type="checkbox" [checked]="submenuItem === 'environmentalCharacteris'">
+                                    <label class="tab-label" (click)="clickOnTabSubmenu('environmentalCharacteris')">
+                                        Ecosystem and environmental characteris 
+                                    </label>
+                                    <div class="tab-content" *ngIf="submenuItem === 'environmentalCharacteris'">
+                                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails.environmentalCharacteris.geoBonBiome">GEO-BON Biome </div>
+                                        <div  class="mt-0">
+                                            {{siteDetails?.environmentalCharacteris?.geoBonBiome}}
+                                        </div>
+                                        
+                                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.biome">Biome </div>
+                                        <div  class="mt-0">
+                                            {{siteDetails?.environmentalCharacteris?.biome}}
+                                        </div>
+                            
+                                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.ecosystemAndLanduse">Ecosystem and Landuse </div>
+                                        <div  class="mt-0">
+                                            {{siteDetails?.environmentalCharacteris?.ecosystemAndLanduse}}
+                                        </div>
+                            
+                                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.biogeographicalRegion">Biogeographical Region </div>
+                                        <div  class="mt-0">
+                                            {{siteDetails?.environmentalCharacteris?.biogeographicalRegion}}
+                                        </div>
+                            
+                                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.eunisHabitat">Eunis Habitat </div>
+                                        <div  class="mt-0">
+                                            {{siteDetails?.environmentalCharacteris?.eunisHabitat}}
+                                        </div>
+                            
+                                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.airTemperatureMin || siteDetails?.environmentalCharacteris?.airTemperatureMax
+                                            || siteDetails?.environmentalCharacteris?.airTemperatureAvg || siteDetails?.environmentalCharacteris?.airTemperatureUnit">Air Temperature </div>
+                                        <div *ngIf="siteDetails?.environmentalCharacteris?.airTemperatureMin" class="mb-0 mt-0">
+                                            <b>Max</b> {{siteDetails?.environmentalCharacteris?.airTemperatureMax}}
+                                        </div>
+                                        <div *ngIf="siteDetails?.environmentalCharacteris?.airTemperatureMin" class="mb-0 mt-0">
+                                            <b>Min</b> {{siteDetails?.environmentalCharacteris?.airTemperatureMin}}
+                                        </div>
+                                        <div *ngIf="siteDetails.environmentalCharacteris.airTemperatureAvg" class="mb-0 mt-0">
+                                            <b>Average</b> {{siteDetails?.environmentalCharacteris?.airTemperatureAvg}}
+                                        </div>
+                                        <div *ngIf="siteDetails?.environmentalCharacteris?.airTemperatureMin" class="mb-0 mt-0">
+                                            <b>Unit</b> {{siteDetails?.environmentalCharacteris?.airTemperatureUnit}}
+                                        </div>
+                            
+                                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.precipitationMin || siteDetails?.environmentalCharacteris?.precipitationMax
+                                            || siteDetails?.environmentalCharacteris?.precipitationAnnual || siteDetails?.environmentalCharacteris?.precipitationUnit">Precipitation </div>
+                                        <div *ngIf="siteDetails?.environmentalCharacteris?.precipitationMax" class="mb-0 mt-0">
+                                            <b>Max</b> {{siteDetails?.environmentalCharacteris?.precipitationMax}}
+                                        </div>
+                                        <div *ngIf="siteDetails?.environmentalCharacteris?.precipitationMin" class="mb-0 mt-0">
+                                            <b>Min</b> {{siteDetails?.environmentalCharacteris?.precipitationMin}}
+                                        </div>
+                                        <div *ngIf="siteDetails?.environmentalCharacteris?.precipitationAnnual" class="mb-0 mt-0">
+                                            <b>Annual</b> {{siteDetails?.environmentalCharacteris?.precipitationAnnual}}
+                                        </div>
+                                        <div *ngIf="siteDetails?.environmentalCharacteris?.precipitationUnit" class="mb-0 mt-0">
+                                            <b>Unit</b> {{siteDetails?.environmentalCharacteris?.precipitationUnit}}
+                                        </div>
+                            
+                                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.landforms">Landforms </div>
+                                        <div  class="mt-0">
+                                            {{siteDetails?.environmentalCharacteris?.landforms}}
+                                        </div>
+                            
+                            
+                                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.geology">Geology </div>
+                                        <div  class="mt-0">
+                                            {{siteDetails?.environmentalCharacteris?.geology}}
+                                        </div>
+                            
+                                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.hydrology">Hydrology </div>
+                                        <div  class="mt-0">
+                                            {{siteDetails?.environmentalCharacteris?.hydrology}}
+                                        </div>
+                            
+                            
+                                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.soils">Soils </div>
+                                        <div  class="mt-0">
+                                            {{siteDetails?.environmentalCharacteris?.soils}}
+                                        </div>
+                            
+                                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.vegetation">Vegetation </div>
+                                        <div  class="mt-0">
+                                            {{siteDetails?.environmentalCharacteris?.vegetation}}
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    <div class="tab">
+                                        <input type="checkbox" [checked]="submenuItem === 'protectionLevel'">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('protectionLevel')">
+                                            Protection level and resource management
+                                        </label>
+                                        <div class="tab-content"  *ngIf="submenuItem === 'protectionLevel'">
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.protectionLevel">Protection Level </div>
+                                            <div  class="mt-0 mb-1">
+                                                <a target="_blank" *ngFor="let protectionLevel of siteDetails?.protectionLevel" href="{{protectionLevel?.url}}">
+                                                    {{protectionLevel?.name}}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab">
+                                        <input type="checkbox" [checked]="submenuItem === 'design'">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('design')">
+                                            Type, design and scale 
+                                        </label>
+                                        <div class="tab-content"  *ngIf="submenuItem === 'design'">
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.siteType">Site type </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails?.siteType}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.experimentsDesign">Design of Experimentation </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails?.experimentsDesign}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.experimentsScale">Scale of Experimentation </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails?.experimentsScale}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.observationsScale">Design of Observation </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails?.observationsScale}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.observationsScale">Scale of Observation </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails?.observationsScale}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab">
+                                        <input type="checkbox" [checked]="submenuItem === 'equipment'">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('equipment')">
+                                            Equipment
+                                        </label>
+                                        <div class="tab-content"  *ngIf="submenuItem === 'equipment'">
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails.infrastructure?.permanentPowerSupply != null">Permanent power supply: </div>
+                                            <div  class="mt-0" *ngIf="siteDetails.infrastructure.permanentPowerSupply != null">
+                                                {{siteDetails.infrastructure.permanentPowerSupply ? 'Yes' : 'No'}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.collections">Collections: </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails?.infrastructure?.collections}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.notes">Notes: </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails?.infrastructure?.notes}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab">
+                                        <input type="checkbox" [checked]="submenuItem === 'operation'">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('operation')">
+                                            Operation
+                                        </label>
+                                        <div class="tab-content"  *ngIf="submenuItem === 'operation'">
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.accessibleAllYear != null">Accessible All Year: </div>
+                                            <div  class="mt-0" *ngIf="siteDetails?.infrastructure?.accessibleAllYear != null">
+                                                {{siteDetails?.infrastructure?.accessibleAllYear ? 'Yes' : 'No'}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.allPartsAccessible != null">All parts of Site Accessibl: </div>
+                                            <div  class="mt-0" *ngIf="siteDetails?.infrastructure?.allPartsAccessible != null">
+                                                {{siteDetails?.infrastructure?.allPartsAccessible ? 'Yes' : 'No'}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.accessType">Access type </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails?.infrastructure?.accessType}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.operationPermanent != null">Permanent Operation </div>
+                                            <div  class="mt-0" *ngIf="siteDetails?.infrastructure?.operationPermanent != null">
+                                                {{siteDetails?.infrastructure?.operationPermanent ? 'Yes' : 'No'}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.notes">Operation Notes </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails?.infrastructure?.notes}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.operationSiteVisitInterval">Site Visit Interval </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails?.infrastructure?.operationSiteVisitInterval}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.maintenanceInterval">Maintenance Interval </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails.infrastructure.maintenanceInterval}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab">
+                                        <input type="checkbox" [checked]="submenuItem === 'dataManagement'">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('dataManagement')">
+                                            Data Management
+                                        </label>
+                                        <div class="tab-content"  *ngIf="submenuItem === 'dataManagement'">
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.policy?.rights">General Data Policy </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails?.infrastructure?.policy?.rights}}
+                                            </div>
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.policy?.url">Data Policy URL </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails?.infrastructure?.policy?.url}}
+                                            </div>
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.policy?.notes">Data Policy notes </div>
+                                            <div  class="mt-0">
+                                                {{siteDetails?.infrastructure?.policy?.notes}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab">
+                                        <input type="checkbox" [checked]="submenuItem === 'relatedResources'">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('relatedResources')">
+                                            Related resources
+                                        </label>
+                                        <div class="tab-content"  *ngIf="submenuItem === 'relatedResources'">
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.relatedResources"> Related resources: </div>
+                                            <div *ngFor="let relatedResources of siteDetails?.relatedResources"  class="mt-0">
+                                                <a href="{{relatedResources?.url}}" target="_blank">{{relatedResources?.name}}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div> 
+
+                        <div class="tab" *ngIf="darsData && darsData.length > 0">
+                            <input type="checkbox" [checked]="menuItem == 'dar'">
+                            <label class="tab-label" (click)="clickOnTab('dar')">
+                                Digital Asset Register
+                            </label>
+
+                            <div *ngIf="menuItem == 'dar'" class="tab-content">
+                                <div class="tabs">
+                                    <div class="tab" *ngFor="let darData of darsData">
+                                        <input type="checkbox" [checked]="submenuItem === darData.id">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu(darData.id)">
+                                            {{darData.title}}
+                                        </label>
+                                        <div class="tab-content" *ngIf="submenuItem === darData.id">
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.description">Description </div>
+                                            <div  class="mt-0">
+                                                {{darData?.description}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.datasetReferenceDate?.creationDate">Publication date </div>
+                                            <div  class="mt-0">
+                                                {{darData?.datasetReferenceDate?.creationDate}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.deimsSites">DEIMS site </div>
+                                            <div *ngFor="let deimsSite of darData?.deimsSites"  class="mt-0">
+                                                <a href="{{deimsSite?.url}}" target="_blank">{{deimsSite?.title}}</a>
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.dataLevel">Provenance & quality </div>
+                                            <div  class="mt-0">
+                                                This dataset has a data level of {{darData?.dataLevel}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.supplemental">Supplemental information </div>
+                                            <div *ngFor="let supplemental of darData?.supplemental"  class="mt-0">
+                                                <a href="{{supplemental?.url}}" target="_blank">{{supplemental?.name}}</a>
+                                                <div  class="mt-0">
+                                                    {{supplemental?.description}}
+                                                </div>
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="hasNonNullEmail(darData.responsibleParties)">Correspondence/contact details </div>
+                                            <div *ngFor="let responsiblePartie of darData?.responsibleParties"  class="mt-0">
+                                                <a href="mailto:{{responsiblePartie?.email}}">{{responsiblePartie?.email}}</a>
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.authors">Author </div>
+                                            <div *ngFor="let author of darData?.authors"  class="mt-0">
+                                                <div  class="mt-0" *ngIf="author.role == 'author'">
+                                                    {{author?.individualName}}
+                                                </div>
+                                                <div  class="mt-0" *ngIf="author.role == 'author'">
+                                                    {{author?.organisationName}}
+                                                </div>
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0">Additional metadata </div>
+                                            <div  class="mt-0" >
+                                                <strong> Other keywords </strong>
+                                            </div>
+                                            <div>
+                                                <span *ngFor="let keyword of darData.keywords; let last = last">
+                                                    {{ keyword.value }}{{ !last ? ', ' : '' }}
+                                                </span>
+                                            </div>
+                                            <div  class="mt-0" >
+                                                <strong> Last updated </strong>
+                                            </div>
+                                            <div  class="mt-0" >
+                                                {{darData.metadataDate | date:'medium'}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.onlineResources">Get the data </div>
+                                            <div  class="mt-0" *ngIf="darData?.onlineResources">
+                                                This record describes data managed by a third party
+                                            </div>
+                                            <div  class="mt-0" *ngIf="darData?.onlineResources">
+                                                To access the data visit
+                                            </div>
+                                            <div *ngFor="let onlineResource of darData?.onlineResources"  class="mt-0">
+                                                <a href="{{onlineResource?.url}}" target="_blank">{{onlineResource?.url}}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 
-    <div [hidden]="!siteDetails.open" id="detailsTimeseriesScroll"  malihu-scrollbar [scrollbarOptions]="scrollbarOptions" class="mt-0 pt-0">
-        <div class="tabs">
-        <div class="tab">
-            <input type="checkbox" [checked]="menuItem == 'basic'">
-            <label class="tab-label" (click)="clickOnTab('basic')">
-                Basic information
-            </label>
-            <div *ngIf="menuItem == 'basic'" class="tab-content">
-                <div class="h6 text-secundary-color-green-dark mb-3 mt-2" *ngIf="siteDetails?.id">Source: <a href="https://deims.org/{{siteDetails?.id}}" target="_blank">{{siteDetails?.id}}</a></div>
-
-                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.siteName">Site name </div>
-                <div class="mt-0 mb-1">
-                    {{siteDetails?.siteName}}
-                </div>
-
-                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.shortName">Short name </div>
-                <div class="mt-0 mb-1">
-                    {{siteDetails?.shortName}}
-                </div>
-
-                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.country">Country </div>
-                <div class="mt-0 mb-1">
-                    {{siteDetails?.country}}
-                </div>
-
-                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.contact?.siteUrl">Web Address </div>
-                <div class="mt-0 mb-1" *ngFor="let siteUrl of siteDetails.contact.siteUrl">
-                    <a href="{{siteUrl?.url}}" target="_blank">{{siteUrl.url}}</a>
-                </div>
-
-                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.contact?.siteManagers">Site Manager </div>
-
-                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.contact?.operatingOrganisation">Operating organisation</div>
-                <div class="mt-0 mb-1" *ngFor="let operatingOrganisation of siteDetails?.contact?.operatingOrganisation">
-                    <div *ngIf="operatingOrganisation?.name" class="mb-1 mt-0">
-                        {{operatingOrganisation?.name}} {{operatingOrganisation?.type ? '-' : ''}} {{operatingOrganisation?.type}}
-                    </div>
-                </div>
-
-                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.contact?.fundingAgency">Funding agency: </div>
-                <div *ngFor="let fundingAgency of siteDetails?.contact?.fundingAgency"  class="mt-0">
-                    <div *ngIf="fundingAgency?.name" class="mb-1 mt-0">
-                    {{fundingAgency?.name}} {{fundingAgency?.type ? '-' : ''}} {{fundingAgency?.type}}
-                    </div>
-                
-                </div>
-
-                <div class="h6 text-secundary-color-green-dark mb-0" *ngIf="siteDetails?.description && siteDetails?.description !== 'null'"> Description </div>
-                <div class="mt-0 mb-1"  *ngIf="siteDetails?.description && siteDetails?.description !== 'null'">
-                    {{siteDetails?.description}}
-                </div>
-
-                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.changed">Last modified </div>
-                <div  class="mt-0 mb-1">
-                    {{siteDetails?.changed | date:'medium'}}
-                </div>
-            </div>
-        </div>
-
-
-        <div class="tab">
-            <input type="checkbox" [checked]="menuItem == 'network'">
-            <label class="tab-label" (click)="clickOnTab('network')">
-                Affiliation and Network Specific Information
-            </label>
-            <div *ngIf="menuItem === 'network'" class="tab-content">
-                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.belongsTo">Affiliation </div>
-                <div *ngFor="let belongsTo of siteDetails?.belongsTo"  class="mt-0">
-                    <a href="{{belongsTo?.url}}" target="_blank">{{belongsTo?.name}}</a>
-                </div>
-
-                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.projects">Projects</div>
-                <div  class="mt-0">
-                    <div class="mt-0" *ngFor="let project of siteDetails?.projects"> 
-                        <a *ngIf="!project?.url">{{project.name}} </a>
-                        <a href="{{project?.url}}" *ngIf="project.url" target="_blank">{{project?.name}} </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="tab">
-            <input type="checkbox" [checked]="menuItem == 'general'">
-            <label class="tab-label" (click)="clickOnTab('general')">
-                General Characteristics and Status
-            </label>
-            <div *ngIf="menuItem == 'general'" class="tab-content">
-                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.status">Status </div>
-                <div  class="mt-0">
-                    <a target="_blank" href="{{siteDetails?.status?.url}}">{{siteDetails?.status?.name}}</a>
-                </div>
-    
-                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.yearEstablished">Year established </div>
-                <div  class="mt-0">
-                    {{siteDetails?.yearEstablished}}
-                </div>
-    
-                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.observingCapabilities"> Observing Capabilities</div>
-                <div  class="mt-0 mb-1">
-                    <a target="_blank" *ngFor="let observingCapabilities of siteDetails?.observingCapabilities" href="{{observingCapabilities?.url}}">
-                        {{observingCapabilities?.name}}
-                    </a>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="tab">
-            <input type="checkbox" [checked]="menuItem == 'geographic'">
-            <label class="tab-label" (click)="clickOnTab('geographic')">
-                Geographic
-            </label>
-            <div class="tab-content"  *ngIf="menuItem === 'geographic'">
-                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.geographic?.sizeValue">Size </div>
-                <div  class="mt-0" *ngIf="siteDetails?.geographic?.sizeValue">
-                    {{siteDetails?.geographic?.sizeValue}} {{siteDetails?.geographic?.sizeUnit}}
-                </div>
-    
-                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.geographic?.elevationAvg">Elevation (average) </div>
-                <div  class="mt-0" *ngIf="siteDetails?.geographic?.elevationAvg">
-                    {{siteDetails?.geographic?.elevationAvg}} {{siteDetails?.geographic?.elevationUnit}}
-                </div>
-    
-                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.geographic?.elevationMin">Elevation (min) </div>
-                <div  class="mt-0" *ngIf="siteDetails?.geographic?.elevationAvg">
-                    {{siteDetails?.geographic?.elevationMin}} {{siteDetails?.geographic?.elevationUnit}}
-                </div>
-    
-                <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.geographic?.elevationMax">Elevation (max) </div>
-                <div  class="mt-0" *ngIf="siteDetails?.geographic?.elevationMax">
-                    {{siteDetails?.geographic?.elevationMax}} {{siteDetails?.geographic?.elevationUnit}}
-                </div>
-            </div>
-        </div>
-
-
-
-
-        <div class="tab">
-            <input type="checkbox" [checked]="menuItem == 'details'">
-            <label class="tab-label" (click)="clickOnTab('details')">
-                Site details
-            </label>
-            <div class="tab-content" *ngIf="menuItem === 'details'">
-
-                <div class="tabs">
-                    <div class="tab">
-                      <input type="checkbox" [checked]="submenuItem === 'environmentalCharacteris'">
-                      <label class="tab-label" (click)="clickOnTabSubmenu('environmentalCharacteris')">
-                        Ecosystem and environmental characteris 
-                      </label>
-                      <div class="tab-content" *ngIf="submenuItem === 'environmentalCharacteris'">
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails.environmentalCharacteris.geoBonBiome">GEO-BON Biome </div>
-                        <div  class="mt-0">
-                            {{siteDetails?.environmentalCharacteris?.geoBonBiome}}
-                        </div>
-                        
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.biome">Biome </div>
-                        <div  class="mt-0">
-                            {{siteDetails?.environmentalCharacteris?.biome}}
-                        </div>
-            
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.ecosystemAndLanduse">Ecosystem and Landuse </div>
-                        <div  class="mt-0">
-                            {{siteDetails?.environmentalCharacteris?.ecosystemAndLanduse}}
-                        </div>
-            
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.biogeographicalRegion">Biogeographical Region </div>
-                        <div  class="mt-0">
-                            {{siteDetails?.environmentalCharacteris?.biogeographicalRegion}}
-                        </div>
-            
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.eunisHabitat">Eunis Habitat </div>
-                        <div  class="mt-0">
-                            {{siteDetails?.environmentalCharacteris?.eunisHabitat}}
-                        </div>
-            
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.airTemperatureMin || siteDetails?.environmentalCharacteris?.airTemperatureMax
-                            || siteDetails?.environmentalCharacteris?.airTemperatureAvg || siteDetails?.environmentalCharacteris?.airTemperatureUnit">Air Temperature </div>
-                        <div *ngIf="siteDetails?.environmentalCharacteris?.airTemperatureMin" class="mb-0 mt-0">
-                            <b>Max</b> {{siteDetails?.environmentalCharacteris?.airTemperatureMax}}
-                        </div>
-                        <div *ngIf="siteDetails?.environmentalCharacteris?.airTemperatureMin" class="mb-0 mt-0">
-                            <b>Min</b> {{siteDetails?.environmentalCharacteris?.airTemperatureMin}}
-                        </div>
-                        <div *ngIf="siteDetails.environmentalCharacteris.airTemperatureAvg" class="mb-0 mt-0">
-                            <b>Average</b> {{siteDetails?.environmentalCharacteris?.airTemperatureAvg}}
-                        </div>
-                        <div *ngIf="siteDetails?.environmentalCharacteris?.airTemperatureMin" class="mb-0 mt-0">
-                            <b>Unit</b> {{siteDetails?.environmentalCharacteris?.airTemperatureUnit}}
-                        </div>
-            
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.precipitationMin || siteDetails?.environmentalCharacteris?.precipitationMax
-                            || siteDetails?.environmentalCharacteris?.precipitationAnnual || siteDetails?.environmentalCharacteris?.precipitationUnit">Precipitation </div>
-                        <div *ngIf="siteDetails?.environmentalCharacteris?.precipitationMax" class="mb-0 mt-0">
-                            <b>Max</b> {{siteDetails?.environmentalCharacteris?.precipitationMax}}
-                        </div>
-                        <div *ngIf="siteDetails?.environmentalCharacteris?.precipitationMin" class="mb-0 mt-0">
-                            <b>Min</b> {{siteDetails?.environmentalCharacteris?.precipitationMin}}
-                        </div>
-                        <div *ngIf="siteDetails?.environmentalCharacteris?.precipitationAnnual" class="mb-0 mt-0">
-                            <b>Annual</b> {{siteDetails?.environmentalCharacteris?.precipitationAnnual}}
-                        </div>
-                        <div *ngIf="siteDetails?.environmentalCharacteris?.precipitationUnit" class="mb-0 mt-0">
-                            <b>Unit</b> {{siteDetails?.environmentalCharacteris?.precipitationUnit}}
-                        </div>
-            
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.landforms">Landforms </div>
-                        <div  class="mt-0">
-                            {{siteDetails?.environmentalCharacteris?.landforms}}
-                        </div>
-            
-            
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.geology">Geology </div>
-                        <div  class="mt-0">
-                            {{siteDetails?.environmentalCharacteris?.geology}}
-                        </div>
-            
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.hydrology">Hydrology </div>
-                        <div  class="mt-0">
-                            {{siteDetails?.environmentalCharacteris?.hydrology}}
-                        </div>
-            
-            
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.soils">Soils </div>
-                        <div  class="mt-0">
-                            {{siteDetails?.environmentalCharacteris?.soils}}
-                        </div>
-            
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.environmentalCharacteris?.vegetation">Vegetation </div>
-                        <div  class="mt-0">
-                            {{siteDetails?.environmentalCharacteris?.vegetation}}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="tab">
-                        <input type="checkbox" [checked]="submenuItem === 'protectionLevel'">
-                        <label class="tab-label" (click)="clickOnTabSubmenu('protectionLevel')">
-                            Protection level and resource management
-                        </label>
-                        <div class="tab-content"  *ngIf="submenuItem === 'protectionLevel'">
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.protectionLevel">Protection Level </div>
-                            <div  class="mt-0 mb-1">
-                                <a target="_blank" *ngFor="let protectionLevel of siteDetails?.protectionLevel" href="{{protectionLevel?.url}}">
-                                    {{protectionLevel?.name}}
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab">
-                        <input type="checkbox" [checked]="submenuItem === 'design'">
-                        <label class="tab-label" (click)="clickOnTabSubmenu('design')">
-                            Type, design and scale 
-                        </label>
-                        <div class="tab-content"  *ngIf="submenuItem === 'design'">
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.siteType">Site type </div>
-                            <div  class="mt-0">
-                                {{siteDetails?.siteType}}
-                            </div>
-
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.experimentsDesign">Design of Experimentation </div>
-                            <div  class="mt-0">
-                                {{siteDetails?.experimentsDesign}}
-                            </div>
-
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.experimentsScale">Scale of Experimentation </div>
-                            <div  class="mt-0">
-                                {{siteDetails?.experimentsScale}}
-                            </div>
-
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.observationsScale">Design of Observation </div>
-                            <div  class="mt-0">
-                                {{siteDetails?.observationsScale}}
-                            </div>
-
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.observationsScale">Scale of Observation </div>
-                            <div  class="mt-0">
-                                {{siteDetails?.observationsScale}}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab">
-                        <input type="checkbox" [checked]="submenuItem === 'equipment'">
-                        <label class="tab-label" (click)="clickOnTabSubmenu('equipment')">
-                            Equipment
-                        </label>
-                        <div class="tab-content"  *ngIf="submenuItem === 'equipment'">
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails.infrastructure?.permanentPowerSupply != null">Permanent power supply: </div>
-                            <div  class="mt-0" *ngIf="siteDetails.infrastructure.permanentPowerSupply != null">
-                                {{siteDetails.infrastructure.permanentPowerSupply ? 'Yes' : 'No'}}
-                            </div>
-
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.collections">Collections: </div>
-                            <div  class="mt-0">
-                                {{siteDetails?.infrastructure?.collections}}
-                            </div>
-
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.notes">Notes: </div>
-                            <div  class="mt-0">
-                                {{siteDetails?.infrastructure?.notes}}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab">
-                        <input type="checkbox" [checked]="submenuItem === 'operation'">
-                        <label class="tab-label" (click)="clickOnTabSubmenu('operation')">
-                            Operation
-                        </label>
-                        <div class="tab-content"  *ngIf="submenuItem === 'operation'">
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.accessibleAllYear != null">Accessible All Year: </div>
-                            <div  class="mt-0" *ngIf="siteDetails?.infrastructure?.accessibleAllYear != null">
-                                {{siteDetails?.infrastructure?.accessibleAllYear ? 'Yes' : 'No'}}
-                            </div>
-
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.allPartsAccessible != null">All parts of Site Accessibl: </div>
-                            <div  class="mt-0" *ngIf="siteDetails?.infrastructure?.allPartsAccessible != null">
-                                {{siteDetails?.infrastructure?.allPartsAccessible ? 'Yes' : 'No'}}
-                            </div>
-
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.accessType">Access type </div>
-                            <div  class="mt-0">
-                                {{siteDetails?.infrastructure?.accessType}}
-                            </div>
-
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.operationPermanent != null">Permanent Operation </div>
-                            <div  class="mt-0" *ngIf="siteDetails?.infrastructure?.operationPermanent != null">
-                                {{siteDetails?.infrastructure?.operationPermanent ? 'Yes' : 'No'}}
-                            </div>
-
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.notes">Operation Notes </div>
-                            <div  class="mt-0">
-                                {{siteDetails?.infrastructure?.notes}}
-                            </div>
-
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.operationSiteVisitInterval">Site Visit Interval </div>
-                            <div  class="mt-0">
-                                {{siteDetails?.infrastructure?.operationSiteVisitInterval}}
-                            </div>
-
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.maintenanceInterval">Maintenance Interval </div>
-                            <div  class="mt-0">
-                                {{siteDetails.infrastructure.maintenanceInterval}}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab">
-                        <input type="checkbox" [checked]="submenuItem === 'dataManagement'">
-                        <label class="tab-label" (click)="clickOnTabSubmenu('dataManagement')">
-                            Data Management
-                        </label>
-                        <div class="tab-content"  *ngIf="submenuItem === 'dataManagement'">
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.policy?.rights">General Data Policy </div>
-                            <div  class="mt-0">
-                                {{siteDetails?.infrastructure?.policy?.rights}}
-                            </div>
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.policy?.url">Data Policy URL </div>
-                            <div  class="mt-0">
-                                {{siteDetails?.infrastructure?.policy?.url}}
-                            </div>
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.infrastructure?.policy?.notes">Data Policy notes </div>
-                            <div  class="mt-0">
-                                {{siteDetails?.infrastructure?.policy?.notes}}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab">
-                        <input type="checkbox" [checked]="submenuItem === 'relatedResources'">
-                        <label class="tab-label" (click)="clickOnTabSubmenu('relatedResources')">
-                            Related resources
-                        </label>
-                        <div class="tab-content"  *ngIf="submenuItem === 'relatedResources'">
-                            <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="siteDetails?.relatedResources"> Related resources: </div>
-                            <div *ngFor="let relatedResources of siteDetails?.relatedResources"  class="mt-0">
-                                <a href="{{relatedResources?.url}}" target="_blank">{{relatedResources?.name}}</a>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
-          </div> 
-
-          <div class="tab" *ngIf="darsData && darsData.length > 0">
-            <input type="checkbox" [checked]="menuItem == 'dar'">
-            <label class="tab-label" (click)="clickOnTab('dar')">
-                Digital Asset Register
-            </label>
-            <div *ngIf="menuItem == 'dar'" class="tab-content">
-
-                <div class="tabs">
-                    <div class="tab" *ngFor="let darData of darsData">
-                      <input type="checkbox" [checked]="submenuItem === darData.id">
-                      <label class="tab-label" (click)="clickOnTabSubmenu(darData.id)">
-                        {{darData.title}}
-                      </label>
-                      <div class="tab-content" *ngIf="submenuItem === darData.id">
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.description">Description </div>
-                        <div  class="mt-0">
-                            {{darData?.description}}
-                        </div>
-
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.datasetReferenceDate?.creationDate">Publication date </div>
-                        <div  class="mt-0">
-                            {{darData?.datasetReferenceDate?.creationDate}}
-                        </div>
-
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.deimsSites">DEIMS site </div>
-                        <div *ngFor="let deimsSite of darData?.deimsSites"  class="mt-0">
-                            <a href="{{deimsSite?.url}}" target="_blank">{{deimsSite?.title}}</a>
-                        </div>
-
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.dataLevel">Provenance & quality </div>
-                        <div  class="mt-0">
-                            This dataset has a data level of {{darData?.dataLevel}}
-                        </div>
-
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.supplemental">Supplemental information </div>
-                        <div *ngFor="let supplemental of darData?.supplemental"  class="mt-0">
-                            <a href="{{supplemental?.url}}" target="_blank">{{supplemental?.name}}</a>
-                            <div  class="mt-0">
-                                {{supplemental?.description}}
-                            </div>
-                        </div>
-
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="hasNonNullEmail(darData.responsibleParties)">Correspondence/contact details </div>
-                        <div *ngFor="let responsiblePartie of darData?.responsibleParties"  class="mt-0">
-                            <a href="mailto:{{responsiblePartie?.email}}">{{responsiblePartie?.email}}</a>
-                        </div>
-
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.authors">Author </div>
-                        <div *ngFor="let author of darData?.authors"  class="mt-0">
-                            <div  class="mt-0" *ngIf="author.role == 'author'">
-                                {{author?.individualName}}
-                            </div>
-                            <div  class="mt-0" *ngIf="author.role == 'author'">
-                                {{author?.organisationName}}
-                            </div>
-                        </div>
-
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0">Additional metadata </div>
-                        <div  class="mt-0" >
-                            <strong> Other keywords </strong>
-                        </div>
-                        <div>
-                            <span *ngFor="let keyword of darData.keywords; let last = last">
-                                {{ keyword.value }}{{ !last ? ', ' : '' }}
-                            </span>
-                        </div>
-                        <div  class="mt-0" >
-                            <strong> Last updated </strong>
-                        </div>
-                        <div  class="mt-0" >
-                            {{darData.metadataDate | date:'medium'}}
-                        </div>
-
-                        <div class="h6 text-secundary-color-green-dark mt-2 mb-0" *ngIf="darData?.onlineResources">Get the data </div>
-                        <div  class="mt-0" *ngIf="darData?.onlineResources">
-                            This record describes data managed by a third party
-                        </div>
-                        <div  class="mt-0" *ngIf="darData?.onlineResources">
-                            To access the data visit
-                        </div>
-                        <div *ngFor="let onlineResource of darData?.onlineResources"  class="mt-0">
-                            <a href="{{onlineResource?.url}}" target="_blank">{{onlineResource?.url}}</a>
-                        </div>
-                    </div>
-                </div>
-                </div>
-
-
-            </div>
-        </div>
-
-          
-        </div>
-    </div>
+</div>

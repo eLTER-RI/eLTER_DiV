@@ -106,7 +106,7 @@ export class SiteDetailsComponent implements OnInit, OnChanges {
   openCloseSiteDetail() {
     this.siteDetails.open = !this.siteDetails.open;
 
-    this.homeService.markSiteOnMap(this.siteId, this.siteDetails.open);
+    this.homeService.markSitesOnMap([this.siteId], this.siteDetails.open);
   }
 
   showOperationTab() {

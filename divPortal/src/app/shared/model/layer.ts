@@ -37,4 +37,6 @@ export class Layer {
 
     searchFilterType: boolean;
 
+    codeForSidebar: string;
+
 }

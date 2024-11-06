@@ -16,6 +16,7 @@ public class SimpleResponseDTO implements Serializable {
 	public static final Integer PARSE_EXCEPTION = 3;
 	public static final Integer NOT_ALLOWED = 4;
 	public static final Integer DEIMS_API_ERROR = 5;
+	public static final Integer INVENIO_API_ERROR = 6;
 
 	private Integer status;
 
