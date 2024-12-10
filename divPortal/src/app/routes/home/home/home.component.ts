@@ -7,9 +7,9 @@ import { Layer } from './../../../shared/model/layer';
 import { Subscription } from 'rxjs';
 import { HomeService } from './home.service';
 import { SettingsService } from './../../../core/settings/settings.service';
-import { Component, HostListener, OnInit, OnDestroy, SecurityContext } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Map, Overlay, View } from 'ol';
-import { Attribution, FullScreen, ScaleLine, defaults as defaultControls } from 'ol/control';
+import { Attribution, ScaleLine } from 'ol/control';
 import TileLayer from 'ol/layer/Tile';
 import { PaginationInstance } from 'ngx-pagination';
 import OSM from 'ol/source/OSM';
@@ -20,14 +20,13 @@ import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import { Fill, Stroke, Style } from 'ol/style';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { unByKey } from 'ol/Observable';
 import CircleStyle from 'ol/style/Circle';
 import { LineString, Polygon } from 'ol/geom';
-import Draw, { createBox, createRegularPolygon } from 'ol/interaction/Draw';
+import Draw from 'ol/interaction/Draw';
 import { getArea, getLength } from 'ol/sphere';
 import { cloneDeep } from 'lodash';
-import { transform } from 'ol/proj';
 import { SearchSidebarService } from '../search-sidebar/search-sidebar.service';
 import Cluster from 'ol/source/Cluster';
 
@@ -114,9 +113,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 	});
     scaleType = false;
 	control;
-
-
-
 
     constructor(private settings: SettingsService,
                 private homeService: HomeService,
@@ -264,6 +260,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                 } else {
                     feature = f.getId()?.toString();
                 }
+
                 if (feature) {
                     if (feature.indexOf('site_points') > -1) {
                         const id = feature.substring(12);

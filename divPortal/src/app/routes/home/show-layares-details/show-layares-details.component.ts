@@ -130,7 +130,6 @@ export class ShowLayaresDetailsComponent implements OnInit {
   onFilter(): void {  
     const search = this.filter.toLowerCase().trim();
     if (!search || search.length === 0) {
-      console.log(this.layerGroupsOrig)
       this.layerGroups = [...this.layerGroupsOrig];
 
       if (this.fromGetCapabilitiesLayers) {

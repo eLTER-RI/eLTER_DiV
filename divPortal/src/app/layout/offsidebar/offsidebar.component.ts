@@ -93,6 +93,8 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
         await new Promise( resolve => setTimeout(resolve, 10) );
         this.openOffsidebar();
 
+        this.visibleTab = null;
+        
         delete this.ebvs;
         delete this.siteIds;
         delete this.datasets;

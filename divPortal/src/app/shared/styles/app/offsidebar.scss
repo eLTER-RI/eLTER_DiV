@@ -13,11 +13,22 @@ $offsidebar-color:        $body-color;
 $offsidebar-wd:           60%;//$aside-wd + 15px;      // match the width with the main aside component
 
 .offsidebar {
+    
+    @media screen and (max-width: 768px) {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        margin: 0 !important;
+        z-index: 1000;
+    }
+
     position: absolute;
     top: 0;
     bottom: 0;
     right: 0;
-    width: $offsidebar-wd;
+    margin-left: clamp(350px, 20%, 500px);
     margin-top: $navbar-height;
     background-color: $offsidebar-bg;
     color: $offsidebar-color;
@@ -89,6 +100,7 @@ $offsidebar-wd:           60%;//$aside-wd + 15px;      // match the width with t
 .csstransforms3d {
     .offsidebar {
         right: 0;
+        left: 0;
         transform: translate3d( (10000px), 0, 0);
         transition: transform .3s ease, z-index 0s linear .3s;
     }

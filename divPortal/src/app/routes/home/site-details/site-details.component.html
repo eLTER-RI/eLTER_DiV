@@ -6,7 +6,13 @@
         <div class="tab">
             <input type="checkbox" [checked]="siteDetails.open">
             <label class="tab-label" (click)="openCloseSiteDetail()">
-                <b>{{siteDetails?.siteName}} ({{siteDetails?.shortName}}) - {{siteDetails?.siteType}}</b>
+                <label class="pointer">
+                    <em (click)="pinClick(); $event.stopPropagation();" 
+                        class="fa-2x mr-2 fas fa-map-marker-alt pinIcon"
+                        [ngClass]="{'pinIconActive' : pinActive}">
+                    </em>
+                    <b>{{siteDetails?.siteName}} ({{siteDetails?.shortName}}) - {{siteDetails?.siteType}}</b>
+                </label>
             </label>
 
             <div *ngIf="siteDetails.open" class="tab-content">

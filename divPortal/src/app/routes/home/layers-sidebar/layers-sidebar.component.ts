@@ -72,7 +72,8 @@ export class LayersSidebarComponent implements OnInit {
 
   ngOnInit(): void {
     this.styleCache = {};
-
+    this.showLayers = true;
+    
     this.readCodebook();
 
     this.initSubscriptions();
@@ -446,7 +447,7 @@ export class LayersSidebarComponent implements OnInit {
 
   }
 
-  closeOffsidebar(){
+  closeOffsidebar() {
     if (this.settings.getLayoutSetting('offsidebarOpen')) {
         this.settings.setLayoutSetting('offsidebarOpen', false);
       }

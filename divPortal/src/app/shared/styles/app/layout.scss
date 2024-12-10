@@ -57,7 +57,6 @@ body {
     .aside-container {
         // visibility: hidden;
         position: absolute;
-        width: $aside-wd;
 
         top: 0;
         left: 0;
@@ -69,7 +68,9 @@ body {
         .aside-inner {
             padding-top: $navbar-hg;
             height: 100%;
-            width: $aside-wd;
+            //width: $aside-wd;
+            width: 20%;
+            min-width: 350px;
             overflow: hidden;
         }
 
@@ -88,7 +89,7 @@ body {
     .section-container {
         position: relative;
         height: 100%;
-        margin-left: 0; // overflow: hidden;
+        margin-left: 0;
         z-index: $z-index-main-section;
         background-color: $content-bg;
         margin-bottom: $footer-hg !important; // ensure a space for the footer
@@ -187,7 +188,7 @@ body {
 
         .section-container,
         .footer-container {
-            margin-left: $aside-wd;
+            margin-left: clamp(350px, 20%, 500px);
         }
 
         .section-container {
@@ -320,6 +321,7 @@ body {
             &,
             .aside-inner {
                 width: $aside-wd-collapsed;
+                min-width: 0px;   
             }
             .nav-floating {
                 margin-left: $aside-wd-collapsed;

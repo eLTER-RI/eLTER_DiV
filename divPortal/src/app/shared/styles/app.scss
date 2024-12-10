@@ -172,6 +172,9 @@
     &:hover {
       background: darken($elter-primary-orange, 10%);
     }
+    &.no-icon::after {
+      content: none;
+    }
     &::after {
       content: "\276F";
       width: 1em;
@@ -230,4 +233,16 @@ input:checked {
     cursor: pointer;
   }
   
+}
+
+.pointer {
+  cursor:pointer;
+}
+
+.pinIcon:hover {
+  color: $elter-secondary-dark-blue;
+}
+
+.pinIconActive {
+  color: $elter-secondary-dark-blue;
 }

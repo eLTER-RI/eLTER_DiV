@@ -1,17 +1,24 @@
 <div class="wrapper">
     <!-- top navbar-->
     <app-header class="topnavbar-wrapper"></app-header>
-    <!-- sidebar-->
-    <app-sidebar class="aside-container"></app-sidebar>
-    <!-- offsidebar-->
-    <app-offsidebar class="offsidebar pt-2" (clickOutside)="clickOutsideOffsidebar()"></app-offsidebar>
-    <!-- Main section-->
-    <section class="section-container">
-        <!-- Page content-->
-        <div class="content-wrapper">
-            <router-outlet></router-outlet>
+    
+    <div class="main-content">
+        <!-- sidebar-->
+        <app-sidebar class="aside-container"></app-sidebar>
+        
+        <div class="offsidebar-section-wrapper">
+            <!-- offsidebar-->
+            <app-offsidebar class="offsidebar pt-2" (clickOutside)="clickOutsideOffsidebar()"></app-offsidebar>
+            
+            <!-- Main section-->
+            <section class="section-container">
+                <div class="content-wrapper">
+                    <router-outlet></router-outlet>
+                </div>
+            </section>
         </div>
-    </section>
+    </div>
+
     <!-- Page footer-->
     <footer class="footer-container" 
         app-footer 
@@ -21,5 +28,4 @@
         [footerText]="footerHtml?.html" 
         [footerOnHoverText]="footerOnHoverHtml?.html"
         [ngStyle]="getStyleForFooter()"></footer>
-
 </div>

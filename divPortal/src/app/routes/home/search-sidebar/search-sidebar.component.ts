@@ -70,7 +70,7 @@ export class SearchSidebarComponent implements OnInit {
 
   ngOnInit(): void {
     this.divFilter = new DivFilterAndSearch();
-    this.showDivFilterAndSearch = true;
+    this.showDivFilterAndSearch = false;
     this.showFilter = false;
     this.showSearch = false;
 

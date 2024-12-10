@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
@@ -178,7 +180,7 @@ public class DatasetServiceImpl implements DatasetService {
 
 			DatasetODTO dataset = new DatasetODTO();
 
-			dataset.setId(hitNode.get("id").asText());
+			setFieldSafely(hitNode, dataset::setId, JsonNode::asText, "id");
 
 			// sites
 			Set<SiteODTO> sites = new HashSet<>();
@@ -230,8 +232,8 @@ public class DatasetServiceImpl implements DatasetService {
 			JsonNode soReferenceNode = metadataNode.get("SOReference");
 			if (soReferenceNode != null) {
 				SOReferenceODTO soReference = new SOReferenceODTO();
-				soReference.setName(soReferenceNode.get("name").asText());
-				soReference.setUrl(soReferenceNode.get("url").asText());
+				setFieldSafely(soReferenceNode, soReference::setName, JsonNode::asText, "name");
+				setFieldSafely(soReferenceNode, soReference::setUrl, JsonNode::asText, "url");
 				metadata.setSoReference(soReference);
 			}
 
@@ -241,10 +243,10 @@ public class DatasetServiceImpl implements DatasetService {
 			if (authorNodeList != null) {
 				for (JsonNode authorNode : authorNodeList) {
 					AuthorODTO author = new AuthorODTO();
-					author.setEmail(authorNode.get("email").asText());
-					author.setFamilyName(authorNode.get("familyName").asText());
-					author.setFullName(authorNode.get("fullName").asText());
-					author.setGivenName(authorNode.get("givenName").asText());
+					setFieldSafely(authorNode, author::setEmail, JsonNode::asText, "email");
+					setFieldSafely(authorNode, author::setFamilyName, JsonNode::asText, "familyName");
+					setFieldSafely(authorNode, author::setFullName, JsonNode::asText, "fullName");
+					setFieldSafely(authorNode, author::setGivenName, JsonNode::asText, "givenName");
 
 					authors.add(author);
 				}
@@ -257,11 +259,11 @@ public class DatasetServiceImpl implements DatasetService {
 			if (contributorNodeList != null) {
 				for (JsonNode contributorNode : contributorNodeList) {
 					ContributorODTO contributor = new ContributorODTO();
-					contributor.setEmail(contributorNode.get("email").asText());
-					contributor.setFamilyName(contributorNode.get("familyName").asText());
-					contributor.setFullName(contributorNode.get("fullName").asText());
-					contributor.setGivenName(contributorNode.get("givenName").asText());
-					contributor.setType(contributorNode.get("type").asText());
+					setFieldSafely(contributorNode, contributor::setEmail, JsonNode::asText, "email");
+					setFieldSafely(contributorNode, contributor::setFamilyName, JsonNode::asText, "familyName");
+					setFieldSafely(contributorNode, contributor::setFullName, JsonNode::asText, "fullName");
+					setFieldSafely(contributorNode, contributor::setGivenName, JsonNode::asText, "givenName");
+					setFieldSafely(contributorNode, contributor::setType, JsonNode::asText, "type");
 
 					contributors.add(contributor);
 				}
@@ -269,7 +271,7 @@ public class DatasetServiceImpl implements DatasetService {
 			metadata.setContributors(contributors);
 
 			// Data Level
-			metadata.setDataLevel(metadataNode.get("dataLevel").asInt());
+			setFieldSafely(metadataNode, metadata::setDataLevel, JsonNode::asInt, "dataLevel");
 
 			// Dataset IDs
 			List<DatasetIdODTO> datasetIds = new ArrayList<>();
@@ -277,10 +279,10 @@ public class DatasetServiceImpl implements DatasetService {
 			if (datasetIdNodeList != null) {
 				for (JsonNode datasetIdNode : datasetIdNodeList) {
 					DatasetIdODTO datasetId = new DatasetIdODTO();
-					datasetId.setIdentifier(datasetIdNode.get("identifier").asText());
-					datasetId.setSourceName(datasetIdNode.get("sourceName").asText());
-					datasetId.setType(datasetIdNode.get("type").asText());
-					datasetId.setUrl(datasetIdNode.get("url").asText());
+					setFieldSafely(datasetIdNode, datasetId::setIdentifier, JsonNode::asText, "identifier");
+					setFieldSafely(datasetIdNode, datasetId::setSourceName, JsonNode::asText, "sourceName");
+					setFieldSafely(datasetIdNode, datasetId::setType, JsonNode::asText, "type");
+					setFieldSafely(datasetIdNode, datasetId::setUrl, JsonNode::asText, "url");
 					datasetIds.add(datasetId);
 				}
 			}
@@ -292,9 +294,10 @@ public class DatasetServiceImpl implements DatasetService {
 			if (descriptionNodeList != null) {
 				for (JsonNode descriptionNode : descriptionNodeList) {
 					DescriptionODTO description = new DescriptionODTO();
-					description.setDescription(descriptionNode.get("description").asText());
-					description.setLanguage(descriptionNode.get("language").asText());
-					description.setType(descriptionNode.get("type").asText());
+					setFieldSafely(descriptionNode, description::setDescription, JsonNode::asText, "description");
+					setFieldSafely(descriptionNode, description::setLanguage, JsonNode::asText, "language");
+					setFieldSafely(descriptionNode, description::setType, JsonNode::asText, "type");
+
 					descriptions.add(description);
 				}
 			}
@@ -306,11 +309,11 @@ public class DatasetServiceImpl implements DatasetService {
 			if (fileNodeList != null) {
 				for (JsonNode fileNode : fileNodeList) {
 					FileODTO file = new FileODTO();
-					file.setFormat(fileNode.get("format").asText());
-					file.setMd5(fileNode.get("md5").asText());
-					file.setName(fileNode.get("name").asText());
-					file.setSize(fileNode.get("size").asText());
-					file.setSourceUrl(fileNode.get("sourceUrl").asText());
+					setFieldSafely(fileNode, file::setFormat, JsonNode::asText, "format");
+					setFieldSafely(fileNode, file::setMd5, JsonNode::asText, "md5");
+					setFieldSafely(fileNode, file::setName, JsonNode::asText, "name");
+					setFieldSafely(fileNode, file::setSize, JsonNode::asText, "size");
+					setFieldSafely(fileNode, file::setSourceUrl, JsonNode::asText, "sourceUrl");
 					files.add(file);
 				}
 			}
@@ -322,15 +325,16 @@ public class DatasetServiceImpl implements DatasetService {
 			if (keywordNodeList != null) {
 				for (JsonNode keywordNode : keywordNodeList) {
 					KeywordODTO keyword = new KeywordODTO();
-					keyword.setName(keywordNode.get("name").asText());
-					keyword.setUrl(keywordNode.get("url").asText());
+					setFieldSafely(keywordNode, keyword::setName, JsonNode::asText, "name");
+					setFieldSafely(keywordNode, keyword::setUrl, JsonNode::asText, "url");
+
 					keywords.add(keyword);
 				}
 			}
 			metadata.setKeywords(keywords);
 
 			// Language
-			metadata.setLanguage(metadataNode.get("language").asText());
+			setFieldSafely(metadataNode, metadata::setLanguage, JsonNode::asText, "language");
 
 			// Licenses
 			List<LicenseODTO> licenses = new ArrayList<>();
@@ -338,8 +342,9 @@ public class DatasetServiceImpl implements DatasetService {
 			if (licenseNodeList != null) {
 				for (JsonNode licenseNode : licenseNodeList) {
 					LicenseODTO license = new LicenseODTO();
-					license.setName(licenseNode.get("name").asText());
-					license.setUrl(licenseNode.get("url").asText());
+					setFieldSafely(licenseNode, license::setName, JsonNode::asText, "name");
+					setFieldSafely(licenseNode, license::setUrl, JsonNode::asText, "url");
+
 					licenses.add(license);
 				}
 			}
@@ -349,9 +354,10 @@ public class DatasetServiceImpl implements DatasetService {
 			JsonNode projectNode = metadataNode.get("project");
 			if (projectNode != null) {
 				ProjectODTO project = new ProjectODTO();
-				project.setDOI(projectNode.get("DOI").asText());
-				project.setPID(projectNode.get("PID").asText());
-				project.setName(projectNode.get("name").asText());
+				setFieldSafely(projectNode, project::setDOI, JsonNode::asText, "DOI");
+				setFieldSafely(projectNode, project::setPID, JsonNode::asText, "PID");
+				setFieldSafely(projectNode, project::setName, JsonNode::asText, "name");
+
 				metadata.setProject(project);
 			}
 
@@ -361,8 +367,9 @@ public class DatasetServiceImpl implements DatasetService {
 			if (propertyRightNodeList != null) {
 				for (JsonNode propertyRightNode : propertyRightNodeList) {
 					PropertyRightODTO propertyRight = new PropertyRightODTO();
-					propertyRight.setName(propertyRightNode.get("name").asText());
-					propertyRight.setUrl(propertyRightNode.get("url").asText());
+					setFieldSafely(propertyRightNode, propertyRight::setName, JsonNode::asText, "name");
+					setFieldSafely(propertyRightNode, propertyRight::setUrl, JsonNode::asText, "url");
+
 					propertyRights.add(propertyRight);
 				}
 			}
@@ -374,8 +381,9 @@ public class DatasetServiceImpl implements DatasetService {
 			if (shortNameNodeList != null) {
 				for (JsonNode shortNameNode : shortNameNodeList) {
 					ShortNameODTO shortName = new ShortNameODTO();
-					shortName.setLanguage(shortNameNode.get("language").asText());
-					shortName.setText(shortNameNode.get("text").asText());
+					setFieldSafely(shortNameNode, shortName::setLanguage, JsonNode::asText, "language");
+					setFieldSafely(shortNameNode, shortName::setText, JsonNode::asText, "text");
+
 					shortNames.add(shortName);
 				}
 			}
@@ -387,7 +395,7 @@ public class DatasetServiceImpl implements DatasetService {
 			if (taxonomicCoverageNodeList != null) {
 				for (JsonNode taxonomicCoverageNode : taxonomicCoverageNodeList) {
 					TaxonomicCoverageODTO taxonomicCoverage = new TaxonomicCoverageODTO();
-					taxonomicCoverage.setDescription(taxonomicCoverageNode.get("description").asText());
+					setFieldSafely(taxonomicCoverageNode, taxonomicCoverage::setDescription, JsonNode::asText, "description");
 					taxonomicCoverages.add(taxonomicCoverage);
 				}
 			}
@@ -398,9 +406,9 @@ public class DatasetServiceImpl implements DatasetService {
 
 			JsonNode titles = metadataNode.get("titles");
 			if (titles != null) {
-				for (JsonNode title : titles) {
-					if (title.get("language").equals("eng")) {
-						dataset.setTitle(title.get("text").asText());
+				for (JsonNode titleNode : titles) {
+					if (titleNode.get("language") != null && titleNode.get("language").asText().equals("eng")) {
+						setFieldSafely(titleNode, dataset::setTitle, JsonNode::asText, "text");
 						break;
 					}
 				}
@@ -413,6 +421,24 @@ public class DatasetServiceImpl implements DatasetService {
 
 		return response;
 
+	}
+
+	private <T> void setFieldSafely(JsonNode node, Consumer<T> setter, Function<JsonNode, T> extractor, String... paths) {
+		T value = getNestedValue(node, extractor, paths);
+		if (value != null) {
+			setter.accept(value);
+		}
+	}
+	
+	private <T> T getNestedValue(JsonNode node, Function<JsonNode, T> extractor, String... paths) {
+		for (String path : paths) {
+			if (node == null || node.isNull()) {
+				return null;
+			}
+			node = node.get(path);
+		}
+		
+		return (node != null && !node.isNull()) ? extractor.apply(node) : null;
 	}
     
 }

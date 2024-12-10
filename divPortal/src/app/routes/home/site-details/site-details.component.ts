@@ -7,6 +7,8 @@ import { Subscription } from 'rxjs';
 import { HomeService } from '../home/home.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { SettingsService } from 'src/app/core/settings/settings.service';
+import { DatasetDetailsListService } from '../dataset-details-list/dataset-details-list.service';
 
 @Component({
   selector: 'app-site-details',
@@ -18,6 +20,8 @@ export class SiteDetailsComponent implements OnInit, OnChanges {
   @Input() siteId: number;
   @Input() open: boolean;
 
+  pinActive: boolean = false;
+
   siteDetails: SiteDetails;
   darsData: DarDB[];
   menuItem: string;
@@ -25,6 +29,7 @@ export class SiteDetailsComponent implements OnInit, OnChanges {
 
   siteOpenDetailsSubscription: Subscription;
   closeAllSiteDetailsSubscription: Subscription;
+  pinClickedSubscription: Subscription;
 
   scrollbarOptions = {  theme: 'dark-thick', scrollButtons: { enable: true },  setHeight: '80vh'};
 
@@ -32,7 +37,9 @@ export class SiteDetailsComponent implements OnInit, OnChanges {
               private offsidebarService: OffsidebarService,
               private homeService: HomeService,
               private toastrService: ToastrService,
-              private translateService: TranslateService) { }
+              private translateService: TranslateService,
+              private settings: SettingsService,
+              private datasetDetailsListService: DatasetDetailsListService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.loadSites();
@@ -63,6 +70,15 @@ export class SiteDetailsComponent implements OnInit, OnChanges {
         this.siteDetails.open = false;
       }
     });
+
+    this.pinClickedSubscription = this.datasetDetailsListService.pinClickedtbservable.subscribe( obj => {
+      if (obj?.type != 'site' || obj?.id != this.siteDetails?.id) {
+        if (this.siteDetails) {
+          this.pinActive = false;
+        }
+      }
+    });
+    
   }
 
   async loadSites() {
@@ -80,7 +96,6 @@ export class SiteDetailsComponent implements OnInit, OnChanges {
 
   // async loadDar() {
   //   const response = await this.sharedService.get('dar/get?deimsUUID='+this.siteDetails);
-  //   console.log(response.entity);
   // }
 
   clickOnTab(tabName: string) {
@@ -150,6 +165,27 @@ showPolicyTab() {
 
   hasNonNullEmail(authors: any[]): boolean {
     return authors.some(author => author.email != null);
+  }
+
+  pinClick() {
+    this.pinActive = !this.pinActive;
+
+    this.datasetDetailsListService.pinClicked({ type: 'site', id: this.siteDetails.id })
+
+    if (this.pinActive) {
+      this.homeService.actionChanged({
+        action: 'removeSitePolygon'
+      });
+      this.homeService.markSitesOnMap([this.siteId], true);
+
+      this.openOffsidebar();
+    }
+  }
+
+  openOffsidebar(){
+    if (this.settings.getLayoutSetting('offsidebarOpen')) {
+        this.settings.toggleLayoutSetting('offsidebarOpen');
+    }
   }
 
 }

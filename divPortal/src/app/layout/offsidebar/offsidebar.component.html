@@ -2,7 +2,7 @@
     <app-ebv-details [ebvs]="ebvs" [hidden]="ebvs.length == 0"></app-ebv-details>
 </div>
 
-<div *ngIf="visibleTab" class="row mx-0 mt-2 ps-0 border-bottom border-secondary mb-3" >
+<div *ngIf="visibleTab && (visibleTab == 'sites' || visibleTab == 'datasets')" class="row mx-0 mt-2 ps-0 border-bottom border-secondary mb-3" >
     <button 
         [ngClass]="['btn btn-sm col-2 ms-0 me-0 ps-0 pe-0 border-warning', visibleTab === 'sites'?'bg-warning':'btn-default']"
         type="button"

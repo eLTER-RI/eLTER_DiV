@@ -6,6 +6,8 @@ import { SharedService } from 'src/app/shared/service/shared.service';
 import { HomeService } from '../home/home.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { SettingsService } from 'src/app/core/settings/settings.service';
+import { DatasetDetailsListService } from '../dataset-details-list/dataset-details-list.service';
 
 @Component({
   selector: 'app-dataset-details',
@@ -17,16 +19,21 @@ export class DatasetDetailsComponent implements OnInit {
   @Input() datasetDetail: Dataset;
   @Input() open: boolean;
 
+  pinActive: boolean = false;
+
   menuItem: string;
   submenuItem: string;
 
   datasetOpenDetailsSubscription: Subscription;
   closeAllDatasetDetailsSubscription: Subscription;
+  pinClickedSubscription: Subscription;
 
   scrollbarOptions = {  theme: 'dark-thick', scrollButtons: { enable: true },  setHeight: '70vh'};
 
   constructor(private offsidebarService: OffsidebarService,
-              private homeService: HomeService) { }
+              private homeService: HomeService,
+              private settings: SettingsService,
+              private datasetDetailsListService: DatasetDetailsListService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.menuItem = 'basic';
@@ -59,6 +66,12 @@ export class DatasetDetailsComponent implements OnInit {
         this.datasetDetail.open = false;
       }
     });
+
+    this.pinClickedSubscription = this.datasetDetailsListService.pinClickedtbservable.subscribe( obj => {
+      if (obj?.type != 'dataset' || obj?.id != this.datasetDetail.id) {
+        this.pinActive = false;
+      }
+    });
   }
 
   openCloseDatasetDetail() {
@@ -85,6 +98,37 @@ export class DatasetDetailsComponent implements OnInit {
       this.submenuItem = '';
     } else {
       this.submenuItem = tabName;
+    }
+  }
+
+  pinClick() {
+    this.pinActive = !this.pinActive;
+
+    this.datasetDetailsListService.pinClicked({ type: 'dataset', id: this.datasetDetail.id });
+
+    if (this.pinActive) {
+      this.homeService.actionChanged({
+        action: 'removeSitePolygon'
+      });
+
+      if (this.datasetDetail.sites?.length > 0) {
+        let siteIds = this.datasetDetail.sites.map(site => site.id);
+        this.homeService.markSitesOnMap(siteIds, true);
+      }
+
+      this.openOffsidebar();
+    }
+  }
+
+  navigateToExternal(url: string) {
+    if (url?.length > 0) {
+      window.open(url, '_blank');
+    }
+  }
+
+  openOffsidebar(){
+    if (this.settings.getLayoutSetting('offsidebarOpen')) {
+        this.settings.toggleLayoutSetting('offsidebarOpen');
     }
   }
 
