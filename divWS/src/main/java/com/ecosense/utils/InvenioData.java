@@ -2,7 +2,7 @@ package com.ecosense.utils;
 
 public class InvenioData {
 
-    public static final String BASE_URL = "https://catalog.elter-ri.eu/api/lter/?";
+    public static final String BASE_URL = "https://dar.elter-ri.eu/api/lter/?";
 
     public static final String FULL_TEXT_SEARCH_PARAM = "q=";
     public static final String SITE_KEY_WORD_SEARCH_PARAM = "metadata_siteReference_name=";
