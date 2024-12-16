@@ -1,7 +1,6 @@
 import { SiteDetails } from './../../../shared/model/site-details-response-db';
 import { SharedService } from './../../../shared/service/shared.service';
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { DarDB } from 'src/app/shared/model/dar-db';
 import { OffsidebarService } from 'src/app/layout/offsidebar/offsidebar.service';
 import { Subscription } from 'rxjs';
 import { HomeService } from '../home/home.service';
@@ -23,7 +22,6 @@ export class SiteDetailsComponent implements OnInit, OnChanges {
   pinActive: boolean = false;
 
   siteDetails: SiteDetails;
-  darsData: DarDB[];
   menuItem: string;
   submenuItem: string;
 
@@ -88,15 +86,8 @@ export class SiteDetailsComponent implements OnInit, OnChanges {
     } else {
       this.siteDetails = response.entity;
       this.siteDetails.open = this.open;
-      
-      const response2 = await this.sharedService.get('dar/get?deimsUUID='+this.siteDetails.id);
-      this.darsData = response2.entity;
     }
   }
-
-  // async loadDar() {
-  //   const response = await this.sharedService.get('dar/get?deimsUUID='+this.siteDetails);
-  // }
 
   clickOnTab(tabName: string) {
     if (tabName === this.menuItem) {
@@ -107,8 +98,6 @@ export class SiteDetailsComponent implements OnInit, OnChanges {
 
     if (this.menuItem === 'details') {
       this.submenuItem = 'environmentalCharacteris';
-    } else if (this.menuItem === 'dar') {
-      this.submenuItem = this.darsData[0].id;
     } else {
       this.submenuItem = '';
     }

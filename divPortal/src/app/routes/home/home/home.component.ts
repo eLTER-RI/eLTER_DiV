@@ -471,9 +471,9 @@ export class HomeComponent implements OnInit, OnDestroy {
             if (layer?.layerVector != null && layer?.layerVector != undefined  && this.layers.indexOf(layer?.layerVector) == -1) {
                 this.layers.push(layer?.layerVector);
                 this.map.addLayer(layer?.layerVector);
+                this.fitMapToExtent(layer);
             }
 
-            this.fitMapToExtent(layer);
         } else if (action == 'turnOff') {
             if (layer?.layerTile != null && layer?.layerTile != undefined) {
                 this.layers.splice(layer.layerTile);
@@ -490,6 +490,16 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.map.removeLayer(layer.layerVector);
             }
         } 
+
+        if (bbox) {
+            console.log(bbox)
+            let loc1 = [bbox.minX, bbox.minY];
+            let loc2 = [bbox.maxX, bbox.maxY];
+            //@ts-ignore
+            this.extent = new boundingExtent([loc1, loc2]);
+            this.map.getView().fit(this.extent);
+        }
+
     } 
 
     fitMapToExtent(layer:Layer) {

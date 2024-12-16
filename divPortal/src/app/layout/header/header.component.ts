@@ -7,6 +7,7 @@ const screenfull = require('screenfull');
 
 import { SettingsService } from '../../core/settings/settings.service';
 import { MenuService } from '../../core/menu/menu.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-header',
@@ -30,7 +31,8 @@ export class HeaderComponent implements OnInit {
                 private router: Router,
                 private homeService: HomeService,
                 private sharedService: SharedService,
-                private offsidebarService: OffsidebarService) {
+                private offsidebarService: OffsidebarService,
+                private toastrService: ToastrService) {
         this.menuItems = menu.getMenu().slice(0, 4);
 
         this.router.events.subscribe((val) => {
@@ -53,6 +55,11 @@ export class HeaderComponent implements OnInit {
 
         const response2 = await this.sharedService.get('getHtml?partOfApp=terms_and_condititions');
         this.termsAndCondHtml = response2.entity.html;
+
+        this.toastrService.warning('You are using a development system of the emerging eLTER Research Infrastructure (RI). Please note that this service is still under construction and may not yet be fully functional.',
+                                   'Warning', {
+                                        disableTimeOut: true,
+                                    });
     }
 
     toggleUserBlock(event) {

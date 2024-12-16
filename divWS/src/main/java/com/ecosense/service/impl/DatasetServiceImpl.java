@@ -314,6 +314,7 @@ public class DatasetServiceImpl implements DatasetService {
 					setFieldSafely(fileNode, file::setName, JsonNode::asText, "name");
 					setFieldSafely(fileNode, file::setSize, JsonNode::asText, "size");
 					setFieldSafely(fileNode, file::setSourceUrl, JsonNode::asText, "sourceUrl");
+
 					files.add(file);
 				}
 			}

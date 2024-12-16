@@ -11,7 +11,8 @@
                         class="fa-2x mr-2 fas fa-map-marker-alt pinIcon"
                         [ngClass]="{'pinIconActive' : pinActive}">
                     </em>
-                        <b>{{datasetDetail?.title}}</b>
+                        <span *ngIf="datasetDetail?.title && datasetDetail?.title.length > 0"> <b>{{datasetDetail?.title}}</b> </span>
+                        <span *ngIf="!datasetDetail?.title || datasetDetail?.title.length == 0"> <b> This dataset currently has no title </b> </span>
                 </label>
             </label>
             <div *ngIf="datasetDetail.open" class="tab-content">
