@@ -60,7 +60,7 @@ public class DatasetServiceImpl implements DatasetService {
 	@Autowired
 	private SiteService siteService;
 
-    public DatasetsODTO filterAndSearchDataset(DivFilterDTO divFilterDTO) throws SimpleException, IOException {
+	public DatasetsODTO filterAndSearchDataset(DivFilterDTO divFilterDTO) throws SimpleException, IOException {
 		String url = InvenioData.BASE_URL;
 
         url = buildUrlWithParams(divFilterDTO, url);
@@ -108,6 +108,7 @@ public class DatasetServiceImpl implements DatasetService {
 
         return response;
 	}
+
 
     private String buildUrlWithParams(DivFilterDTO divFilterDTO, String url) {
         List<String> searchParameters = new ArrayList<>(); // for full text

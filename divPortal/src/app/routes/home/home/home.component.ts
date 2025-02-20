@@ -40,7 +40,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     map: Map;
     view: View = new View({
         projection: 'EPSG:3857',
-        zoom: 2
+        zoom: 2,
+        maxZoom: 20.5
     });
     mapHeight: number;
     extent;
@@ -273,13 +274,6 @@ export class HomeComponent implements OnInit, OnDestroy {
                         } else if (this.markedLayer?.code == 'sitesDataset') {
                             this.showAndOpenSiteDatasetDetails(id);
                         }
-                    } else if (feature.indexOf('station') > -1 && this.markedLayer?.code == 'station') {
-                        const id = feature.substring(8);
-                        this.offsidebarService.showStation({
-                            station: Number(id),
-                            action: 'showStation'
-                        });
-                        this.offsidebarOpen();
                     }
                 }
             });
@@ -471,7 +465,9 @@ export class HomeComponent implements OnInit, OnDestroy {
             if (layer?.layerVector != null && layer?.layerVector != undefined  && this.layers.indexOf(layer?.layerVector) == -1) {
                 this.layers.push(layer?.layerVector);
                 this.map.addLayer(layer?.layerVector);
-                this.fitMapToExtent(layer);
+                // if (!bbox) {
+                    // this.fitMapToExtent(layer); //TODO milica otkomentarisati ako zatreba za invenio
+                // }
             }
 
         } else if (action == 'turnOff') {
@@ -492,12 +488,12 @@ export class HomeComponent implements OnInit, OnDestroy {
         } 
 
         if (bbox) {
-            console.log(bbox)
             let loc1 = [bbox.minX, bbox.minY];
             let loc2 = [bbox.maxX, bbox.maxY];
             //@ts-ignore
             this.extent = new boundingExtent([loc1, loc2]);
             this.map.getView().fit(this.extent);
+            this.map.getView().setZoom(this.map.getView().getZoom() - 0.7);
         }
 
     } 

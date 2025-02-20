@@ -10,9 +10,15 @@ import java.util.List;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.geotools.geometry.jts.JTS;
+import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 import org.teiid.geo.GeometryTransformUtils;
 
 import com.ecosense.dto.BoundingBoxDTO;
@@ -89,5 +95,44 @@ public class Utils {
 	public static Integer getTotalPageNum(Integer totalElements, Integer numPerPage) {
 		return (totalElements + (numPerPage -1)) / numPerPage;
 	}
-	
+
+	/**
+	 * Transforms the coordinates from one EPSG (European Petroleum Survey Group) code to another.
+	 *
+	 * @param minX The minimum X coordinate value.
+	 * @param minY The minimum Y coordinate value.
+	 * @param maxX The maximum X coordinate value.
+	 * @param maxY The maximum Y coordinate value.
+	 * @param epsgSource The EPSG code of the source coordinate reference system.
+	 * @param epsgTarget The EPSG code of the target coordinate reference system.
+	 * @return An array of transformed coordinates [minX, minY, maxX, maxY].
+	 * @throws Exception if an error occurs during the transformation process.
+	 */
+	public static double[] transformEpsg(double minX, double minY, double maxX, double maxY, String epsgSource, String epsgTarget) {
+		try {
+			GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+			Point minPoint4326 = geometryFactory.createPoint(new Coordinate(minY, minX));
+			Point maxPoint4326 = geometryFactory.createPoint(new Coordinate(maxY, maxX));
+
+			CoordinateReferenceSystem crsSource = CRS.decode(epsgSource);
+			CoordinateReferenceSystem crsTarget = CRS.decode(epsgTarget);
+
+			MathTransform transform = CRS.findMathTransform(crsSource, crsTarget);
+
+			Coordinate minCoordTarget = new Coordinate();
+			Coordinate maxCoordTarget = new Coordinate();
+
+			JTS.transform(minPoint4326.getCoordinate(), minCoordTarget, transform);
+			JTS.transform(maxPoint4326.getCoordinate(), maxCoordTarget, transform);
+
+			return new double[]{
+				minCoordTarget.x, minCoordTarget.y,
+				maxCoordTarget.x, maxCoordTarget.y
+			};
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 }

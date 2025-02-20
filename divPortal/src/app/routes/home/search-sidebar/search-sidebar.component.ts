@@ -8,7 +8,6 @@ import { Fill, Icon, Stroke, Style, Text } from 'ol/style';
 import CircleStyle from 'ol/style/Circle';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import { DivFilterAndSearch } from 'src/app/shared/model/div-filter-and-search';
-import { FilterSiteIDTO } from 'src/app/shared/model/filter-site-ib';
 import { Habitat } from 'src/app/shared/model/habitat';
 import { Layer } from 'src/app/shared/model/layer';
 import { Site } from 'src/app/shared/model/site-db';
@@ -25,6 +24,7 @@ import { Dataset } from 'src/app/shared/model/dataset';
 import { DatasetDetailsListService } from '../dataset-details-list/dataset-details-list.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { BoundingBox } from 'src/app/shared/model/bounding-box-db';
 
 @Component({
   selector: 'app-search-sidebar',
@@ -160,6 +160,7 @@ export class SearchSidebarComponent implements OnInit {
 
     const responseSites = await this.sharedService.post('site/filterAndSearch', this.divFilter)
     this.sitesFiltered = responseSites.entity.sites;
+    const sitesBbox = responseSites.entity.boundingBox;
 
     let idSites = [];
     idSites = this.sitesFiltered?.map(site => site.id);
@@ -170,7 +171,7 @@ export class SearchSidebarComponent implements OnInit {
     });
 
     if (this.sitesFiltered && this.sitesFiltered.length > 0) {
-      this.createSitesLayer(this.siteLayer, this.sitesFiltered, 'site');
+      this.createSitesLayer(this.siteLayer, this.sitesFiltered, 'site', true, sitesBbox);
     } else {
       if (this.siteLayer && (this.offsidebarService.getLayerCodeForSidebar() == null || this.offsidebarService.getLayerCodeForSidebar() == 'search-sidebar')) {
         this.hideLayer(this.siteLayer);
@@ -273,7 +274,6 @@ export class SearchSidebarComponent implements OnInit {
       action: 'turnOff',
       bbox:  undefined
     }
-
     this.homeService.turnOnOffLayer(state);
     this.homeService.hideAllLayers();
   }
@@ -310,7 +310,6 @@ export class SearchSidebarComponent implements OnInit {
         action: 'turnOff',
         bbox:  undefined
       }
-
       this.homeService.turnOnOffLayer(stateOff);
 
       this.homeService.hideAllLayers();
@@ -329,7 +328,7 @@ export class SearchSidebarComponent implements OnInit {
     }
   }
 
-  async createSitesLayer(layer: Layer, sites: Site[], type: string, showLayer: boolean = true) {
+  async createSitesLayer(layer: Layer, sites: Site[], type: string, showLayer: boolean = true, bbox: BoundingBox = null) {
     const ids = sites?.map(s => s.id);
     const cql = 'id in (' + ids?.toString() + ')';
           
@@ -348,7 +347,6 @@ export class SearchSidebarComponent implements OnInit {
       }),
       visible: true,
     });
-
 
     const vectorSource =   new VectorSource({
       format: new GeoJSON(),
@@ -421,7 +419,7 @@ export class SearchSidebarComponent implements OnInit {
       const state = {
         layer: layer,
         action:  layer.showMap ? 'turnOn' : 'turnOff',
-        bbox:  layer.showMap  ? layer.bbox : undefined
+        bbox:  layer.showMap  ? bbox : undefined // TODO milica - layer.bbox
       }
 
       if (showLayer) {

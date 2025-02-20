@@ -6,7 +6,6 @@ import com.ecosense.exception.SimpleException;
 import com.ecosense.service.EbvService;
 import com.ecosense.service.LayerService;
 import com.ecosense.service.SiteService;
-import com.ecosense.service.SosApiService;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,9 +25,6 @@ public class ScheduledReadingData {
 	private SiteService siteService;
 	
 	@Autowired
-	private SosApiService sosApiService;
-	
-	@Autowired
 	private EbvService ebvService;
 	
 	@Autowired
@@ -39,18 +35,6 @@ public class ScheduledReadingData {
 		try {
 			log.info("The time before refreshDatabase", dateFormat.format(new Date()));
 			siteService.refreshDatabase();
-			log.info("The time after refreshDatabase", dateFormat.format(new Date()));
-		} catch (SimpleException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	@Scheduled(cron = "0 0 1 * * ?")  // svaki dan u 1am
-	public void refreshSOS() {
-		try {
-			log.info("The time before refreshDatabase", dateFormat.format(new Date()));
-			sosApiService.refreshDB();
 			log.info("The time after refreshDatabase", dateFormat.format(new Date()));
 		} catch (SimpleException e) {
 			// TODO Auto-generated catch block

@@ -2,10 +2,6 @@ import { Router, NavigationEnd } from '@angular/router';
 import { SettingsService } from './../../../core/settings/settings.service';
 import { Subscription } from 'rxjs';
 import { OffsidebarService } from './../../../layout/offsidebar/offsidebar.service';
-import { Station } from './../../../shared/model/station-db';
-import { FilterStationIDTO } from './../../../shared/model/filter-station-ib';
-import { SosPath } from './../../../shared/model/sos-path-db';
-import { Phenomenon } from './../../../shared/model/phenomenon-db';
 import { SharedService } from './../../../shared/service/shared.service';
 import { FilterSiteIDTO } from './../../../shared/model/filter-site-ib';
 import { CountryDTO } from './../../../shared/model/country-db';
@@ -22,7 +18,7 @@ import VectorLayer from 'ol/layer/Vector';
 import Cluster from 'ol/source/Cluster';
 import { Circle as CircleStyle, Fill, Stroke, Style, Icon, Text } from 'ol/style';
 import GeoJSON from 'ol/format/GeoJSON.js';
-import { tmpdir } from 'os';
+import { BoundingBox } from 'src/app/shared/model/bounding-box-db';
 
 @Component({
   selector: 'app-layers-sidebar',
@@ -38,12 +34,7 @@ export class LayersSidebarComponent implements OnInit {
   countries: CountryDTO[];
   activities: ActivityDTO[];
 
-  stations: Station[];
-  stationShowFilter: boolean;
-  phenomenons: Phenomenon[];
-  stationFilterDTO: FilterStationIDTO = new FilterStationIDTO();
-  usedPhenomenonsLabelEnFilter: string[] = [];
-  sosPaths: SosPath[];
+  sitesBbox: BoundingBox;
 
   allLayers: Layer[];
 
@@ -121,18 +112,13 @@ export class LayersSidebarComponent implements OnInit {
   async readSites() {
     const response  = await this.sharedService.post('site/filter', this.siteFilterDTO);
     this.sites = response.entity.sites;
-  }
-
-  async readStations() {
-    const response = await this.sharedService.post('sos/filter', this.stationFilterDTO);
-    this.stations = response.entity.stations;
+    this.sitesBbox = response.entity.boundingBox;
   }
 
   async readCodebook() {
     await this.readSites();
     await this.readLayers();
     this.readSelectedLayers();
-    this.readStations();
 
     const response = await this.sharedService.get('site/getAllCountries');
     this.countries = response.entity;
@@ -142,12 +128,6 @@ export class LayersSidebarComponent implements OnInit {
 
     const response2 = await this.sharedService.get('site/getAllTitles');
     this.titles = response2.entity;
-
-    const response3 = await this.sharedService.get('sos/getAllSosPath');
-    this.sosPaths = response3.entity;
-
-    const response4 = await this.sharedService.get('sos/allPhenomenons');
-    this.phenomenons = response4.entity;
 
   }
 
@@ -163,11 +143,6 @@ export class LayersSidebarComponent implements OnInit {
   async readLayers() {
     const response = await this.layersService.getLayers(['global'], '');
     this.allLayers = response.entity;
-
-    const resp3 = await this.layersService.getLayers(['special'], 'station');
-    const stationLayer = resp3.entity[0];
-    this.allLayers = [stationLayer].concat(this.allLayers);
-
 
     const resp2 = await this.layersService.getLayers(['special'], 'sites');
     const siteLayer = resp2.entity[0];
@@ -219,8 +194,6 @@ export class LayersSidebarComponent implements OnInit {
       if (layer.layerTile == null || layer.layerTile == undefined) {
         if (layer.code == 'sites') {
           this.createSitesLayer(layer);
-        } else if (layer.code == 'station' && (layer.layerVector == undefined || layer.layerVector == null)) {
-          this.createStationsLayer(layer);
         } else {
           layer.layerTile = new TileLayer({
             source: new TileWMS({
@@ -280,30 +253,6 @@ export class LayersSidebarComponent implements OnInit {
       this.homeService.turnOnOffLayer(state);
 
       this.refreshZIndex();
-  }
-
-  async createStationsLayer(layer: Layer) {
-    if (!this.stations || this.stations.length == 0) {
-      return;
-    }
-
-    const ids = this.stations.map(station => station.id);
-    if (ids) {
-      const cql = 'id in (' + ids.toString() + ')';
-
-      const vectorLayer = new VectorLayer({
-        source: new VectorSource({
-          format: new GeoJSON(),
-          url: layer.geoUrlWfs + "&CQL_FILTER=" + cql
-        }),
-        style: new Style({
-                image: new Icon({
-                  src: 'assets/img/map/marker-blue.png',
-                }),
-            })
-      });
-      layer.layerVector = vectorLayer;
-    }
   }
 
   async createSitesLayer(layer: Layer) {
@@ -477,33 +426,12 @@ export class LayersSidebarComponent implements OnInit {
     const state2 = {
       layer:  layer,
       action: 'turnOn',
-      bbox: layer.bbox
+      bbox: this.sitesBbox
+      // bbox: layer.bbox //. TODO milica - nije radio bbox za poligon (samo za tacku) za filter layer-a
     }
     this.homeService.turnOnOffLayer(state2);
 
     layer.showMap = true;
-  }
-
-  async btn_fiterStations(layer: Layer) {
-    const state = {
-      layer:  layer,
-      action: 'turnOff'
-    }
-    this.homeService.turnOnOffLayer(state);
-
-    await this.readStations();
-
-    await this.createStationsLayer(layer);
-
-    const state2 = {
-      layer:  layer,
-      action: 'turnOn',
-      bbox: layer.bbox
-    }
-    this.homeService.turnOnOffLayer(state2);
-
-    layer.showMap = true;
-
   }
 
   dropSuccess(): void {
@@ -542,7 +470,5 @@ export class LayersSidebarComponent implements OnInit {
       return 'far fa-circle mt-1';
     }
   }
-
-
 
 }

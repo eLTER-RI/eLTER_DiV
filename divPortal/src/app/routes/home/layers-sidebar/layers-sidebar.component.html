@@ -89,44 +89,6 @@
                     </div>
                 </div>
 
-                <div [hidden]="!(layer.showFilter && layer.code == 'station')">
-                    <label class="ml-2 mb-0 mt-1">Provider</label>
-
-                    <ng-select [clearable]="true" class="ml-1 mr-2" [items]="sosPaths"
-                        [(ngModel)]="stationFilterDTO.sosPathUrls" name="sosPaths"
-                        bindLabel="title" bindValue="url"
-                        [multiple]="true">
-            
-                        <ng-template ng-label-tmp let-item="item">
-                            {{item.title}}
-                        </ng-template>
-                        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
-                            {{item.title}}
-                        </ng-template>
-                    </ng-select>
-            
-                    <label class="ml-2 mb-0 mt-1">Phenomenon</label>
-                    <ng-select [clearable]="true" class="ml-1 mr-2 auto-grow" [items]="phenomenons"
-                        [(ngModel)]="stationFilterDTO.phenomenonsLabels" name="phenomenons"
-                        bindLabel="label" bindValue="label"
-                        [multiple]="true">
-            
-                        <ng-template ng-label-tmp let-item="item">
-                            {{item.label}}
-                        </ng-template>
-                        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
-                            <span title="{{item.label}}">{{item.label}}</span>
-                        </ng-template>
-                    </ng-select>
-            
-                    <div class="text-right mr-1 mt-3">
-                        <button class="d-inline mb-2 btn btn-sm bg-orange btn-xs"
-                            (click)="btn_fiterStations(layer)">
-                            <em class="fa fas fa-search"></em>
-                            Filter
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
 

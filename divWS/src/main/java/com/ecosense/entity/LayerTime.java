@@ -37,6 +37,11 @@ public class LayerTime implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
+	public LayerTime(Layer layer, String availableTime) {
+		this.layer = layer;
+		this.availableTime = availableTime;
+	}
+
 	public Integer getId() {
 		return id;
 	}

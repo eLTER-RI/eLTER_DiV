@@ -31,6 +31,7 @@ import com.ecosense.dto.output.SiteDetailsODTO;
 import com.ecosense.dto.output.SiteODTO;
 import com.ecosense.dto.output.SitesODTO;
 import com.ecosense.entity.Activity;
+import com.ecosense.entity.BoundingBox;
 import com.ecosense.entity.Country;
 import com.ecosense.entity.Site;
 import com.ecosense.exception.SimpleException;
@@ -288,9 +289,10 @@ public class SiteServiceImpl implements SiteService {
 	@Override
 	public SitesODTO filterSites(FilterSiteIDTO filterSiteIDTO) throws SimpleException, IOException {
 		SitesODTO response = new SitesODTO();
+
+		BoundingBoxDTO boundingBox = new BoundingBoxDTO(Double.MAX_VALUE, Double.MAX_VALUE, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 		
 		List<Object[]> sitesFromDB = siteRepo.filterSites(filterSiteIDTO);
-		
 		List<SiteODTO> sites = new ArrayList<>();
 		
 		
@@ -303,10 +305,28 @@ public class SiteServiceImpl implements SiteService {
 			double lat = point.getCoordinate().y;
 			siteDTO.setPoint(new PointDTO(lat, lng));
 			
+
+			Geometry polygon  = (Geometry) site[2];
+
+			StringWriter writer = new StringWriter();
+			GeoJsonWriter geoJsonWriter = new GeoJsonWriter();
+			geoJsonWriter.write(polygon, writer);
+			
+			double[] minMaxPoints = Utils.transformEpsg(polygon.getEnvelopeInternal().getMinX(), polygon.getEnvelopeInternal().getMinY(), 
+														polygon.getEnvelopeInternal().getMaxX(), polygon.getEnvelopeInternal().getMaxY(), 
+														"EPSG:4326", "EPSG:3857");
+			if (minMaxPoints == null) {
+				continue;
+			}
+			BoundingBoxDTO siteBbox = new BoundingBoxDTO(minMaxPoints[0], minMaxPoints[1], minMaxPoints[2], minMaxPoints[3]);
+			
+			boundingBox = Utils.setBB(siteBbox, boundingBox);
+
 			sites.add(siteDTO);
 		}
 
 		response.setSites(sites);
+		response.setBoundingBox(boundingBox);
 		return response;
 	}
 
@@ -392,8 +412,14 @@ public class SiteServiceImpl implements SiteService {
 				geoJsonWriter.write(polygon, writer);
 				String polygonJson = writer.toString();
 				
-				BoundingBoxDTO siteBbox = new BoundingBoxDTO(polygon.getEnvelopeInternal().getMinX(), polygon.getEnvelopeInternal().getMinY(),
-						polygon.getEnvelopeInternal().getMaxX(), polygon.getEnvelopeInternal().getMaxY());
+				
+				double[] minMaxPoints = Utils.transformEpsg(polygon.getEnvelopeInternal().getMinX(), polygon.getEnvelopeInternal().getMinY(), 
+															polygon.getEnvelopeInternal().getMaxX(), polygon.getEnvelopeInternal().getMaxY(), 
+															"EPSG:4326", "EPSG:3857");
+				if (minMaxPoints == null) {
+					continue;
+				}
+				BoundingBoxDTO siteBbox = new BoundingBoxDTO(minMaxPoints[0], minMaxPoints[1], minMaxPoints[2], minMaxPoints[3]);
 				
 				siteDTO.setPolygon(new PolygonDTO(polygonJson, siteBbox, isPoygon));
 				

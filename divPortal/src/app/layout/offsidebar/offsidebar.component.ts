@@ -32,9 +32,6 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
     ebvs?: EbvDB[];
     ebvSubscription: Subscription;
 
-    stationId?: number;
-    stationSubscription: Subscription;
-
     html: any;
     htmlSubscription: Subscription;
 
@@ -70,11 +67,6 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
                 this.showDatasets(datasets.datasets);
             }
         });
-        this.stationSubscription = this.offsidebarService.currStation.subscribe( station => {
-            if (station && station.action == 'showStation') {
-                this.showStation(station.station);
-            }
-        });
         this.htmlSubscription = this.offsidebarService.htmlObservable.subscribe( info => {
             if (info && info.action == 'showHTML') {
                 this.showHtml(info.html);
@@ -98,7 +90,6 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
         delete this.ebvs;
         delete this.siteIds;
         delete this.datasets;
-        delete this.stationId;
         delete this.html;
 
         this.homeService.actionChanged({
@@ -114,7 +105,6 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
         delete this.showHideLayers;
         delete this.siteIds;
         delete this.datasets;
-        delete this.stationId;
         delete this.html;
 
         this.homeService.actionChanged({
@@ -132,7 +122,6 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
 
         delete this.showHideLayers;
         delete this.ebvs;
-        delete this.stationId;
         delete this.html;
     }
 
@@ -143,19 +132,6 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
         }
 
         delete this.showHideLayers;
-        delete this.ebvs;
-        delete this.stationId;
-        delete this.html;
-    }
-
-    showStation(station) {
-        this.stationId = station;
-
-        this.visibleTab = null;
-
-        delete this.showHideLayers;
-        delete this.siteIds;
-        delete this.datasets;
         delete this.ebvs;
         delete this.html;
     }
@@ -173,7 +149,6 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
         this.openOffsidebar();
 
         delete this.ebvs;
-        delete this.stationId;
         delete this.siteIds;
     }
 
@@ -192,7 +167,6 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.ebvSubscription.unsubscribe();
         this.sitesSubscription.unsubscribe();
-        this.stationSubscription.unsubscribe();
         this.htmlSubscription.unsubscribe();
     }
 }

@@ -63,9 +63,15 @@ public class Layer implements Serializable {
 	
 	@Column(name="time_tmp_column")
 	private String time;
+
+	@Column(name="abstract")
+	private String abstractStr;
 	
 	@Column(name="active")
 	private Boolean active;
+
+	@Column(name="site_uuid")
+	private String siteUuid;
 
 	@OneToMany(mappedBy = "layer")
 	private List<LayerTime> layerTimes;
@@ -184,6 +190,14 @@ public class Layer implements Serializable {
 		this.active = active;
 	}
 
+	public String getAbstract() {
+		return abstractStr;
+	}
+
+	public void setAbstract(String abstractStr) {
+		this.abstractStr = abstractStr;
+	}
+
 	public List<LayerTime> getLayerTimes() {
 		return layerTimes;
 	}
@@ -232,5 +246,12 @@ public class Layer implements Serializable {
 		this.boundingBox = boundingBox;
 	}
 
+	public String getSiteUuid() {
+		return siteUuid;
+	}
+	
+	public void setSiteUuid(String siteUuid) {
+		this.siteUuid = siteUuid;
+	}
 	
 }

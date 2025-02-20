@@ -3,6 +3,7 @@
 <div *ngIf="markedLayer?.geoUrlLegend" style="flex-direction: column;" class="form-row m-0 p-1 legend" malihu-scrollbar [scrollbarOptions]="scrollbarOptionsLegend">
     <div>
         <img *ngIf="urlMarkedLayerLegend && !showBiggerZoom" [src]="urlMarkedLayerLegend | safe"/>
+        <img *ngIf="urlMarkedLayerLegend && !urlMarkedLayerLegendBiggerZoom && showBiggerZoom" [src]="urlMarkedLayerLegend | safe"/>
         <img *ngIf="urlMarkedLayerLegendBiggerZoom && showBiggerZoom" [src]="urlMarkedLayerLegendBiggerZoom | safe"/>
     </div>
 </div>

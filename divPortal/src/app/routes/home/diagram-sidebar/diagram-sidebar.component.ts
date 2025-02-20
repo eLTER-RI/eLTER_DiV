@@ -1,6 +1,5 @@
 import { Router, NavigationEnd } from '@angular/router';
 import { DiagramService } from './../diagram/diagram.service';
-import { ChartDetails } from './../../../shared/model/chartDetails';
 import { DiagramTimeseries } from './../../../shared/model/diagram-timeseries';
 import { Component, OnInit } from '@angular/core';
 
@@ -96,4 +95,5 @@ export class DiagramSidebarComponent implements OnInit {
     sessionStorage.setItem('diagramTimeseries', JSON.stringify(this.timeseries));
     this.router.navigate(['/home']);
   }
+
 }

@@ -158,44 +158,6 @@ public class SosApiRepoImpl implements SosApiRepo {
 			
 		return procedures;
 	}
-	
-	@Override
-	public List<Station> getStations(SosPath sosPath) {
-		List<Station> stations = new ArrayList<>();
-		JsonNode stationsNode = null;
-		
-		try {
-			ResponseEntity<JsonNode> stationsResponse = restTemplate.exchange(sosPath.getUrl() + SOSData.STATIONS_SUFFIX, HttpMethod.GET, null, JsonNode.class);
-			stationsNode = stationsResponse.getBody();			
-		} catch (Exception e) {
-			System.out.println(sosPath.getUrl() + SOSData.STATIONS_SUFFIX + " <- SERVIS KOJI PUKNE");
-			return stations;
-		}
-		GeometryFactory gf = new GeometryFactory();
-		
-		for (JsonNode stationFromApi : stationsNode) {
-			Station stationDB = new Station();
-			stationDB.setSosId(stationFromApi.get("id").asInt());
-			stationDB.setTitle(stationFromApi.get("properties").get("label").asText());
-			
-			JsonNode geometry = stationFromApi.get("geometry");
-			if (geometry.get("type").asText().equals("Point")) {
-	    		List<Double> coordinates = new ArrayList<>();
-	    		for (JsonNode coordinate : geometry.get("coordinates")) {
-	    			coordinates.add(coordinate.asDouble());
-	    		}
-	    		Geometry g = gf.createPoint(new Coordinate(coordinates.get(0), coordinates.get(1)));
-	    		stationDB.setPoint(g);
-	    	}
-			
-			ResponseEntity<JsonNode> featureResponse = restTemplate.exchange(sosPath.getUrl() + SOSData.FEAUTRE_SUFFIX + stationDB.getSosId() , HttpMethod.GET, null, JsonNode.class);
-			JsonNode featureNode = featureResponse.getBody();
-			stationDB.setFeatureOfInterest(featureNode.get("domainId").asText());
-			stationDB.setSosPath(sosPath);
-			stations.add(stationDB);
-		}
-		return stations;
-	}
 			
 	@Override
 	public MeasurementsODTO getMeasurements(TimeSeries timeSeries, Date dateFrom, Date dateTo) {

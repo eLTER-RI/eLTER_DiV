@@ -1,10 +1,8 @@
 package com.ecosense.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -16,20 +14,14 @@ import com.ecosense.dto.BoundingBoxDTO;
 import com.ecosense.dto.PointDTO;
 import com.ecosense.dto.SimpleResponseDTO;
 import com.ecosense.dto.TimeSeriesDTO;
-import com.ecosense.dto.input.FilterStationIDTO;
 import com.ecosense.dto.input.MeasurementIDTO;
 import com.ecosense.dto.input.TimeseriesIDTO;
 import com.ecosense.dto.output.MeasurementODTO;
 import com.ecosense.dto.output.MeasurementsODTO;
 import com.ecosense.dto.output.PhenomenonODTO;
-import com.ecosense.dto.output.SosPathODTO;
-import com.ecosense.dto.output.StationODTO;
 import com.ecosense.dto.output.StationTimeSeriesODTO;
-import com.ecosense.dto.output.StationsODTO;
 import com.ecosense.dto.output.TimeSeriesPhenomenonODTO;
 import com.ecosense.entity.Phenomenon;
-import com.ecosense.entity.Procedure;
-import com.ecosense.entity.SosPath;
 import com.ecosense.entity.Station;
 import com.ecosense.entity.TimeSeries;
 import com.ecosense.exception.SimpleException;
@@ -37,7 +29,6 @@ import com.ecosense.repository.PhenomenonJpaRepo;
 import com.ecosense.repository.ProcedureJpaRepo;
 import com.ecosense.repository.SosApiRepo;
 import com.ecosense.repository.SosPathRepo;
-import com.ecosense.repository.StationJpaRepo;
 import com.ecosense.repository.TimeseriesJpaRepo;
 import com.ecosense.service.SosApiService;
 import com.ecosense.utils.Utils;
@@ -54,9 +45,6 @@ public class SosApiServiceImpl implements SosApiService {
 	SosPathRepo sosPathRepo;
 	
 	@Autowired
-	StationJpaRepo stationRepo;
-	
-	@Autowired
 	TimeseriesJpaRepo timeseriesRepo;
 	
 	@Autowired
@@ -64,180 +52,6 @@ public class SosApiServiceImpl implements SosApiService {
 	
 	@Autowired
 	ProcedureJpaRepo procedureRepo;
-
-	@Override
-	public StationsODTO getStations() throws SimpleException {
-		StationsODTO resultODTO = new StationsODTO();
-		List<Station> stations = stationRepo.findAll();
-		List<StationODTO> stationsDTO = new ArrayList<>();
-		
-		BoundingBoxDTO boundingBox = new BoundingBoxDTO(Double.MAX_VALUE, Double.MAX_VALUE, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
-		
-		for (Station station : stations) {
-			StationODTO stationDTO = new StationODTO();
-			stationDTO.setId(station.getId());
-			stationDTO.setName(station.getTitle());
-			
-			Point point = (Point) station.getPoint();
-			BoundingBoxDTO stationBbox = new BoundingBoxDTO(point.getEnvelopeInternal().getMinX(), point.getEnvelopeInternal().getMinY(),
-					point.getEnvelopeInternal().getMaxX(), point.getEnvelopeInternal().getMaxY());
-			double lng = point.getCoordinate().x;
-			double lat = point.getCoordinate().y;
-			stationDTO.setPoint(new PointDTO(lat, lng, stationBbox));
-		
-			boundingBox = Utils.setBB(stationBbox, boundingBox);
-			
-			stationsDTO.add(stationDTO);
-		}
-		resultODTO.setStations(stationsDTO);
-		resultODTO.setBoundingBox(boundingBox);
-		return resultODTO;
-	}
-
-	@Override
-	public List<StationTimeSeriesODTO> getStationTimeSeries(Integer stationId) throws SimpleException {
-		return null;
-	}
-	
-	@Override
-	public void insertIntoDB(Integer id) throws SimpleException {
-		Optional<SosPath> sosPath = sosPathRepo.findById(id);
-		
-		if (sosPath.isEmpty()) {
-			throw new SimpleException(SimpleResponseDTO.DATA_NOT_EXIST);
-		}
-		
-		List<Procedure> procedures = sosApiRepo.getProcedures(sosPath.get().getUrl());
-		for (Procedure procedure : procedures) {
-			procedureRepo.saveAndFlush(procedure);
-		}
-		
-		List<Phenomenon> phenomenons = sosApiRepo.getPhenomenons(sosPath.get().getUrl());
-		for(Phenomenon phenomenon : phenomenons) {
-			phenomenonRepo.saveAndFlush(phenomenon);
-		}
-		
-		List<Station> stations = sosApiRepo.getStations(sosPath.get());
-		for(Station station : stations) {
-			stationRepo.saveAndFlush(station);
-		}
-		
-		List<TimeSeries> timeSeries = sosApiRepo.getTimeSeries(sosPath.get().getUrl());
-		for(TimeSeries ts : timeSeries) {
-			List<Procedure> procedure = procedureRepo.getBySosIdAndLabel(ts.getProcedure().getSosId(), ts.getProcedure().getLabel());
-			List<Phenomenon> phenomenon = phenomenonRepo.getBySosIdAndLabel(ts.getPhenomenon().getSosId(),ts.getPhenomenon().getLabel());
-			List<Station> station = stationRepo.getBySosId(ts.getStation().getSosId(), id);
-			
-			ts.setPhenomenon(phenomenon.get(0));
-			ts.setProcedure(procedure.get(0));
-			ts.setStation(station.get(0));
-			
-			timeseriesRepo.saveAndFlush(ts);
-		}
-		
-	}
-	
-	@Override
-	public void refreshDB() throws SimpleException {
-		List<SosPath> sosPaths = sosPathRepo.findAllActive();
-		for (SosPath sosPath : sosPaths) {
-			System.out.println("-----------------------");
-			System.out.println("Sync for: " + sosPath.getUrl());
-			System.out.println("-----------------------");
-
-			List<Phenomenon> phenomenonsFromDB = phenomenonRepo.getBySosId(sosPath.getId());
-			for(Phenomenon ph : phenomenonsFromDB) {
-				phenomenonRepo.delete(ph);
-			}
-			List<Phenomenon> phenomenons = sosApiRepo.getPhenomenons(sosPath.getUrl());
-			for (Phenomenon phenomenon : phenomenons) {
-				phenomenonRepo.saveAndFlush(phenomenon);
-			}
-			
-			
-			List<Procedure> proceduresFromDB = procedureRepo.getBySosId(sosPath.getId());
-			for (Procedure pr : proceduresFromDB) {
-				procedureRepo.delete(pr);
-			}
-			List<Procedure> procedures = sosApiRepo.getProcedures(sosPath.getUrl());
-			for (Procedure procedure : procedures) {
-				procedureRepo.saveAndFlush(procedure);
-			}
-			
-			
-			List<Station> stationsFromDB = stationRepo.findStationBySosPathId(sosPath.getId());
-			for(Station s : stationsFromDB) {
-				stationRepo.delete(s);
-			}
-			List<Station> stations = sosApiRepo.getStations(sosPath);
-			for (Station station : stations) {
-				stationRepo.saveAndFlush(station);
-			}
-			
-			
-			
-			List<TimeSeries> timeSeries = sosApiRepo.getTimeSeries(sosPath.getUrl());
-			for (TimeSeries ts : timeSeries) {
-				Procedure procedure = procedureRepo.getBySosIdAndLabel(ts.getProcedure().getSosId(),ts.getProcedure().getLabel()).get(0);
-				Phenomenon phenomenon = phenomenonRepo.getBySosIdAndLabel(ts.getPhenomenon().getSosId(),ts.getPhenomenon().getLabel()).get(0);
-				Station station  = stationRepo.getBySosId(ts.getStation().getSosId(), sosPath.getId()).get(0);
-				
-				ts.setPhenomenon(phenomenon);
-				ts.setProcedure(procedure);
-				ts.setStation(station);
-				
-				timeseriesRepo.saveAndFlush(ts);
-			}
-		}
-	}
-	
-	@Override
-	public List<SosPathODTO> getSosPaths() throws SimpleException {
-		List<SosPath> sosPaths = sosPathRepo.findAll();
-		List<SosPathODTO> sosPathsDTO = new ArrayList<>();
-		
-		for (SosPath sosPath : sosPaths) {
-			SosPathODTO sosPathDTO = new SosPathODTO();
-			sosPathDTO.setId(sosPath.getId());
-			sosPathDTO.setUrl(sosPath.getUrl());
-			sosPathDTO.setTitle(sosPath.getTitle());
-			
-			sosPathsDTO.add(sosPathDTO);
-		}
-		return sosPathsDTO;
-	}
-	
-	@Override
-	public StationsODTO filterStations(FilterStationIDTO filterStationIDTO) throws SimpleException {
-		StationsODTO result = new StationsODTO();
-		
-		List<Station> stationsFromDB = stationRepo.filterStations(filterStationIDTO);
-		List<StationODTO> stationsDTO = new ArrayList<>();
-		
-		BoundingBoxDTO currentBB = new BoundingBoxDTO(Double.MAX_VALUE, Double.MAX_VALUE, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
-		for (Station station : stationsFromDB) {
-			StationODTO stationDTO = new StationODTO();
-			stationDTO.setId(station.getId());
-			stationDTO.setName(station.getTitle());
-			
-			Point point = (Point) station.getPoint();
-
-			BoundingBoxDTO bbox = new BoundingBoxDTO(point.getEnvelopeInternal().getMinX(), point.getEnvelopeInternal().getMinY(),
-					point.getEnvelopeInternal().getMaxX(), point.getEnvelopeInternal().getMaxY());
-			
-			double lng = point.getCoordinate().x;
-			double lat = point.getCoordinate().y;
-			stationDTO.setPoint(new PointDTO(lat, lng, bbox));
-			
-			currentBB = Utils.setBB(bbox, currentBB);
-			
-			stationsDTO.add(stationDTO);
-		}
-		
-		result.setStations(stationsDTO);
-		result.setBoundingBox(stationsDTO.isEmpty() ? null : currentBB);
-		return result;
-	}
 	
 	@Override
 	public List<MeasurementsODTO> getMeasurements(List<MeasurementIDTO> measurementsIDTO) throws SimpleException {
@@ -299,7 +113,7 @@ public class SosApiServiceImpl implements SosApiService {
 		}
 		
 		StationTimeSeriesODTO stationTimeSeriesODTO = new StationTimeSeriesODTO();
-		Station station = stationRepo.getOne(timeseriesIDTO.getStationId());
+		Station station = null;//stationRepo.getOne(timeseriesIDTO.getStationId());
 		
 		if (station == null) {
 			throw new SimpleException(SimpleResponseDTO.DATA_NOT_EXIST);

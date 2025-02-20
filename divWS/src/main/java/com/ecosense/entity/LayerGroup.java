@@ -5,11 +5,12 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 
 @Entity
@@ -18,6 +19,8 @@ public class LayerGroup implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@SequenceGenerator(name="LAYER_GROUP_ID_GENERATOR", sequenceName="LAYER_GROUP_ID_SEQ", allocationSize = 1)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="LAYER_GROUP_ID_GENERATOR")
 	private Integer id;
 	
 	@Column(name="name")
@@ -40,6 +43,11 @@ public class LayerGroup implements Serializable {
 
 	public LayerGroup() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public LayerGroup(String name, String iconClass) {
+		this.name = name;
+		this.iconClass = iconClass;
 	}
 
 	public Integer getId() {

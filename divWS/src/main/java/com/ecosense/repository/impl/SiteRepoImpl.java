@@ -86,7 +86,7 @@ public class SiteRepoImpl implements SiteRepo {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Object[]> filterSites(FilterSiteIDTO filterIDTO) {
-		StringBuilder querySB = new StringBuilder("SELECT distinct s.id, s.point FROM Site s  ");
+		StringBuilder querySB = new StringBuilder("SELECT distinct s.id, s.point, s.polygon FROM Site s  ");
 		
 		if (filterIDTO.getActivitiesId() != null && !filterIDTO.getActivitiesId().isEmpty()) {
 			querySB.append("LEFT JOIN s.activities a ");

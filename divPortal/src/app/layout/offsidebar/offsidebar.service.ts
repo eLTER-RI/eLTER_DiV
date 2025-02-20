@@ -19,9 +19,6 @@ export class OffsidebarService {
   private siteOpenDetailsBehaviorSubject = new BehaviorSubject<any>(undefined);
   currOpenSite = this.siteOpenDetailsBehaviorSubject.asObservable();
 
-  private stationDetailsBehaviorSubject = new BehaviorSubject<any>(undefined);
-  currStation = this.stationDetailsBehaviorSubject.asObservable();
-
   private showAllLayersBehaviorSubject = new BehaviorSubject<any>(undefined);
   showLayers = this.showAllLayersBehaviorSubject.asObservable();
 
@@ -67,10 +64,6 @@ export class OffsidebarService {
 
   openSite(site) {
     this.siteOpenDetailsBehaviorSubject.next(site);
-  }
-
-  showStation(station) {
-    this.stationDetailsBehaviorSubject.next(station);
   }
 
   showAllLayers(state) {

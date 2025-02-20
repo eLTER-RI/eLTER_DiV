@@ -31,10 +31,6 @@
     <app-dataset-details-list [datasets]="datasets" [page]="datasetPage"></app-dataset-details-list> 
 </div>
 
-<div *ngIf="stationId">
-    <app-station-details [stationId]="stationId" ></app-station-details>
-</div>
-
 <div *ngIf="html" class="m-4">
     <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(html)" class="m-1"></div>
 </div>
