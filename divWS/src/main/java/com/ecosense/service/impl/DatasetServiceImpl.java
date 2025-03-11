@@ -452,10 +452,14 @@ public class DatasetServiceImpl implements DatasetService {
 
 			JsonNode titles = metadataNode.get("titles");
 			if (titles != null) {
-				for (JsonNode titleNode : titles) {
-					if (titleNode.get("titleLanguage") != null && titleNode.get("titleLanguage").asText().equals("eng")) {
-						setFieldSafely(titleNode, dataset::setTitle, JsonNode::asText, "titleText");
-						break;
+				if (titles.size() == 1) {
+					setFieldSafely(titles.get(0), dataset::setTitle, JsonNode::asText, "titleText");
+				} else {
+					for (JsonNode titleNode : titles) {
+						if (titleNode.get("titleLanguage") != null && titleNode.get("titleLanguage").asText().toUpperCase().contains("ENG")) {
+							setFieldSafely(titleNode, dataset::setTitle, JsonNode::asText, "titleText");
+							break;
+						}
 					}
 				}
 			}
