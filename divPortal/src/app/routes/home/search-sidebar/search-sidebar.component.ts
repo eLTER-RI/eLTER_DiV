@@ -87,7 +87,7 @@ export class SearchSidebarComponent implements OnInit {
     this.paginationRefreshSubscription = this.datasetDetailsListService.paginationObservable.subscribe( event => {
       if (event && event.page) {
         this.pageForDatasetSite = event.page;
-        this.filterAndSearchDataset(false, true);
+        this.filterAndSearchDataset(null, true);
       }
     });
 
@@ -105,14 +105,13 @@ export class SearchSidebarComponent implements OnInit {
         }
         this.divFilter = new DivFilterAndSearch();
         this.divFilter.siteIds = [obj.searchParam];
-        this.filterAndSearchDataset();
+        this.filterAndSearchDataset(null);
       }
     });
 
     this.clearDatasetsAndSitesSubscription = this.offsidebarService.clearSitesAndDatasetsObservable.subscribe( obj => {
-      this.searchReset();
-      this.filterReset();
-      this.filterAndSearch(null);
+      this.searchReset(false);
+      this.filterReset(false);
     });
 
   }
@@ -138,25 +137,27 @@ export class SearchSidebarComponent implements OnInit {
 
   async filterAndSearch(type: string) {
     if (type == 'filter') {
-      this.searchReset();
+      this.searchReset(false);
     } else if (type == 'search') {
-      this.filterReset();
+      this.filterReset(false);
     }
 
     this.pageForDatasetSite.currentPage = 1;
 
     this.divFilter.siteIds = [];
 
-    let searchEmpty = !type;
-    this.filterAndSearchSite(searchEmpty);
-    this.filterAndSearchDataset(searchEmpty);
+    if (this.isDivFilterEmpty(type)) {
+      let typeForMessage = type == 'filter' ? 'Filter' : 'Search';
+      this.toastrService.warning(this.translateService.instant(typeForMessage + " criteria is empty"), "Warning"); 
+    }
+
+    this.filterAndSearchSite(type);
+    this.filterAndSearchDataset(type);
   }
 
   // search site
-  async filterAndSearchSite(searchEmpty: boolean = false) {
-    if (!searchEmpty) {
-      this.hideLayer(this.siteLayer);
-    }
+  async filterAndSearchSite(type: string) {
+    this.hideLayer(this.siteLayer);
 
     const responseSites = await this.sharedService.post('site/filterAndSearch', this.divFilter)
     this.sitesFiltered = responseSites.entity.sites;
@@ -165,10 +166,12 @@ export class SearchSidebarComponent implements OnInit {
     let idSites = [];
     idSites = this.sitesFiltered?.map(site => site.id);
 
-    this.offsidebarService.showSites({
-      action: 'showSites',  
-      sites: idSites,
-    });
+    if (!this.isDivFilterEmpty(type)) {
+      this.offsidebarService.showSites({
+        action: 'showSites',  
+        sites: idSites,
+      });
+    }
 
     if (this.sitesFiltered && this.sitesFiltered.length > 0) {
       this.createSitesLayer(this.siteLayer, this.sitesFiltered, 'site', true, sitesBbox);
@@ -178,13 +181,13 @@ export class SearchSidebarComponent implements OnInit {
       }
     }
 
-    if (!searchEmpty) {
+    if (!this.isDivFilterEmpty(type)) {
       this.offsidebarOpen();
     }
   }
 
   // search dataset invenio
-  async filterAndSearchDataset(searchEmpty: boolean = false, paginationSearch: boolean = false) {
+  async filterAndSearchDataset(type: string, paginationSearch: boolean = false) {
     let showLayer = this.offsidebarService.getLayerCodeForSidebar() == null || this.offsidebarService.getLayerCodeForSidebar() == 'search-sidebar';
     if (showLayer) {
       this.hideLayer(this.datasetSiteLayer);
@@ -193,9 +196,7 @@ export class SearchSidebarComponent implements OnInit {
     this.divFilter.page = this.pageForDatasetSite.currentPage;
     const responseDatasetSites = await this.sharedService.post('dataset/filterAndSearch', this.divFilter)
     if (responseDatasetSites.status != 200) {
-      if (!searchEmpty) {
         this.toastrService.error(this.translateService.instant('exception.' + responseDatasetSites.entity.status + ''), "Error"); 
-      }
     } else {
       this.datasetsFiltered = responseDatasetSites.entity.datasets;
 
@@ -204,14 +205,15 @@ export class SearchSidebarComponent implements OnInit {
       } else {
         this.pageForDatasetSite = new Page();
       }
-      
     }
 
-    this.offsidebarService.showDatasets({
-      action: 'showDatasets',  
-      datasets: this.datasetsFiltered,
-      page: this.pageForDatasetSite
-    });
+    if (!this.isDivFilterEmpty(type)) {
+      this.offsidebarService.showDatasets({
+        action: 'showDatasets',  
+        datasets: this.datasetsFiltered,
+        page: this.pageForDatasetSite
+      });
+    }
 
     if (this.datasetsFiltered && this.datasetsFiltered.length > 0) {
       let uniqueSites = new Set();
@@ -233,10 +235,9 @@ export class SearchSidebarComponent implements OnInit {
         this.hideLayer(this.datasetSiteLayer);
       }
     }
-    if (!searchEmpty) {
+
+    if (!this.isDivFilterEmpty(type)) {
       this.offsidebarOpen();
-    } else {
-      this.hideAllLayersFromHere();
     }
   }
 
@@ -278,14 +279,24 @@ export class SearchSidebarComponent implements OnInit {
     this.homeService.hideAllLayers();
   }
 
-  searchReset() {
+  searchReset(newFilterLayerCall: boolean = true) {
     this.divFilter.searchText = '';
+    this.hideAllLayersFromHere();
+
+    if (newFilterLayerCall) {
+      this.homeService.filterLayer({layer: { code: "sites"}}); // filter site in layers section for existing criteria
+    }
   }
 
-  filterReset() {
+  filterReset(newFilterLayerCall: boolean = true) {
     let tmpSearchText = this.divFilter.searchText;
     this.divFilter = new DivFilterAndSearch();
     this.divFilter.searchText = tmpSearchText;
+    this.hideAllLayersFromHere();
+
+    if (newFilterLayerCall) {
+      this.homeService.filterLayer({layer: { code: "sites"}}); // filter site in layers section for existing criteria
+    }
   }
 
   hideAndShowSitesForTab(eventObj: any) {
@@ -432,6 +443,22 @@ export class SearchSidebarComponent implements OnInit {
         });
       }
 
+  }
+
+  isDivFilterEmpty(searchType: string): boolean {
+    if (searchType == 'filter') {
+      if ((!this.divFilter.sites || this.divFilter.sites.length == 0) &&
+          (!this.divFilter.standardObservations || this.divFilter.standardObservations.length == 0) &&
+          (!this.divFilter.habitats || this.divFilter.habitats?.length == 0)) {
+            return true;
+      }
+    } else if (searchType == 'search') {
+      if (!this.divFilter.searchText || this.divFilter.searchText == '') {
+        return true;
+      }
+    }
+
+    return false;
   }
 
 }

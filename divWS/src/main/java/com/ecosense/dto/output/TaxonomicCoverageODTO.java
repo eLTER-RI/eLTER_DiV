@@ -8,6 +8,8 @@ public class TaxonomicCoverageODTO implements Serializable {
 
     private String description;
 
+    private TaxonomicClassificationODTO taxonomicClassification;
+
     public TaxonomicCoverageODTO() { }
 
     public String getDescription() {
@@ -17,5 +19,14 @@ public class TaxonomicCoverageODTO implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public TaxonomicClassificationODTO getTaxonomicClassification() {
+        return taxonomicClassification;
+    }
+
+    public void setTaxonomicClassification(TaxonomicClassificationODTO taxonomicClassification) {
+        this.taxonomicClassification = taxonomicClassification;
+    }
+
 }
 

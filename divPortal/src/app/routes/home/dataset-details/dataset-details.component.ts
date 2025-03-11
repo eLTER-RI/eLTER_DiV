@@ -23,6 +23,7 @@ export class DatasetDetailsComponent implements OnInit {
 
   menuItem: string;
   submenuItem: string;
+  subSubmenuItem: string;
 
   datasetOpenDetailsSubscription: Subscription;
   closeAllDatasetDetailsSubscription: Subscription;
@@ -38,6 +39,7 @@ export class DatasetDetailsComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges): void {
     this.menuItem = 'basic';
     this.submenuItem = '';
+    this.subSubmenuItem = '';
   }
 
   ngOnInit(): void {
@@ -90,7 +92,8 @@ export class DatasetDetailsComponent implements OnInit {
       this.menuItem = tabName;
     }
 
-    this.submenuItem = ''
+    this.submenuItem = '';
+    this.subSubmenuItem = '';
   }
 
   clickOnTabSubmenu(tabName: string) {
@@ -100,6 +103,15 @@ export class DatasetDetailsComponent implements OnInit {
       this.submenuItem = tabName;
     }
   }
+
+  clickOnTabSubSubmenu(tabName: string) {
+    if (tabName === this.subSubmenuItem) {
+      this.subSubmenuItem = '';
+    } else {
+      this.subSubmenuItem = tabName;
+    }
+  }
+
 
   pinClick() {
     this.pinActive = !this.pinActive;

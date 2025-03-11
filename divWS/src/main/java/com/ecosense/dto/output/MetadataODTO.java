@@ -7,38 +7,31 @@ public class MetadataODTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private SOReferenceODTO soReference;
     private Integer dataLevel;
     private String language;
-    private ProjectODTO project; 
 
-    private List<AuthorODTO> authors;
+    private List<ProjectODTO> projects;
+    private List<CreatorODTO> creators;
     private List<ContributorODTO> contributors;
-    private List<DatasetIdODTO> datasetIds;
     private List<DescriptionODTO> descriptions;
-    private List<FileODTO> files;
     private List<KeywordODTO> keywords;
     private List<LicenseODTO> licenses;
-    private List<PropertyRightODTO> propertyRights;
-    private List<ShortNameODTO> shortNames;
     private List<TaxonomicCoverageODTO> taxonomicCoverages;
+    private List<ResponsibleOrganizationODTO> responsibleOrganizations;
+    private List<ContactPointODTO> contactPoints;
+    private List<MethodODTO> methods;
+    private List<HabitatReferenceODTO> habitatReferences;
+    private List<AdditionalMetadataODTO> additionalMetadatas;
+
 
     public MetadataODTO() { }
 
-    public SOReferenceODTO getSoReference() {
-        return soReference;
+    public List<CreatorODTO> getCreators() {
+        return creators;
     }
 
-    public void setSoReference(SOReferenceODTO soReference) {
-        this.soReference = soReference;
-    }
-
-    public List<AuthorODTO> getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(List<AuthorODTO> authors) {
-        this.authors = authors;
+    public void setCreators(List<CreatorODTO> creators) {
+        this.creators = creators;
     }
 
     public List<ContributorODTO> getContributors() {
@@ -49,14 +42,6 @@ public class MetadataODTO implements Serializable {
         this.contributors = contributors;
     }
 
-    public List<DatasetIdODTO> getDatasetIds() {
-        return datasetIds;
-    }
-
-    public void setDatasetId(List<DatasetIdODTO> datasetIds) {
-        this.datasetIds = datasetIds;
-    }
-
     public Integer getDataLevel() {
         return dataLevel;
     }
@@ -65,24 +50,12 @@ public class MetadataODTO implements Serializable {
         this.dataLevel = dataLevel;
     }
 
-    public void setDatasetIds(List<DatasetIdODTO> datasetIds) {
-        this.datasetIds = datasetIds;
-    }
-
     public List<DescriptionODTO> getDescriptions() {
         return descriptions;
     }
 
     public void setDescriptions(List<DescriptionODTO> descriptions) {
         this.descriptions = descriptions;
-    }
-
-    public List<FileODTO> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<FileODTO> files) {
-        this.files = files;
     }
 
     public List<KeywordODTO> getKeywords() {
@@ -109,28 +82,12 @@ public class MetadataODTO implements Serializable {
         this.language = language;
     }
 
-    public ProjectODTO getProject() {
-        return project;
+    public List<ProjectODTO> getProjects() {
+        return projects;
     }
 
-    public void setProject(ProjectODTO project) {
-        this.project = project;
-    }
-
-    public List<PropertyRightODTO> getPropertyRights() {
-        return propertyRights;
-    }
-
-    public void setPropertyRights(List<PropertyRightODTO> propertyRights) {
-        this.propertyRights = propertyRights;
-    }
-
-    public List<ShortNameODTO> getShortNames() {
-        return shortNames;
-    }
-
-    public void setShortNames(List<ShortNameODTO> shortNames) {
-        this.shortNames = shortNames;
+    public void setProjects(List<ProjectODTO> projects) {
+        this.projects = projects;
     }
 
     public List<TaxonomicCoverageODTO> getTaxonomicCoverages() {
@@ -139,6 +96,46 @@ public class MetadataODTO implements Serializable {
 
     public void setTaxonomicCoverages(List<TaxonomicCoverageODTO> taxonomicCoverages) {
         this.taxonomicCoverages = taxonomicCoverages;
+    }
+
+    public List<ResponsibleOrganizationODTO> getResponsibleOrganizations() {
+        return responsibleOrganizations;
+    }
+
+    public void setResponsibleOrganizations(List<ResponsibleOrganizationODTO> responsibleOrganizations) {
+        this.responsibleOrganizations = responsibleOrganizations;
+    }
+
+    public List<ContactPointODTO> getContactPoints() {
+        return contactPoints;
+    }
+
+    public void setContactPoints(List<ContactPointODTO> contactPoints) {
+        this.contactPoints = contactPoints;
+    }
+
+    public List<MethodODTO> getMethods() {
+        return methods;
+    }
+
+    public void setMethods(List<MethodODTO> methods) {
+        this.methods = methods;
+    }
+
+    public List<HabitatReferenceODTO> getHabitatReferences() {
+        return habitatReferences;
+    }
+
+    public void setHabitatReferences(List<HabitatReferenceODTO> habitatReferences) {
+        this.habitatReferences = habitatReferences;
+    }
+
+    public List<AdditionalMetadataODTO> getAdditionalMetadatas() {
+        return additionalMetadatas;
+    }
+
+    public void setAdditionalMetadatas(List<AdditionalMetadataODTO> additionalMetadatas) {
+        this.additionalMetadatas = additionalMetadatas;
     }
 
 }

@@ -152,10 +152,6 @@ showPolicyTab() {
     }
   }
 
-  hasNonNullEmail(authors: any[]): boolean {
-    return authors.some(author => author.email != null);
-  }
-
   pinClick() {
     this.pinActive = !this.pinActive;
 

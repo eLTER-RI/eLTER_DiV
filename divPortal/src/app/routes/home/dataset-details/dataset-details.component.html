@@ -29,29 +29,16 @@
                                     Data level: {{datasetDetail?.metadata?.dataLevel}}
                                 </div>
                                 <div class="tabs">
-                                    <div class="tab" *ngIf="datasetDetail?.metadata?.soReference">
-                                        <label class="tab-label no-icon" (click)="navigateToExternal(datasetDetail?.metadata?.soReference?.url)">
-                                            {{datasetDetail?.metadata?.soReference.name}}
+                                    <div class="tab" *ngFor="let project of datasetDetail?.metadata?.projects">
+                                        <input type="checkbox" [checked]="submenuItem === 'project' + project.name">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('project' + project.name)">
+                                            {{project.name}}
                                         </label>
-                                    </div>
-
-                                    <div class="tab" *ngIf="datasetDetail?.metadata?.project">
-                                        <input type="checkbox" [checked]="submenuItem === 'project' + datasetDetail?.metadata?.project.name">
-                                        <label class="tab-label" (click)="clickOnTabSubmenu('project' + datasetDetail?.metadata?.project.name)">
-                                            {{datasetDetail?.metadata?.project.name}}
-                                        </label>
-                                        <div class="tab-content" *ngIf="submenuItem === 'project' + datasetDetail?.metadata?.project.name">
-                                            <div class="h6 text-secundary-color-green-dark mb-0">DOI</div>
-                                            <div class="mt-0 mb-1"></div>
-                                            <div class="mb-1 mt-0">
-                                                {{datasetDetail?.metadata?.project?.doi}}
-                                            </div>
-                                        </div>
-                                        <div class="tab-content" *ngIf="submenuItem === 'project' + datasetDetail?.metadata?.project.name">
+                                        <div class="tab-content" *ngIf="submenuItem === 'project' + project.name">
                                             <div class="h6 text-secundary-color-green-dark mb-0">PID</div>
                                             <div class="mt-0 mb-1"></div>
                                             <div class="mb-1 mt-0">
-                                                {{datasetDetail?.metadata?.project?.pid}}
+                                                {{project?.pid}}
                                             </div>
                                         </div>
                                     </div>
@@ -60,39 +47,34 @@
                         </div>
 
                         <div class="tab">
-                            <input type="checkbox" [checked]="menuItem == 'authors'">
-                            <label class="tab-label" (click)="clickOnTab('authors')">
-                                Authors
+                            <input type="checkbox" [checked]="menuItem == 'creators'">
+                            <label class="tab-label" (click)="clickOnTab('creators')">
+                                Creators
                             </label>
-                            <div *ngIf="menuItem == 'authors'" class="tab-content">
+                            <div *ngIf="menuItem == 'creators'" class="tab-content">
                                 <div class="tabs">
-                                    <div *ngFor="let author of datasetDetail?.metadata?.authors" class="tab">
-                                        <input type="checkbox" [checked]="submenuItem === 'author' + author.fullName">
-                                        <label class="tab-label" (click)="clickOnTabSubmenu('author' + author.fullName)">
-                                            {{author.fullName}}
+                                    <div *ngFor="let creator of datasetDetail?.metadata?.creators" class="tab">
+                                        <input type="checkbox" [checked]="submenuItem === 'creator' + creator.email">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('creator' + creator.email)">
+                                            {{creator.givenName}} {{creator?.familyName}} 
                                         </label>
-                                        <div class="tab-content" *ngIf="submenuItem === 'author' + author.fullName">
-                                            <div class="h6 text-secundary-color-green-dark mb-0">Full name</div>
-                                            <div class="mt-0 mb-1"></div>
-                                            <div class="mb-1 mt-0">
-                                                {{author?.fullName}}
-                                            </div>
+                                        <div class="tab-content" *ngIf="submenuItem === 'creator' + creator.email">
                                             <div class="h6 text-secundary-color-green-dark mb-0">Family name</div>
                                             <div class="mt-0 mb-1"></div>
                                             <div class="mb-1 mt-0">
-                                                {{author?.familyName}} 
+                                                {{creator?.familyName}} 
                                             </div>
 
                                             <div class="h6 text-secundary-color-green-dark mb-0">Email</div>
                                             <div class="mt-0 mb-1"></div>
                                             <div class="mb-1 mt-0">
-                                                {{author?.email}}
+                                                {{creator?.email}}
                                             </div>
 
                                             <div class="h6 text-secundary-color-green-dark mb-0">Given name</div>
                                             <div class="mt-0 mb-1"></div>
                                             <div class="mb-1 mt-0">
-                                                {{author.givenName}}
+                                                {{creator.givenName}}
                                             </div>
                                         </div>
                                     </div>
@@ -108,16 +90,11 @@
                             <div *ngIf="menuItem == 'contributors'" class="tab-content">
                                 <div class="tabs">
                                     <div *ngFor="let contributor of datasetDetail?.metadata?.contributors" class="tab">
-                                        <input type="checkbox" [checked]="submenuItem === 'contributor' + contributor.fullName">
-                                        <label class="tab-label" (click)="clickOnTabSubmenu('contributor' + contributor.fullName)">
-                                            {{contributor.fullName}}
+                                        <input type="checkbox" [checked]="submenuItem === 'contributor' + contributor.email">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('contributor' + contributor.email)">
+                                            {{contributor.givenName}} {{contributor?.familyName}}
                                         </label>
-                                        <div class="tab-content" *ngIf="submenuItem === 'contributor' + contributor.fullName">
-                                            <div class="h6 text-secundary-color-green-dark mb-0">Full name</div>
-                                            <div class="mt-0 mb-1"></div>
-                                            <div class="mb-1 mt-0">
-                                                {{contributor?.fullName}}
-                                            </div>
+                                        <div class="tab-content" *ngIf="submenuItem === 'contributor' + contributor.email">
                                             <div class="h6 text-secundary-color-green-dark mb-0">Family name</div>
                                             <div class="mt-0 mb-1"></div>
                                             <div class="mb-1 mt-0">
@@ -136,41 +113,11 @@
                                                 {{contributor.givenName}}
                                             </div>
 
-                                            <div class="h6 text-secundary-color-green-dark mb-0">Type</div>
+                                            <div class="h6 text-secundary-color-green-dark mb-0">Contributor type</div>
                                             <div class="mt-0 mb-1"></div>
                                             <div class="mb-1 mt-0">
-                                                {{contributor.type}}
+                                                {{contributor.contributorType}}
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tab">
-                            <input type="checkbox" [checked]="menuItem == 'datasetIds'">
-                            <label class="tab-label" (click)="clickOnTab('datasetIds')">
-                                Dataset IDs
-                            </label>
-                            <div *ngIf="menuItem == 'datasetIds'" class="tab-content">
-                                <div class="tabs">
-                                    <div *ngFor="let datasetId of datasetDetail?.metadata?.datasetIds" class="tab">
-                                        <input type="checkbox" [checked]="submenuItem === 'datasetId' + datasetId.identifier">
-                                        <label class="tab-label" (click)="clickOnTabSubmenu('datasetId' + datasetId.identifier)">
-                                            {{datasetId.identifier}}
-                                        </label>
-                                        <div class="tab-content" *ngIf="submenuItem === 'datasetId' + datasetId.identifier">
-                                            <div class="h6 text-secundary-color-green-dark mb-0">Identifier</div>
-                                            <div>{{datasetId?.identifier}}</div>
-                        
-                                            <div class="h6 text-secundary-color-green-dark mb-0">Source Name</div>
-                                            <div>{{datasetId?.sourceName}}</div>
-                        
-                                            <div class="h6 text-secundary-color-green-dark mb-0">Type</div>
-                                            <div>{{datasetId?.type}}</div>
-                        
-                                            <div class="h6 text-secundary-color-green-dark mb-0">URL</div>
-                                            <div>{{datasetId?.url}}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -189,39 +136,9 @@
                                         <label class="tab-label" (click)="clickOnTabSubmenu('description' + description.description)">
                                             {{description.description}}
                                         </label>
-                                        <div class="tab-content" *ngIf="submenuItem === 'description' + description.language">
+                                        <div class="tab-content" *ngIf="submenuItem === 'description' + description.description">
                                             <div class="h6 text-secundary-color-green-dark mb-0">Type</div>
                                             <div>{{description?.type}}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tab">
-                            <input type="checkbox" [checked]="menuItem == 'files'">
-                            <label class="tab-label" (click)="clickOnTab('files')">
-                                Files
-                            </label>
-                            <div *ngIf="menuItem == 'files'" class="tab-content">
-                                <div class="tabs">
-                                    <div *ngFor="let file of datasetDetail?.metadata?.files" class="tab">
-                                        <input type="checkbox" [checked]="submenuItem === 'file' + file.name">
-                                        <label class="tab-label" (click)="clickOnTabSubmenu('file' + file.name)">
-                                            {{file.name}}
-                                        </label>
-                                        <div class="tab-content" *ngIf="submenuItem === 'file' + file.name">
-                                            <div class="h6 text-secundary-color-green-dark mb-0">Format</div>
-                                            <div>{{file?.format}}</div>
-                        
-                                            <div class="h6 text-secundary-color-green-dark mb-0">MD5</div>
-                                            <div>{{file?.md5}}</div>
-                        
-                                            <div class="h6 text-secundary-color-green-dark mb-0">Size</div>
-                                            <div>{{file?.size}}</div>
-                        
-                                            <div class="h6 text-secundary-color-green-dark mb-0">Source URL</div>
-                                            <div><a [href]="file?.sourceUrl" target="_blank"> {{file?.sourceUrl}} </a></div>
                                         </div>
                                     </div>
                                 </div>
@@ -261,54 +178,184 @@
                         </div>
                         
                         <div class="tab">
-                            <input type="checkbox" [checked]="menuItem == 'propertyRights'">
-                            <label class="tab-label" (click)="clickOnTab('propertyRights')">
-                                Property Rights
-                            </label>
-                            <div *ngIf="menuItem == 'propertyRights'" class="tab-content">
-                                <div class="tabs">
-                                    <div *ngFor="let propertyRight of datasetDetail?.metadata?.propertyRights" class="tab">
-                                        <label class="tab-label no-icon" (click)="navigateToExternal(propertyRight?.url)">
-                                            {{propertyRight.name}}
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="tab">
-                            <input type="checkbox" [checked]="menuItem == 'shortNames'">
-                            <label class="tab-label" (click)="clickOnTab('shortNames')">
-                                Short Names
-                            </label>
-                            <div *ngIf="menuItem == 'shortNames'" class="tab-content">
-                                <div class="tabs">
-                                    <div *ngFor="let shortName of datasetDetail?.metadata?.shortNames" class="tab">
-                                        <input type="checkbox" [checked]="submenuItem === 'shortName' + shortName.text">
-                                        <label class="tab-label no-icon" (click)="clickOnTabSubmenu('shortName' + shortName.text)">
-                                            {{shortName.text}}
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>   
-                        
-                        <div class="tab">
                             <input type="checkbox" [checked]="menuItem == 'taxonomicCoverages'">
                             <label class="tab-label" (click)="clickOnTab('taxonomicCoverages')">
-                                Taxonomic Coverages
+                                Taxonomic coverages
                             </label>
                             <div *ngIf="menuItem == 'taxonomicCoverages'" class="tab-content">
                                 <div class="tabs">
                                     <div *ngFor="let taxonomicCoverage of datasetDetail?.metadata?.taxonomicCoverages" class="tab">
-                                        <label class="tab-label no-icon">
+                                        <input type="checkbox" [checked]="submenuItem === 'taxonomicCoverage' + taxonomicCoverage.description">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('taxonomicCoverage' + taxonomicCoverage.description)">
                                             {{taxonomicCoverage.description}}
                                         </label>
+                                        <div class="tab-content" *ngIf="submenuItem === 'taxonomicCoverage' + taxonomicCoverage.description">
+                                            <div class="h6 text-secundary-color-green-dark mb-0">Taxonomic classification ID</div>
+                                            <div>{{taxonomicCoverage?.taxonomicClassification?.taxonomicClassificationID}}</div>
+                                            
+                                            <div class="h6 text-secundary-color-green-dark mb-0">Taxonomic rank name</div>
+                                            <div>{{taxonomicCoverage?.taxonomicClassification?.taxonomicRankName}}</div>
+
+                                            <div class="h6 text-secundary-color-green-dark mb-0">Taxonomic rank value</div>
+                                            <div>{{taxonomicCoverage?.taxonomicClassification?.taxonomicRankValue}}</div>
+
+                                            <div class="h6 text-secundary-color-green-dark mb-0">Taxonomic common name</div>
+                                            <div>{{taxonomicCoverage?.taxonomicClassification?.taxonomicCommonName}}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     
+                        <div class="tab">
+                            <input type="checkbox" [checked]="menuItem == 'responsibleOrganizations'">
+                            <label class="tab-label" (click)="clickOnTab('responsibleOrganizations')">
+                                Responsible organizations
+                            </label>
+                            <div *ngIf="menuItem == 'responsibleOrganizations'" class="tab-content">
+                                <div class="tabs">
+                                    <div *ngFor="let responsibleOrg of datasetDetail?.metadata?.responsibleOrganizations" class="tab">
+                                        <input type="checkbox" [checked]="submenuItem === 'responsibleOrg' + responsibleOrg.organizationEmail">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('responsibleOrg' + responsibleOrg.organizationEmail)">
+                                            {{responsibleOrg.organizationName}}
+                                        </label>
+                                        <div class="tab-content" *ngIf="submenuItem === 'responsibleOrg' + responsibleOrg.organizationEmail">
+                                            <div class="h6 text-secundary-color-green-dark mb-0">Organization email</div>
+                                            <div class="mt-0 mb-1"></div>
+                                            <div class="mb-1 mt-0">
+                                                {{responsibleOrg?.organizationEmail}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab">
+                            <input type="checkbox" [checked]="menuItem == 'contactPoints'">
+                            <label class="tab-label" (click)="clickOnTab('contactPoints')">
+                                Contact points
+                            </label>
+                            <div *ngIf="menuItem == 'contactPoints'" class="tab-content">
+                                <div class="tabs">
+                                    <div *ngFor="let contactPoint of datasetDetail?.metadata?.contactPoints" class="tab">
+                                        <input type="checkbox" [checked]="submenuItem === 'contactPoint' + contactPoint.contactEmail">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('contactPoint' + contactPoint.contactEmail)">
+                                            {{contactPoint.contactName}}
+                                        </label>
+                                        <div class="tab-content" *ngIf="submenuItem === 'contactPoint' + contactPoint.contactEmail">
+                                            <div class="h6 text-secundary-color-green-dark mb-0">Contact email</div>
+                                            <div class="mt-0 mb-1"></div>
+                                            <div class="mb-1 mt-0">
+                                                {{contactPoint?.contactEmail}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab">
+                            <input type="checkbox" [checked]="menuItem == 'methods'">
+                            <label class="tab-label" (click)="clickOnTab('methods')">
+                                Methods
+                            </label>
+                            <div *ngIf="menuItem == 'methods'" class="tab-content">
+                                <div class="tabs">
+                                    <div *ngFor="let method of datasetDetail?.metadata?.methods" class="tab">
+                                        <input type="checkbox" [checked]="submenuItem === 'method' + method.methodID">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('method' + method.methodID)">
+                                            {{method.methodID}}
+                                        </label>
+                                        <div class="tab-content" *ngIf="submenuItem === 'method' + method.methodID">
+                                            <div class="h6 text-secundary-color-green-dark mb-0">Quality control description</div>
+                                            <div class="mt-0 mb-1"></div>
+                                            <div class="mb-1 mt-0">
+                                                {{method?.qualityControlDescription}}
+                                            </div>
+                                        
+                                            <div class="h6 text-secundary-color-green-dark mb-0">Instrumentation description</div>
+                                            <div class="mt-0 mb-1"></div>
+                                            <div class="mb-1 mt-0">
+                                                {{method?.instrumentationDescription}}
+                                            </div>
+
+                                            <!-- Sampling -->
+                                            <div class="h6 text-secundary-color-green-dark mb-0">Sampling study description</div>
+                                            <div class="mt-0 mb-1"></div>
+                                            <div class="mb-1 mt-0">
+                                                {{method?.sampling?.studyDescription}}
+                                            </div>
+
+                                            <div class="h6 text-secundary-color-green-dark mb-0">Sampling description</div>
+                                            <div class="mt-0 mb-1"></div>
+                                            <div class="mb-1 mt-0">
+                                                {{method?.sampling?.samplingDescription}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Steps -->
+                                        <div class="tabs">
+                                            <div class="tab" *ngFor="let step of method?.steps">
+                                                <input type="checkbox" [checked]="subSubmenuItem === 'step' + step.stepTitle">
+                                                <label class="tab-label" (click)="clickOnTabSubSubmenu('step' + step.stepTitle)">
+                                                    {{step.stepTitle}}
+                                                </label>
+                                                <div class="tab-content" *ngIf="subSubmenuItem === 'step' + step.stepTitle">
+                                                    <div class="h6 text-secundary-color-green-dark mb-0">Step description</div>
+                                                    <div class="mt-0 mb-1"></div>
+                                                    <div class="mb-1 mt-0">
+                                                        {{step?.stepDescription}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab">
+                            <input type="checkbox" [checked]="menuItem == 'habitatReferences'">
+                            <label class="tab-label" (click)="clickOnTab('habitatReferences')">
+                                Habitat references
+                            </label>
+                            <div *ngIf="menuItem == 'habitatReferences'" class="tab-content">
+                                <div class="tabs">
+                                    <div *ngFor="let habitatRef of datasetDetail?.metadata?.habitatReferences" class="tab">
+                                        <label class="tab-label no-icon" (click)="navigateToExternal(habitatRef?.soHabitatURI)">
+                                            {{habitatRef.soHabitatCode}}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab">
+                            <input type="checkbox" [checked]="menuItem == 'additionalMetadatas'">
+                            <label class="tab-label" (click)="clickOnTab('additionalMetadatas')">
+                                Additional metadatas
+                            </label>
+                            <div *ngIf="menuItem == 'additionalMetadatas'" class="tab-content">
+                                <div class="tabs">
+                                    <div *ngFor="let additionalMetadata of datasetDetail?.metadata?.additionalMetadatas" class="tab">
+                                        <input type="checkbox" [checked]="submenuItem === 'additionalMetadata' + additionalMetadata.name">
+                                        <label class="tab-label" (click)="clickOnTabSubmenu('additionalMetadata' + additionalMetadata.name)">
+                                            {{additionalMetadata.name}}
+                                        </label>
+                                        <div class="tab-content" *ngIf="submenuItem === 'additionalMetadata' + additionalMetadata.name">
+                                            <div class="h6 text-secundary-color-green-dark mb-0">Value</div>
+                                            <div class="mt-0 mb-1"></div>
+                                            <div class="mb-1 mt-0">
+                                                {{additionalMetadata?.value}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             

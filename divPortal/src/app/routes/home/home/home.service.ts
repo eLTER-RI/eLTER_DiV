@@ -27,6 +27,9 @@ export class HomeService {
 	private markSitesOnMapBehaviorSubject = new BehaviorSubject<any>(undefined);
 	markSitesOnMapObservable = this.markSitesOnMapBehaviorSubject.asObservable();
 
+	private filterLayerBehaviorSubject = new BehaviorSubject<any>(undefined);
+	filterLayerObservable = this.filterLayerBehaviorSubject.asObservable();
+
   	constructor() { }
 
 	changeBaseMap(basemap) {
@@ -55,6 +58,10 @@ export class HomeService {
 
 	markSitesOnMap(siteIds: number[], markOnMap: boolean) {
 		this.markSitesOnMapBehaviorSubject.next({siteIds: siteIds, markOnMap: markOnMap});
+	}
+
+	filterLayer(layer) {
+		this.filterLayerBehaviorSubject.next(layer);
 	}
 
 }

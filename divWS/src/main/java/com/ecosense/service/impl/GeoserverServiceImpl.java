@@ -24,6 +24,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
@@ -52,20 +53,10 @@ import com.ecosense.utils.Utils;
 @Transactional
 public class GeoserverServiceImpl implements GeoserverService {
 
-    private final LayerRepository layerRepository;
-    private final LayerGroupRepository layerGroupRepository;
-    private final BoundingBoxRepository bboxRepository;
-    private final LayerTimeRepository layerTimeRepository;
-    
-    public GeoserverServiceImpl(LayerRepository layerRepository,
-                                LayerGroupRepository layerGroupRepository,
-                                BoundingBoxRepository bboxRepository,
-                                LayerTimeRepository layerTimeRepository) {
-        this.layerRepository = layerRepository;
-        this.layerGroupRepository = layerGroupRepository;
-        this.bboxRepository = bboxRepository;
-        this.layerTimeRepository = layerTimeRepository;
-    }
+    @Autowired private LayerRepository layerRepository;
+    @Autowired private LayerGroupRepository layerGroupRepository;
+    @Autowired private BoundingBoxRepository bboxRepository;
+    @Autowired private LayerTimeRepository layerTimeRepository;
 
     private static final Logger log = LoggerFactory.getLogger(GeoserverServiceImpl.class);
 
@@ -77,6 +68,7 @@ public class GeoserverServiceImpl implements GeoserverService {
      *
      * @throws Exception if an error occurs during the refresh process.
      */
+    @Override
     public void refreshGeoserverData() throws Exception {
             List<Layer> layers = layerRepository.findAll();
             List<Map<String, Object>> gsLayerRows = getLayersFromGeoserver(GeoserverData.GEOSERVER_ELTER_GET_CAPABILITIES_URL);

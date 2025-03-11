@@ -46,6 +46,7 @@ export class LayersSidebarComponent implements OnInit {
 
   addSelectedLayersSubscription: Subscription;
   hideAllLayersSubscription: Subscription;
+  filterLayerSubscription: Subscription;
 
   showLayerIcon: boolean[] = [];
 
@@ -80,7 +81,15 @@ export class LayersSidebarComponent implements OnInit {
     this.hideAllLayersSubscription = this.homeService.hideAllLayersObservable.subscribe( obj => {
       this.allLayers?.forEach(lay => {
         if (lay.showMap) {
-          this.btn_showOrHideLayersOnMap(lay);
+          this.showOrHideLayersOnMap(lay);
+        }
+      });
+    });
+
+    this.filterLayerSubscription = this.homeService.filterLayerObservable.subscribe( obj => {
+      this.allLayers?.forEach(lay => {
+        if (lay.code == obj.layer.code && !lay.showMap) {
+          this.fiterSites(lay);
         }
       });
     });
@@ -146,7 +155,7 @@ export class LayersSidebarComponent implements OnInit {
 
     const resp2 = await this.layersService.getLayers(['special'], 'sites');
     const siteLayer = resp2.entity[0];
-    this.btn_showOrHideLayersOnMap(siteLayer);
+    this.showOrHideLayersOnMap(siteLayer);
     this.allLayers = [siteLayer].concat(this.allLayers);
   }
 
@@ -157,7 +166,7 @@ export class LayersSidebarComponent implements OnInit {
       this.markedLayer = layer;
       this.markedLayer.codeForSidebar = 'layers-sidebar';
       if (!layer.showMap) {
-        this.btn_showOrHideLayersOnMap(layer);
+        this.showOrHideLayersOnMap(layer);
       }
     }
 
@@ -167,7 +176,7 @@ export class LayersSidebarComponent implements OnInit {
 
   }
 
-  btn_showOrHideLayersOnMap(layer: Layer, directlyFromButton: boolean = false) {
+  showOrHideLayersOnMap(layer: Layer, directlyFromButton: boolean = false) {
       layer.showMap = !layer.showMap;
 
       if (layer.showMap) {
@@ -368,7 +377,7 @@ export class LayersSidebarComponent implements OnInit {
           let curr = layers.find(l => l.id ?  l.id == layer.id : l.idHash == layer.idHash);
           if (!curr) {                                                
             if (layer.showMap && layer.layerType != 'special') {
-              this.btn_showOrHideLayersOnMap(layer);
+              this.showOrHideLayersOnMap(layer);
             } 
             layer.skipForDelete = true;
           } else {
@@ -388,7 +397,7 @@ export class LayersSidebarComponent implements OnInit {
     } else {
       this.allLayers.forEach(layer => {
           if (layer.showMap && layer.layerType != 'special') {
-            this.btn_showOrHideLayersOnMap(layer);
+            this.showOrHideLayersOnMap(layer);
           }
       });
       this.allLayers = this.allLayers.filter(l => l.layerType == 'special');
@@ -412,12 +421,14 @@ export class LayersSidebarComponent implements OnInit {
     return newSelectedLayers;
   }
 
-  async btn_fiterSites(layer: Layer) {
+  async fiterSites(layer: Layer) {
     const state = {
       layer: layer,
       action: 'turnOff'
     }
     this.homeService.turnOnOffLayer(state);
+
+    this.offsidebarService.clearSitesAndDatasets();
 
     await this.readSites();
     
@@ -431,7 +442,9 @@ export class LayersSidebarComponent implements OnInit {
     }
     this.homeService.turnOnOffLayer(state2);
 
-    layer.showMap = true;
+    if (!this.getMarkedForLayer(layer)) {
+      this.changeMarkedLayer(layer);
+    }
   }
 
   dropSuccess(): void {
@@ -461,14 +474,19 @@ export class LayersSidebarComponent implements OnInit {
     })
 	}
 
-  getIconClassForMarkedLayer(layer) {
+  getMarkedForLayer(layer: Layer) {
     if (this.markedLayer && this.markedLayer?.id) {
-      return this.markedLayer?.id === layer?.id ? 'fa icon-check mt-1' : 'far fa-circle mt-1';
+      return this.markedLayer?.id === layer?.id;
     } else if (this.markedLayer) {
-      return this.markedLayer?.idHash === layer?.idHash ? 'fa icon-check mt-1' : 'far fa-circle mt-1';
+      return this.markedLayer?.idHash === layer?.idHash
     } else {
-      return 'far fa-circle mt-1';
+      return false;
     }
+  }
+
+  getIconClassForMarkedLayer(layer) {
+    const layerMarked = this.getMarkedForLayer(layer);
+    return layerMarked ? 'fa icon-check mt-1' : 'far fa-circle mt-1';
   }
 
 }

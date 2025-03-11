@@ -164,6 +164,12 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
         }
     }
 
+    closeOffsidebar() {
+        if (this.settings.getLayoutSetting('offsidebarOpen')) {
+            this.settings.toggleLayoutSetting('offsidebarOpen');
+        }
+    }
+
     ngOnDestroy() {
         this.ebvSubscription.unsubscribe();
         this.sitesSubscription.unsubscribe();

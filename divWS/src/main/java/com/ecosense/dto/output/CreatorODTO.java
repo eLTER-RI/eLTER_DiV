@@ -2,15 +2,14 @@ package com.ecosense.dto.output;
 
 import java.io.Serializable;
 
-public class ContributorODTO implements Serializable {
+public class CreatorODTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-    
+
     private String email;
     private String familyName;
     private String givenName;
-    private String contributorType;
 
-    public ContributorODTO() { }
+    public CreatorODTO() { }
 
     public String getEmail() {
         return email;
@@ -34,14 +33,6 @@ public class ContributorODTO implements Serializable {
 
     public void setGivenName(String givenName) {
         this.givenName = givenName;
-    }
-
-    public String getContributorType() {
-        return contributorType;
-    }
-
-    public void setContributorType(String contributorType) {
-        this.contributorType = contributorType;
     }
 
 }

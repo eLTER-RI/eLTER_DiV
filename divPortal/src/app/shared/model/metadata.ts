@@ -1,33 +1,33 @@
-import { Author } from "./author"
+import { Creator } from "./creator"
 import { Contributor } from "./contributor";
-import { DatasetId } from "./dataset-id";
 import { Description } from "./description";
-import { File } from "./file";
 import { Keyword } from "./keyword";
 import { License } from "./license";
 import { Project } from "./project";
-import { PropertyRight } from "./property-right";
-import { ShortName } from "./short-name";
-import { SOReference } from "./so-reference";
 import { TaxonomicCoverage } from "./taxonomic-coverage";
+import { ResponsibleOrganization } from "./responsible-organization";
+import { Method } from "./method";
+import { ContactPoint } from "./contact-point";
+import { HabitatReference } from "./habitat-reference";
+import { AdditionalMetadata } from "./additional-metadata";
 
 export class Metadata {
 
-    soReference: SOReference;
     dataLevel: number;
     language: string;
-    project: Project;
 
-    authors: Author[];
+    projects: Project[];
+    creators: Creator[];
     contributors: Contributor[];
-    datasetIds: DatasetId[];
     descriptions: Description[];
-    files: File[];
     keywords: Keyword[];
     licenses: License[];
-    propertyRights: PropertyRight[];
-    shortNames: ShortName[];
     taxonomicCoverages: TaxonomicCoverage[];
+    responsibleOrganizations: ResponsibleOrganization[];
+    contactPoints: ContactPoint[];
+    methods: Method[];
+    habitatReferences: HabitatReference[];
+    additionalMetadatas: AdditionalMetadata[];
 
     constructor() { }
 

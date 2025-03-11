@@ -1,4 +1,4 @@
-import { Author } from "./author";
+import { Creator } from "./creator";
 import { Contributor } from "./contributor";
 import { Metadata } from "./metadata";
 import { Site } from "./site-db";
