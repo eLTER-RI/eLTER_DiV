@@ -44,10 +44,11 @@ import { DiagramSidebarComponent } from './diagram-sidebar/diagram-sidebar.compo
         RouterModule,
     ],
     declarations: [HomeComponent, HomeSidebarComponent, BaseMapSidebarComponent, LayersSidebarComponent, EbvSidebarComponent, 
-        EbvDetailsComponent, SiteDetailsComponent, DiagramComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent, SearchSidebarComponent, SiteDetailsListComponent, DatasetDetailsListComponent, DatasetDetailsComponent],
+        EbvDetailsComponent, SiteDetailsComponent, DiagramComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent, SearchSidebarComponent, SiteDetailsListComponent, DatasetDetailsListComponent, DatasetDetailsComponent,
+        ],
     exports: [
         RouterModule,HomeSidebarComponent, EbvDetailsComponent, SiteDetailsComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent, SiteDetailsListComponent, DatasetDetailsListComponent
     ],
-    providers: [ DatePipe, SlicePipe]
+    providers: [ DatePipe, SlicePipe ]
 })
 export class HomeModule { }

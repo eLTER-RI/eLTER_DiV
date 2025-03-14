@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { CommonModule } from '@angular/common';
 import { DndModule } from 'ng2-dnd';
+import { AppBlockerService } from './layout/app-overlay/app-blocker.service';
 
 // https://github.com/ocombe/ng2-translate/issues/218
 export function createTranslateLoader(http: HttpClient) {
@@ -49,7 +50,7 @@ export function createTranslateLoader(http: HttpClient) {
         MalihuScrollbarModule.forRoot(),
         
     ],
-    providers: [],
+    providers: [AppBlockerService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

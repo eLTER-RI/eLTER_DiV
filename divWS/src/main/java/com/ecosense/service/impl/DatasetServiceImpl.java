@@ -2,7 +2,7 @@ package com.ecosense.service.impl;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,7 +19,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import com.ecosense.dto.BoundingBoxDTO;
 import com.ecosense.dto.DivFilterDTO;
 import com.ecosense.dto.PageDTO;
@@ -33,6 +32,8 @@ import com.ecosense.dto.output.ContributorODTO;
 import com.ecosense.dto.output.DatasetODTO;
 import com.ecosense.dto.output.DatasetsODTO;
 import com.ecosense.dto.output.DescriptionODTO;
+import com.ecosense.dto.output.ExternalSourceInformationODTO;
+import com.ecosense.dto.output.FileODTO;
 import com.ecosense.dto.output.HabitatReferenceODTO;
 import com.ecosense.dto.output.KeywordODTO;
 import com.ecosense.dto.output.LicenseODTO;
@@ -170,9 +171,7 @@ public class DatasetServiceImpl implements DatasetService {
 			countParamSite++;
         }
 
-		System.out.println("URL " + url);
         return url;
-
     }
 
 	private DatasetsODTO extractDatasetsFromResponse(JsonNode hitListNode) {
@@ -234,6 +233,13 @@ public class DatasetServiceImpl implements DatasetService {
 
 			dataset.setSites(Arrays.asList(sites.toArray(SiteODTO[]::new)));
 
+			// publication date
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			try {
+				metadata.setPublicationDate(sdf.parse(metadataNode.get("publicationDate").asText()));
+			} catch (Exception e) {
+			}
+
 			// creators
 			List<CreatorODTO> creators = new ArrayList<>();
 			JsonNode creatorNodeList = metadataNode.get("creators");
@@ -246,6 +252,8 @@ public class DatasetServiceImpl implements DatasetService {
 
 					creators.add(creator);
 				}
+			} else {
+				creators = null;
 			}
 			metadata.setCreators(creators);
 
@@ -262,6 +270,8 @@ public class DatasetServiceImpl implements DatasetService {
 
 					contributors.add(contributor);
 				}
+			} else {
+				contributors = null;
 			}
 			metadata.setContributors(contributors);
 
@@ -282,6 +292,8 @@ public class DatasetServiceImpl implements DatasetService {
 
 					descriptions.add(description);
 				}
+			} else {
+				descriptions = null;
 			}
 			metadata.setDescriptions(descriptions);
 
@@ -296,6 +308,8 @@ public class DatasetServiceImpl implements DatasetService {
 
 					keywords.add(keyword);
 				}
+			} else {
+				keywords = null;
 			}
 			metadata.setKeywords(keywords);
 
@@ -313,6 +327,8 @@ public class DatasetServiceImpl implements DatasetService {
 
 					licenses.add(license);
 				}
+			} else {
+				licenses = null;
 			}
 			metadata.setLicenses(licenses);
 
@@ -327,6 +343,8 @@ public class DatasetServiceImpl implements DatasetService {
 
 					projects.add(project);
 				}
+			} else {
+				projects = null;
 			}
 			metadata.setProjects(projects);
 
@@ -348,6 +366,8 @@ public class DatasetServiceImpl implements DatasetService {
 
 					taxonomicCoverages.add(taxonomicCoverage);
 				}
+			} else {
+				taxonomicCoverages = null;
 			}
 			metadata.setTaxonomicCoverages(taxonomicCoverages);
 
@@ -362,6 +382,8 @@ public class DatasetServiceImpl implements DatasetService {
 
 					responsibleOrganizations.add(reponsibleOrg);
 				}
+			} else {
+				responsibleOrganizations = null;
 			}
 			metadata.setResponsibleOrganizations(responsibleOrganizations);
 
@@ -376,6 +398,8 @@ public class DatasetServiceImpl implements DatasetService {
 
 					contactPoints.add(contactPoint);
 				}
+			} else {
+				contactPoints = null;
 			}
 			metadata.setContactPoints(contactPoints);
 
@@ -383,7 +407,6 @@ public class DatasetServiceImpl implements DatasetService {
 			List<MethodODTO> methods = new ArrayList<>();
 			JsonNode methodNodeList = metadataNode.get("contactPoints");
 			if (methodNodeList != null) {
-				System.out.println("METHODS");
 				for (JsonNode methodNode : methodNodeList) {
 					MethodODTO method = new MethodODTO();
 					setFieldSafely(methodNode, method::setMethodID, JsonNode::asText, "methodID");
@@ -391,14 +414,16 @@ public class DatasetServiceImpl implements DatasetService {
 					setFieldSafely(methodNode, method::setInstrumentationDescription, JsonNode::asText, "instrumentationDescription");
 
 					// Sampling
+					SamplingODTO sampling = new SamplingODTO();
 					JsonNode samplingNode = methodNode.get("sampling");
 					if (samplingNode != null) {
-						SamplingODTO sampling = new SamplingODTO();
 						setFieldSafely(samplingNode, sampling::setStudyDescription, JsonNode::asText, "studyDescription");
 						setFieldSafely(samplingNode, sampling::setSamplingDescription, JsonNode::asText, "samplingDescription");
-
-						method.setSampling(sampling);
+					} else { 
+						sampling = null;
 					}
+					method.setSampling(sampling);
+
 
 					// Steps
 					List<StepODTO> steps = new ArrayList<>();
@@ -411,11 +436,15 @@ public class DatasetServiceImpl implements DatasetService {
 
 							steps.add(step);
 						}
+					} else {
+						steps = null;
 					}
 					method.setSteps(steps);
 
 					methods.add(method);
 				}
+			} else {
+				methods = null;
 			}
 			metadata.setMethods(methods);
 
@@ -430,6 +459,8 @@ public class DatasetServiceImpl implements DatasetService {
 
 					habitatRefs.add(habitatRef);
 				}
+			} else {
+				habitatRefs = null;
 			}
 			metadata.setHabitatReferences(habitatRefs);
 
@@ -444,22 +475,50 @@ public class DatasetServiceImpl implements DatasetService {
 
 					additionalMetadatas.add(additionalMetadata);
 				}
+			} else { 
+				additionalMetadatas = null;
 			}
 			metadata.setAdditionalMetadatas(additionalMetadatas);
 
+			ExternalSourceInformationODTO externalSourceInformation = new ExternalSourceInformationODTO();
+			JsonNode externalSourceInformationNode = metadataNode.get("externalSourceInformation");
+			if (externalSourceInformationNode != null) {
+				setFieldSafely(externalSourceInformationNode, externalSourceInformation::setExternalSourceInfo, JsonNode::asText, "externalSourceInfo");
+				setFieldSafely(externalSourceInformationNode, externalSourceInformation::setExternalSourceName, JsonNode::asText, "externalSourceName");
+				setFieldSafely(externalSourceInformationNode, externalSourceInformation::setExternalSourceURI, JsonNode::asText, "externalSourceURI");
+			} else {
+				externalSourceInformation = null;
+			}
+			metadata.setExternalSourceInformation(externalSourceInformation);
+
+
+			List<FileODTO> files = new ArrayList<>();
+			JsonNode fileNodeList = metadataNode.get("files");
+			if (fileNodeList != null) {
+				for (JsonNode fileNode : fileNodeList) {
+					FileODTO file = new FileODTO();
+					setFieldSafely(fileNode, file::setName, JsonNode::asText, "name");
+					setFieldSafely(fileNode, file::setFormat, JsonNode::asText, "format");
+					setFieldSafely(fileNode, file::setMd5, JsonNode::asText, "md5");
+					setFieldSafely(fileNode, file::setSize, JsonNode::asText, "size");
+					setFieldSafely(fileNode, file::setSizeMeasureType, JsonNode::asText, "sizeMeasureType");
+					setFieldSafely(fileNode, file::setSourceUrl, JsonNode::asText, "sourceUrl");
+
+					files.add(file);
+				}
+			} else {
+				files = null;
+			}
+			metadata.setFiles(files);
 
 			dataset.setMetadata(metadata);
 
 			JsonNode titles = metadataNode.get("titles");
 			if (titles != null) {
-				if (titles.size() == 1) {
-					setFieldSafely(titles.get(0), dataset::setTitle, JsonNode::asText, "titleText");
-				} else {
-					for (JsonNode titleNode : titles) {
-						if (titleNode.get("titleLanguage") != null && titleNode.get("titleLanguage").asText().toUpperCase().contains("ENG")) {
-							setFieldSafely(titleNode, dataset::setTitle, JsonNode::asText, "titleText");
-							break;
-						}
+				for (JsonNode titleNode : titles) {
+					if (titleNode.get("titleLanguage") != null && titleNode.get("titleLanguage").asText().equals("en")) {
+						setFieldSafely(titleNode, dataset::setTitle, JsonNode::asText, "titleText");
+						break;
 					}
 				}
 			}

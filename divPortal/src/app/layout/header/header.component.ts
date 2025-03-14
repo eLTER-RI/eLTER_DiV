@@ -8,6 +8,7 @@ const screenfull = require('screenfull');
 import { SettingsService } from '../../core/settings/settings.service';
 import { MenuService } from '../../core/menu/menu.service';
 import { ToastrService } from 'ngx-toastr';
+import { AppBlockerService } from '../app-overlay/app-blocker.service';
 
 @Component({
     selector: 'app-header',
@@ -32,7 +33,8 @@ export class HeaderComponent implements OnInit {
                 private homeService: HomeService,
                 private sharedService: SharedService,
                 private offsidebarService: OffsidebarService,
-                private toastrService: ToastrService) {
+                private toastrService: ToastrService,
+                private appBlockerService: AppBlockerService) {
         this.menuItems = menu.getMenu().slice(0, 4);
 
         this.router.events.subscribe((val) => {
@@ -56,10 +58,18 @@ export class HeaderComponent implements OnInit {
         const response2 = await this.sharedService.get('getHtml?partOfApp=terms_and_condititions');
         this.termsAndCondHtml = response2.entity.html;
 
-        this.toastrService.warning('You are using a development system of the emerging eLTER Research Infrastructure (RI). Please note that this service is still under construction and may not yet be fully functional.',
+        this.appBlockerService.blockApp();
+
+        const disclaimerToast = this.toastrService.warning('You are using a development system of the emerging eLTER Research Infrastructure (RI). Please note that this service is still under construction and may not yet be fully functional.',
                                    'Warning', {
                                         disableTimeOut: true,
+                                        tapToDismiss: true, // Allows user to dismiss the toast by clicking
+                                        closeButton: true
                                     });
+
+        disclaimerToast.onTap.subscribe(() => {
+            this.appBlockerService.unblockApp();
+        });
     }
 
     toggleUserBlock(event) {

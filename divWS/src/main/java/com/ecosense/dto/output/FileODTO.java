@@ -3,13 +3,13 @@ package com.ecosense.dto.output;
 import java.io.Serializable;
 
 public class FileODTO implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 1L;
+    
     private String format;
     private String md5;
     private String name;
     private String size;
+    private String sizeMeasureType;
     private String sourceUrl;
 
     public FileODTO() { }
@@ -46,6 +46,14 @@ public class FileODTO implements Serializable {
         this.size = size;
     }
 
+    public String getSizeMeasureType() {
+        return sizeMeasureType;
+    }
+
+    public void setSizeMeasureType(String sizeMeasureType) {
+        this.sizeMeasureType = sizeMeasureType;
+    }
+
     public String getSourceUrl() {
         return sourceUrl;
     }
@@ -53,4 +61,5 @@ public class FileODTO implements Serializable {
     public void setSourceUrl(String sourceUrl) {
         this.sourceUrl = sourceUrl;
     }
+    
 }

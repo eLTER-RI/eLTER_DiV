@@ -1,6 +1,7 @@
 package com.ecosense.dto.output;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 public class MetadataODTO implements Serializable {
@@ -9,6 +10,7 @@ public class MetadataODTO implements Serializable {
 
     private Integer dataLevel;
     private String language;
+    private Date publicationDate;
 
     private List<ProjectODTO> projects;
     private List<CreatorODTO> creators;
@@ -22,6 +24,8 @@ public class MetadataODTO implements Serializable {
     private List<MethodODTO> methods;
     private List<HabitatReferenceODTO> habitatReferences;
     private List<AdditionalMetadataODTO> additionalMetadatas;
+    private ExternalSourceInformationODTO externalSourceInformation;
+    private List<FileODTO> files;
 
 
     public MetadataODTO() { }
@@ -138,4 +142,28 @@ public class MetadataODTO implements Serializable {
         this.additionalMetadatas = additionalMetadatas;
     }
 
+    public Date getPublicationDate() {
+        return publicationDate;
+    }
+
+    public void setPublicationDate(Date publicationDate) {
+        this.publicationDate = publicationDate;
+    }
+
+    public ExternalSourceInformationODTO getExternalSourceInformation() {
+        return externalSourceInformation;
+    }
+
+    public void setExternalSourceInformation(ExternalSourceInformationODTO externalSourceInformation) {
+        this.externalSourceInformation = externalSourceInformation;
+    }
+
+    public List<FileODTO> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<FileODTO> files) {
+        this.files = files;
+    }
+    
 }

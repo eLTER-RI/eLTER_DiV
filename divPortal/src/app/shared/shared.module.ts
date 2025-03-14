@@ -35,6 +35,7 @@ import { NowDirective } from './directives/now/now.directive';
 import { ScrollableDirective } from './directives/scrollable/scrollable.directive';
 import { JqcloudDirective } from './directives/jqcloud/jqcloud.directive';
 import { SafePipe } from './pipe/safe.pipe';
+import { NullPipe } from './pipe/null.pipe';
 
 // https://angular.io/styleguide#!#04-10
 @NgModule({
@@ -78,7 +79,8 @@ import { SafePipe } from './pipe/safe.pipe';
     JqcloudDirective,
     LoadingComponent,
     ClickOutsideDirective,
-    SafePipe
+    SafePipe,
+    NullPipe
   ],
   exports: [
     CommonModule,
@@ -114,7 +116,8 @@ import { SafePipe } from './pipe/safe.pipe';
     JqcloudDirective,
     LoadingComponent,
     ClickOutsideDirective,
-    SafePipe
+    SafePipe,
+    NullPipe
   ],
 })
 

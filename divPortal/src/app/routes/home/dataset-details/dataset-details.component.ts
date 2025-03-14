@@ -2,10 +2,7 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { OffsidebarService } from 'src/app/layout/offsidebar/offsidebar.service';
 import { Dataset } from 'src/app/shared/model/dataset';
-import { SharedService } from 'src/app/shared/service/shared.service';
 import { HomeService } from '../home/home.service';
-import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
 import { SettingsService } from 'src/app/core/settings/settings.service';
 import { DatasetDetailsListService } from '../dataset-details-list/dataset-details-list.service';
 

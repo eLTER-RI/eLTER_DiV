@@ -8,6 +8,7 @@ import { NavsearchComponent } from './header/navsearch/navsearch.component';
 import { OffsidebarComponent } from './offsidebar/offsidebar.component';
 import { FooterComponent } from './footer/footer.component';
 import { SharedModule } from '../shared/shared.module';
+import { AppOverlayComponent } from './app-overlay/app-overlay.component';
 
 @NgModule({
     imports: [
@@ -22,7 +23,8 @@ import { SharedModule } from '../shared/shared.module';
         HeaderComponent,
         NavsearchComponent,
         OffsidebarComponent,
-        FooterComponent
+        FooterComponent,
+        AppOverlayComponent
     ],
     exports: [
         LayoutComponent,
@@ -30,7 +32,8 @@ import { SharedModule } from '../shared/shared.module';
         HeaderComponent,
         NavsearchComponent,
         OffsidebarComponent,
-        FooterComponent
+        FooterComponent,
+        AppOverlayComponent
     ]
 })
 export class LayoutModule { }
