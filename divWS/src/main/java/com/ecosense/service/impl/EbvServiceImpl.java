@@ -240,6 +240,7 @@ public class EbvServiceImpl implements EbvService {
 		
 		JsonNode body = response.getBody();
 		JsonNode dataNode = body.get("data").get(0);
+		System.out.println(dataNode.toPrettyString());
 		detailDTO.setId(Integer.parseInt(dataNode.get("id").asText()));
 		detailDTO.setNamingAuthority(dataNode.get("naming_authority").asText());
 		detailDTO.setTitle(dataNode.get("title").asText());
@@ -266,7 +267,7 @@ public class EbvServiceImpl implements EbvService {
 		
 		JsonNode creatorNode = dataNode.get("creator");
 		EbvCreatorDetailNodeDTO ebvCreatorDTO = new EbvCreatorDetailNodeDTO(creatorNode.get("creator_name").asText(), creatorNode.get("creator_email").asText(), 
-				creatorNode.get("creator_institution").asText(), creatorNode.get("creator_country").asText());
+																			creatorNode.get("creator_institution").asText(), creatorNode.get("creator_url").asText());
 		detailDTO.setCreator(ebvCreatorDTO);
 		
 		detailDTO.setContributorName(dataNode.get("contributor_name").asText());
@@ -275,7 +276,7 @@ public class EbvServiceImpl implements EbvService {
 		JsonNode publisherNode = dataNode.get("publisher");
 		if (publisherNode != null) {
 			EbvPublisherDetailNodeDTO ebvPublisherDTO = new EbvPublisherDetailNodeDTO(publisherNode.get("publisher_name").asText(), publisherNode.get("publisher_email").asText(), 
-					publisherNode.get("publisher_institution").asText(), publisherNode.get("publisher_country").asText());
+					publisherNode.get("publisher_institution").asText(), publisherNode.get("publisher_url").asText());
 			detailDTO.setPublisher(ebvPublisherDTO);
 		}
 		
@@ -313,10 +314,10 @@ public class EbvServiceImpl implements EbvService {
 		EbvMetricsDetailNodeDTO ebvMetricsDTO = new EbvMetricsDetailNodeDTO(metric0, metric1);
 		detailDTO.setEbvMetric(ebvMetricsDTO);
 		
-		JsonNode ebvSpatialNode = dataNode.get("ebv_spatial");
+		JsonNode ebvSpatialNode = dataNode.get("ebv_geospatial");
 		if (ebvSpatialNode != null) {
-			EbvSpatialDetailNodeDTO ebvSpatialDTO = new EbvSpatialDetailNodeDTO(chekIsNodeNull(ebvSpatialNode.get("ebv_spatial_scope"))  ? null : ebvSpatialNode.get("ebv_spatial_scope").asText(), 
-					chekIsNodeNull(ebvSpatialNode.get("ebv_spatial_description")) ? null : ebvSpatialNode.get("ebv_spatial_description").asText());
+			EbvSpatialDetailNodeDTO ebvSpatialDTO = new EbvSpatialDetailNodeDTO(chekIsNodeNull(ebvSpatialNode.get("ebv_geospatial_scope"))  ? null : ebvSpatialNode.get("ebv_geospatial_scope").asText(), 
+					chekIsNodeNull(ebvSpatialNode.get("ebv_geospatial_description")) ? null : ebvSpatialNode.get("ebv_geospatial_description").asText());
 			detailDTO.setEbvSpatial(ebvSpatialDTO);
 		}
 		

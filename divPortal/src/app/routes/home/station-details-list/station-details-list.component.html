@@ -1,0 +1,6 @@
+<div *ngIf="!stationIds || stationIds.length == 0" class="pl-3 pt-3 text-primary-color-orange">
+    <h3 class="text-center"> No station results </h3>
+</div>
+<div *ngFor="let stationId of stationIds">
+    <app-station-details [stationId]="stationId" [open]="stationIds?.length == 1"> </app-station-details>
+</div>

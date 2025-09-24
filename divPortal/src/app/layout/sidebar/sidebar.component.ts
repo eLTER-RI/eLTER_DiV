@@ -30,14 +30,8 @@ export class SidebarComponent implements OnInit {
         });
     }
 
-    
-
     ngOnInit() {
         this.showHome = true;
     }
-
-
-
-
 
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { MeasurementRequest } from 'src/app/shared/model/measurement-ib';
 import { MeasurementResponse } from 'src/app/shared/model/measurements-response-db';
@@ -13,14 +13,19 @@ export class DiagramService {
 
   private httpHeaders = new HttpHeaders({ 'Content-Type': 'application/json' });
   
-  private diagramBehaviorSubject = new BehaviorSubject<any>({});
-  currDiagram = this.diagramBehaviorSubject.asObservable();
+  private diagramBehaviorEvent: Subject<any> = new Subject();
+  private refreshEvent: Subject<any> = new Subject();
 
   constructor(private http: HttpClient) { }
 
-  diagramChanged(state: any) {
-    this.diagramBehaviorSubject.next(state);
+  getDiagramBehaviorEvent() {
+    return this.diagramBehaviorEvent;
   }
+
+  getRefreshEvent() {
+    return this.refreshEvent;
+  }
+
 
   getMeasurements(measurementRequests: MeasurementRequest[]): Observable<MeasurementResponse> {
     const url = environment.serverUrl + 'sos/getMeasurements';

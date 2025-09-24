@@ -33,13 +33,27 @@
 }
 
 .navigation-box-header:hover {
-width: 150px;
+  width: 150px;
 }
 .navigation-box-body:hover{
-width: 170px;
-height: 120px;
+  width: 170px;
+  height: 120px;
 }
 .navigation-box:hover {
-width: 170px;
-height: 140px;
+  width: 170px;
+  height: 140px;
+}
+
+.diagram-loading {
+  position: absolute;
+  top: 400px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 9999;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

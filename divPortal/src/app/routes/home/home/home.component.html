@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<div class="time-of-layer-background" *ngIf="markedLayer?.times != undefined && markedLayer?.times != null && markedLayer.times.length > 0">
+<div class="time-of-layer-background pointer" *ngIf="markedLayer?.times != undefined && markedLayer?.times != null && markedLayer.times.length > 0">
     <div class="time-of-layer">
         <pagination-template #p="paginationApi" id="custom" (pageChange)="config.currentPage = $event">
 

@@ -39,4 +39,8 @@ export class Layer {
 
     codeForSidebar: string;
 
+    clickedForInfo: boolean = false;
+
+    hasJsonDataset: boolean;
+
 }

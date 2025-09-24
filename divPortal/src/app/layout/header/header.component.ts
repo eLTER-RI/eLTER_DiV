@@ -61,13 +61,13 @@ export class HeaderComponent implements OnInit {
         this.appBlockerService.blockApp();
 
         const disclaimerToast = this.toastrService.warning('You are using a development system of the emerging eLTER Research Infrastructure (RI). Please note that this service is still under construction and may not yet be fully functional.',
-                                   'Warning', {
-                                        disableTimeOut: true,
-                                        tapToDismiss: true, // Allows user to dismiss the toast by clicking
-                                        closeButton: true
-                                    });
-
-        disclaimerToast.onTap.subscribe(() => {
+                                                           'Warning', 
+                                                           {
+                                                                disableTimeOut: true,
+                                                                tapToDismiss: true, // Allows user to dismiss the toast by clicking
+                                                           });
+;
+        disclaimerToast.onHidden.subscribe(() => {
             this.appBlockerService.unblockApp();
         });
     }

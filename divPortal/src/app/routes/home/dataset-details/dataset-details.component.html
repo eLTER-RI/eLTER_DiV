@@ -5,14 +5,22 @@
     <div class="tabs">
         <div class="tab">
             <input type="checkbox" [checked]="datasetDetail.open">
-            <label class="tab-label" (click)="openCloseDatasetDetail()">
+            <label class="tab-label" (click)="openCloseDatasetDetail(); $event.preventDefault();">
                 <label class="pointer">
                     <em (click)="pinClick(); $event.stopPropagation();" 
                         class="fa-2x mr-2 fas fa-map-marker-alt pinIcon"
                         [ngClass]="{'pinIconActive' : pinActive}">
                     </em>
-                        <span *ngIf="datasetDetail.title?.length > 0"> <b>{{datasetDetail?.title}}</b> </span>
-                        <span *ngIf="!datasetDetail.title || datasetDetail.title.length == 0"> <b> This dataset currently has no title </b> </span>
+                    <span *ngIf="layer" class="switch-container" (click)="$event.stopPropagation()">
+                        <label class="switch mr-2" style="display: inline">
+                            <input type="checkbox" 
+                                [checked]="datasetDetail.datasetLayerChecked" 
+                                (click)="checkDatasetLayer(datasetDetail); $event.stopPropagation();">
+                            <span></span> 
+                        </label>
+                    </span>
+                    <span *ngIf="datasetDetail.title?.length > 0"> <b>{{datasetDetail?.title}}</b> </span>
+                    <span *ngIf="!datasetDetail.title || datasetDetail.title.length == 0"> <b> This dataset currently has no title </b> </span>
                 </label>
             </label>
             <div *ngIf="datasetDetail.open" class="tab-content">
@@ -369,7 +377,7 @@
                             </div>
                         </div>
 
-                        <div class="tab" *ngId="datasetDetail?.metadata?.files">
+                        <div class="tab" *ngIf="datasetDetail?.metadata?.files">
                             <input type="checkbox" [checked]="menuItem == 'files'">
                             <label class="tab-label" (click)="clickOnTab('files')">
                                 Files

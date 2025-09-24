@@ -33,14 +33,14 @@ export class Creator {
     creatorName: string;
     creatorEmail: string;
     creatorInstitution: string;
-    creatorCountry: string;
+    creatorUrl: string;
 }
 
 export class Publisher {
     publisherName: string;
     publisherEmail: string;
     publisherInstitution: string;
-    publisherCountry: string;
+    publisherUrl: string;
 }
 
 export class EbvMetric {

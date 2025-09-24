@@ -8,7 +8,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.glassfish.jersey.internal.inject.ParamConverters.TypeValueOf;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
@@ -61,6 +60,16 @@ public class SiteRepoImpl implements SiteRepo {
 	}
 
 	@Override
+	public Site getSite(Integer id) {
+		List<Site> sites = em.createQuery("SELECT site FROM Site site WHERE site.id = :id", Site.class)
+				.setParameter("id", id)
+				.getResultList();
+		
+		return sites.isEmpty() ? null : sites.get(0);
+	}
+
+	@Override
+	@Transactional
 	public void updateSite(Site siteFromDB) {
 		em.merge(siteFromDB);
 		em.flush();

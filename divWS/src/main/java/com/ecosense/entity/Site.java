@@ -21,12 +21,19 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import org.locationtech.jts.geom.Geometry;
-import org.teiid.core.types.GeographyType;
 
 @Entity  
 @NamedQuery(name="Site.findAll", query="SELECT s FROM Site s")
 @Table(name="site")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Site implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -48,12 +55,19 @@ public class Site implements Serializable {
 	@JsonIgnore
 	@Column(name="polygon")
 	private Geometry polygon;
+
+	@JsonIgnore
+	@Column(name="circle")
+	private Geometry circle;
 	
 	@Column(name="title")
 	private String title;
 	
 	@Column(name="area")
 	private Double area;
+
+	@Column(name="last_checked")
+	private Date lastChecked;
 	
 	@JsonManagedReference
 	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, fetch = FetchType.LAZY)
@@ -81,9 +95,6 @@ public class Site implements Serializable {
 		)
 	private List<Country> countries;
 	
-	public Site() {
-	}
-	
 	public Site(Integer id,  String idSuffix, String title, Geometry point) {
 		super();
 		this.id = id;
@@ -92,89 +103,24 @@ public class Site implements Serializable {
 		this.title = title;
 	}
 
-	public Integer getId() {
-		return this.id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	
-	public String getIdSuffix() {
-		return this.idSuffix;
-	}
-
-	public void setIdSuffix(String idSuffix) {
-		this.idSuffix = idSuffix;
-	}
-	
-	public String getTitle() {
-		return this.title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	
-	public Date getChanged() {
-		return this.changed;
-	}
-
-	public void setChanged(Date changed) {
-		this.changed = changed;
-	}
-
-	public Geometry getPoint() {
-		return this.point;
-	}
-
-	public void setPoint(Geometry point) {
-		this.point = point;
-	}
-
-	public Geometry getPolygon() {
-		return this.polygon;
-	}
-
-	public void setPolygon(Geometry polygon) {
-		this.polygon = polygon;
-	}
-	
-	public List<Activity> getActivities() {
-		if (this.activities == null) {
-			this.activities = new ArrayList<>();
-		}
-		return this.activities;
-	}
-
-	public void setActivities(List<Activity> activities) {
-		this.activities = activities;
-	}
-
-	public List<Country> getCountries() {
-		if (this.countries == null) {
-			this.countries = new ArrayList<>();
-		}
-		return this.countries;
-	}
-
-	public void setCountries(List<Country> countries) {
-		this.countries = countries;
-	}
-	
-	public Double getArea() {
-		return area;
-	}
-
-	public void setArea(Double area) {
-		this.area = area;
-	}
-
 	@Override
 	public String toString() {
 		return "Site [id=" + id + ", changed=" + changed + ", idSuffix=" + idSuffix + ", point=" + point + ", polygon="
 				+ polygon + ", title=" + title + "]";
 	}
 
-	
+	public List<Activity> getActivities() {
+		if (activities == null) {
+			activities = new ArrayList<>();
+		}
+		return activities;
+	}
+
+	public List<Country> getCountries() {
+		if (countries == null) {
+			countries = new ArrayList<>();
+		}
+		return countries;
+	}
+
 }

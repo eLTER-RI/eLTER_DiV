@@ -1,7 +1,9 @@
 import { Router, NavigationEnd } from '@angular/router';
 import { DiagramService } from './../diagram/diagram.service';
-import { DiagramTimeseries } from './../../../shared/model/diagram-timeseries';
 import { Component, OnInit } from '@angular/core';
+import { TimeIOService } from 'src/app/shared/service/time-io.service';
+import { TimeIODatastream } from 'src/app/shared/model/timeio-datastream';
+import { OffsidebarService } from 'src/app/layout/offsidebar/offsidebar.service';
 
 @Component({
   selector: 'app-diagram-sidebar',
@@ -10,18 +12,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DiagramSidebarComponent implements OnInit {
 
-  timeseries: DiagramTimeseries[];
+  datastreams: TimeIODatastream[];
   showValues: boolean[] = [];
 
-  scrollbarOptionsTimeseries = {  theme: 'light-thick', scrollButtons: { enable: true },  setHeight: '95vh'};
-
-  private colors: string[] = ['#0879C0', '#96CE58', '#003972', '#BADFFD',
-  '#0879C0', '#7b00ff', '#42f5e3', '#917af5',
-  '#f7528c', '#f27900', '#eef200', '#f552f7'];
-
+  scrollbarOptionsDatastreams = {  theme: 'light-thick', scrollButtons: { enable: true },  setHeight: '95vh'};
 
   constructor(private diagramService: DiagramService,
-              private router: Router) {
+              private router: Router,
+              private timeioService: TimeIOService,
+              private offsidebarService: OffsidebarService) {
     this.router.events.subscribe((val) => {
         if (val instanceof NavigationEnd && val.url.indexOf('diagram') > -1) {
           this.loadTimeseries();
@@ -31,25 +30,33 @@ export class DiagramSidebarComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTimeseries();
+
+    this.initSubscriptions();
+  }
+
+  initSubscriptions() {
+    this.timeioService.selectedDatastreams$.subscribe(selectedDs => {
+      selectedDs.forEach(ds => {
+        if (!this.datastreams.find(d => d.id === ds.id)) {
+          this.datastreams.push(ds);
+        }
+      });
+    });
   }
 
   loadTimeseries() {
-    const timeseries = sessionStorage.getItem('diagramTimeseries');
-
-    if (timeseries != null && timeseries != undefined && timeseries != 'undefined') {
-      this.timeseries = JSON.parse(timeseries);
-    }
+    this.datastreams = this.timeioService.getSelectedDatastreams();
   }
 
-  btn_showStationOnMap(ts) {
-
+  getFilteredDatastreams(): TimeIODatastream[] {
+    return this.datastreams.filter(ds => ds.showed);
   }
-
-  getStyleForTimeseries(timeseries: DiagramTimeseries) {
-    if (timeseries.color != null) {
+  
+  getStyleForDatastream(datastream: TimeIODatastream) {
+    if (datastream.color != null) {
         const styles = {
             'border-style': 'solid',
-            'border-color': timeseries.color
+            'border-color': datastream.color
         }
         return styles;
     }
@@ -60,39 +67,49 @@ export class DiagramSidebarComponent implements OnInit {
     return styles;
   }
 
-  btn_selectOrDeselectTimeseries(timeseries: DiagramTimeseries, i: number) {
+  btn_selectOrDeselectDatastreams(datastream: TimeIODatastream, i: number) {
     const state = {
       obj: {
-        timeseries: timeseries,
+        datastreams: datastream,
         index: i
       },
-      action: 'selectOrDeselectTimeseries'
+      action: 'selectOrDeselectDatastreams'
     }
-
-    this.diagramService.diagramChanged(state);
+    this.diagramService.getDiagramBehaviorEvent().next(state);
   }
 
 
-  btn_removeTimeseries(tsToRemove: DiagramTimeseries, index) {
-    this.timeseries.splice(index, 1);
+  btn_removeDatastreams(dsToRemove: TimeIODatastream, index, event) {
+    event?.stopPropagation();
 
-    sessionStorage.setItem('diagramTimeseries', JSON.stringify(this.timeseries));
+    dsToRemove.showed = false;
+    dsToRemove.checked = false;
+    dsToRemove.color = null;
+    this.datastreams.splice(index, 1);
+
+    this.timeioService.removeDatastream(dsToRemove);
+
+    this.offsidebarService.unselectDatastreams([dsToRemove.id]);
 
     const state = {
-      action: 'removeOneTimeserie',
+      action: 'removeOneDatastream',
       obj: {
-        tsToRemove: tsToRemove,
-        index: index
+        dsToRemove: dsToRemove
       }
     }
 
-    this.diagramService.diagramChanged(state);
+    this.diagramService.getDiagramBehaviorEvent().next(state);
   }
 
   btn_clearAll() {
-    this.timeseries = [];
+    let datastreamIds = this.datastreams.map(ds => ds.id);
+    this.datastreams.forEach(ds => {ds.showed = false; ds.checked = false; ds.color = null;}); // Hide all datastreams
 
-    sessionStorage.setItem('diagramTimeseries', JSON.stringify(this.timeseries));
+    this.timeioService.removeAllDatastreams();
+    this.offsidebarService.unselectDatastreams(datastreamIds);
+
+    this.datastreams = [];
+    
     this.router.navigate(['/home']);
   }
 

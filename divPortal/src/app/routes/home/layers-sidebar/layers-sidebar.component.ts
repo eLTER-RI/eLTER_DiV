@@ -19,6 +19,7 @@ import Cluster from 'ol/source/Cluster';
 import { Circle as CircleStyle, Fill, Stroke, Style, Icon, Text } from 'ol/style';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import { BoundingBox } from 'src/app/shared/model/bounding-box-db';
+import { TimeIOLocation } from 'src/app/shared/model/timeio-location';
 
 @Component({
   selector: 'app-layers-sidebar',
@@ -36,6 +37,9 @@ export class LayersSidebarComponent implements OnInit {
 
   sitesBbox: BoundingBox;
 
+  stations: TimeIOLocation[];
+  stationsBbox: BoundingBox;
+
   allLayers: Layer[];
 
   showLayers: boolean;
@@ -52,6 +56,8 @@ export class LayersSidebarComponent implements OnInit {
 
   zIndexOffset = 1300;
   styleCache;
+
+  isBlinking: boolean = false;
 
   constructor(private layersService: LayersSidebarService,
               private homeService: HomeService,
@@ -74,7 +80,7 @@ export class LayersSidebarComponent implements OnInit {
   initSubscriptions() {
     this.addSelectedLayersSubscription = this.offsidebarService.selectedLayers.subscribe( state => {
       if (state && state.action == 'addSelectedLayers') {
-        this.addSelectedLayers(state.layers);
+        this.addSelectedLayers(state.layers, state.closeOffsidebar);
       } 
     });
 
@@ -89,7 +95,7 @@ export class LayersSidebarComponent implements OnInit {
     this.filterLayerSubscription = this.homeService.filterLayerObservable.subscribe( obj => {
       this.allLayers?.forEach(lay => {
         if (lay.code == obj.layer.code && !lay.showMap) {
-          this.fiterSites(lay);
+          this.filterSites(lay);
         }
       });
     });
@@ -114,6 +120,7 @@ export class LayersSidebarComponent implements OnInit {
       action:  layer.showMap ? 'turnOn' : 'turnOff',
       bbox:  layer.showMap  ? layer.bbox : undefined
     }
+
     this.homeService.turnOnOffLayer(state);
     this.refreshZIndex();
   }
@@ -124,8 +131,15 @@ export class LayersSidebarComponent implements OnInit {
     this.sitesBbox = response.entity.boundingBox;
   }
 
+  async readStations() {
+    const response  = await this.sharedService.get('timeio/location/getAllLocations');
+    this.stations = response.entity.locations;
+    this.stationsBbox = response.entity.boundingBox;
+  }
+
   async readCodebook() {
     await this.readSites();
+    await this.readStations();
     await this.readLayers();
     this.readSelectedLayers();
 
@@ -138,6 +152,7 @@ export class LayersSidebarComponent implements OnInit {
     const response2 = await this.sharedService.get('site/getAllTitles');
     this.titles = response2.entity;
 
+    this.homeService.isLoading(false);
   }
 
   readSelectedLayers() {
@@ -157,6 +172,13 @@ export class LayersSidebarComponent implements OnInit {
     const siteLayer = resp2.entity[0];
     this.showOrHideLayersOnMap(siteLayer);
     this.allLayers = [siteLayer].concat(this.allLayers);
+
+    const resp3 = await this.layersService.getLayers(['special'], 'station');
+    const stationLayer = resp3.entity[0];
+    stationLayer.showMap = false;
+    this.allLayers = [stationLayer].concat(this.allLayers);
+
+
   }
 
   changeMarkedLayer(layer: Layer) {
@@ -177,7 +199,9 @@ export class LayersSidebarComponent implements OnInit {
   }
 
   showOrHideLayersOnMap(layer: Layer, directlyFromButton: boolean = false) {
-      layer.showMap = !layer.showMap;
+      if (directlyFromButton || layer.code != 'station') {
+        layer.showMap = !layer.showMap;
+      }
 
       if (layer.showMap) {
         this.offsidebarService.setLayerCodeForSidebar('layers-sidebar');
@@ -202,6 +226,8 @@ export class LayersSidebarComponent implements OnInit {
 
       if (layer.layerTile == null || layer.layerTile == undefined) {
         if (layer.code == 'sites') {
+          this.createSitesLayer(layer);
+        } else if (layer.code == 'station') {
           this.createSitesLayer(layer);
         } else {
           layer.layerTile = new TileLayer({
@@ -232,8 +258,11 @@ export class LayersSidebarComponent implements OnInit {
                 }
     
             }),
-            visible: true,
+            visible: true
           });
+          if (!directlyFromButton) {
+            layer.showMap = false;
+          }
 
          if (layer.layerNameBiggerZoom) {
           layer.layerTileBiggerZoom = new TileLayer({
@@ -258,16 +287,28 @@ export class LayersSidebarComponent implements OnInit {
         action:  layer.showMap ? 'turnOn' : 'turnOff',
         bbox:  layer.showMap  ? layer.bbox : undefined
       }
-
       this.homeService.turnOnOffLayer(state);
 
       this.refreshZIndex();
   }
 
-  async createSitesLayer(layer: Layer) {
-    const ids = this.sites?.map( s => s.id);
-    const cql = 'id in (' + ids?.toString() + ')';
-          
+  async createSitesLayer(layer: Layer, filter: boolean = false) {
+    
+    let ids = [];
+    let cql = null;
+    let layerTileVisible;
+    if (layer.code == 'sites') {
+      ids = this.sites?.map( s => s.id);
+      layerTileVisible = true;
+    } else if (layer.code == 'station') {
+      ids = this.stations?.map( s => s.id);
+      layerTileVisible = false;
+    }
+    
+    if (filter) {
+      cql = 'id in (' + ids?.toString() + ')';
+    }
+    
     layer.layerTile = new TileLayer({
       source: new TileWMS({
           url: layer.geoUrlWms,
@@ -281,13 +322,12 @@ export class LayersSidebarComponent implements OnInit {
           transition: 0,
 
       }),
-      visible: true,
+      visible: layerTileVisible
     });
-
 
     const vectorSource =   new VectorSource({
       format: new GeoJSON(),
-      url: layer.geoUrlWfs + "&CQL_FILTER=" + cql,
+      url: layer.geoUrlWfs + (cql ? ("&CQL_FILTER=" + cql) : ""),
     });
 
     layer.layerVector = new VectorSource({});
@@ -309,6 +349,7 @@ export class LayersSidebarComponent implements OnInit {
 
 						if (size > 1) {
 							if (!style) { 
+                let fillColor = layer.code == "sites" ? '#cc7000' : '#ec1c24';
 								style = new Style({
 									image: new CircleStyle({
 										radius: 10,
@@ -316,7 +357,7 @@ export class LayersSidebarComponent implements OnInit {
 											color: '#fff',
 										}),
 										fill: new Fill({
-											color: '#cc7000',
+											color: fillColor,
 										}),
 									}),
 									text: new Text({
@@ -332,10 +373,11 @@ export class LayersSidebarComponent implements OnInit {
 
 							return style;
 						} else { 
+              let iconPath = layer.code == "sites" ? "assets/img/map/marker-orange.png" : "assets/img/map/marker-red.png";
               let style = new Style({
                 image: new Icon(({
                   anchor: [0.5, 1],
-                  src: "assets/img/map/marker-orange.png"
+                  src: iconPath
                 })),
                 zIndex: 20
               })
@@ -351,13 +393,15 @@ export class LayersSidebarComponent implements OnInit {
 
 
   showHideMoreLayers() {
+    this.triggerBlink();
+    
     this.offsidebarService.showAllLayers({
       action: 'showHideMoreLayers',
       layers: this.allLayers
     });
   }
 
-  async addSelectedLayers(layers) {
+  async addSelectedLayers(layers, closeOffsidebar: boolean = true) {
     const ids = layers.filter(l => l.id != undefined).map( l => l.id);
     const mylayers = JSON.parse(JSON.stringify(layers.filter( l => l.layerType == 'mylayer')));
 
@@ -367,7 +411,10 @@ export class LayersSidebarComponent implements OnInit {
     sessionStorage.setItem('selectedLayers', JSON.stringify(allLayers));
 
     this.addListToAllLayers(allLayers);
-    this.closeOffsidebar();
+
+    if (closeOffsidebar) {
+      this.closeOffsidebar();
+    }
   }
 
   addListToAllLayers(layers: Layer[]) {
@@ -421,7 +468,7 @@ export class LayersSidebarComponent implements OnInit {
     return newSelectedLayers;
   }
 
-  async fiterSites(layer: Layer) {
+  async filterSites(layer: Layer) {
     const state = {
       layer: layer,
       action: 'turnOff'
@@ -432,13 +479,12 @@ export class LayersSidebarComponent implements OnInit {
 
     await this.readSites();
     
-    await this.createSitesLayer(layer);
+    await this.createSitesLayer(layer, true);
     
     const state2 = {
       layer:  layer,
       action: 'turnOn',
       bbox: this.sitesBbox
-      // bbox: layer.bbox //. TODO milica - nije radio bbox za poligon (samo za tacku) za filter layer-a
     }
     this.homeService.turnOnOffLayer(state2);
 
@@ -487,6 +533,15 @@ export class LayersSidebarComponent implements OnInit {
   getIconClassForMarkedLayer(layer) {
     const layerMarked = this.getMarkedForLayer(layer);
     return layerMarked ? 'fa icon-check mt-1' : 'far fa-circle mt-1';
+  }
+
+  triggerBlink() {
+    if (!this.isBlinking) {
+      this.isBlinking = true;
+      setTimeout(() => {
+        this.isBlinking = false;
+      }, 2000); // (2 seconds for 2 blinks)
+    }
   }
 
 }

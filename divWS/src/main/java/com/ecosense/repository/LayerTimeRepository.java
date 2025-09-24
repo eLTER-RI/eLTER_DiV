@@ -16,4 +16,6 @@ public interface LayerTimeRepository extends JpaRepository<LayerTime, Integer> {
 
 	Long countByLayer(Layer layer);
 
+	void deleteByLayer(Layer layer);
+
 }

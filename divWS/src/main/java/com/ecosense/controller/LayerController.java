@@ -1,5 +1,6 @@
 package com.ecosense.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecosense.dto.CapabilitiesRequestDTO;
+import com.ecosense.dto.DivFilterDTO;
 import com.ecosense.dto.LayerDTO;
+import com.ecosense.dto.DatasetLayerDTO;
 import com.ecosense.dto.SimpleResponseDTO;
 import com.ecosense.dto.input.FeatureInfoRequestIDTO;
 import com.ecosense.dto.output.LayerGroupDTO;
@@ -138,6 +141,27 @@ public class LayerController {
 		}
 		if (response.getStatus() == SimpleResponseDTO.OK) {
 			return Response.ok(getCapabilitiesResponse).build();
+		} else {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
+		}
+	}
+
+	@RequestMapping(value = "/filterAndSearch", method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON)
+	public Response filterAndSearch(@RequestBody DivFilterDTO divFilterDTO) {
+		SimpleResponseDTO response = new SimpleResponseDTO();
+		
+		List<DatasetLayerDTO> layersWithDatasets = new ArrayList<>();
+		try {
+			
+			layersWithDatasets = layerService.filterAndSearch(divFilterDTO);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(SimpleResponseDTO.GENERAL_SERVER_ERROR);
+		}
+		if (response.getStatus() == SimpleResponseDTO.OK) {
+			return Response.ok(layersWithDatasets).build();
 		} else {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
 		}

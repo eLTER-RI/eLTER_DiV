@@ -1,0 +1,20 @@
+<div *ngIf="datasetLayers?.length == 0" class="pl-3 pt-3 text-primary-color-orange">
+    <h3 class="text-center"> No search results </h3>
+</div>
+
+<app-loading *ngIf="!datasetLayers"></app-loading>
+
+<div *ngFor="let datasetLayer of datasetLayers | slice:(page.currentPage - 1) * page.size:(page.currentPage * page.size)">
+    <app-dataset-layer-details [datasetLayerDetail]="datasetLayer" [open]="datasetLayers?.length == 1"> </app-dataset-layer-details>
+</div>
+
+<div class="card-footer d-flex justify-content-center bg-transparent" *ngIf="page?.totalPages > 1">
+    <pagination 
+        [totalItems]="page?.totalElements" 
+        [itemsPerPage]="page?.size" 
+        previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;"
+        [(ngModel)]="page.currentPage" [boundaryLinks]="true" (pageChanged)="pageChanged($event)" 
+        (click)="$event.stopPropagation()"
+        class="pagination-sm m-0">
+    </pagination>
+</div>

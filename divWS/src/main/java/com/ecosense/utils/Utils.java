@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -23,9 +24,10 @@ import org.teiid.geo.GeometryTransformUtils;
 
 import com.ecosense.dto.BoundingBoxDTO;
 import com.ecosense.dto.SimpleResponseDTO;
-import com.ecosense.dto.input.FilterSatelliteIDTO;
-import com.ecosense.dto.output.SatelliteODTO;
 import com.ecosense.exception.SimpleException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Utils {
 	
@@ -33,6 +35,10 @@ public class Utils {
 	public static final int MINUTE = 60 * SECOND;
 	public static final int HOUR = 60 * MINUTE;
 	public static final int DAY = 24 * HOUR;
+
+	public static Boolean isEmpty(List<?> list) {
+		return list == null || list.isEmpty();
+	}
 
 	public static XMLGregorianCalendar getXMLGregorianCalendarInUTCFromDate(Date date) throws Exception {
 		GregorianCalendar gc = new GregorianCalendar();  
@@ -50,6 +56,15 @@ public class Utils {
 	    xmlDate.setTimezone(0);
 
 	    return xmlDate;
+	}
+
+	public static Boolean isOlderThanOneDay(Date date) {
+		if (date == null) return false;
+		
+		Date now = new Date();
+		long diff = now.getTime() - date.getTime();
+		
+		return diff > DAY;
 	}
 	
 	public static BoundingBoxDTO setBB(BoundingBoxDTO newPolygonBB, BoundingBoxDTO currentBB) {
@@ -133,6 +148,13 @@ public class Utils {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static Map<String, Object> mapFromJsonNode(JsonNode jsonNode) {
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = mapper.convertValue(jsonNode, new TypeReference<Map<String, Object>>() {});
+
+		return map;
 	}
 
 }

@@ -1,0 +1,8 @@
+<app-loading *ngIf="!datasetLayerDetail"></app-loading>
+
+<div *ngIf="datasetLayerDetail !== undefined">
+    <app-dataset-details [datasetDetail]="datasetLayerDetail.dataset" 
+                         [open]="open"
+                         [layer]="datasetLayerDetail.layer">
+    </app-dataset-details>
+</div>

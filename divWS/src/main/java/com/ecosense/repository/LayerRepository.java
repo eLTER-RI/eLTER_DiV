@@ -29,6 +29,8 @@ public interface LayerRepository extends JpaRepository<Layer, Integer> {
 	@Query("SELECT distinct l.layerGroup FROM Layer l WHERE l.active = true and l.layerGroup.id = :lgId ")
 	List<LayerGroup> getByLayerGroupId(@Param("lgId") Integer lgId);
 
-	
+	List<Layer> findBySiteUuid(String siteUuid);
+
+	Layer findByCode(String code);	
 
 }

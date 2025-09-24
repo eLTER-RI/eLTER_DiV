@@ -1,5 +1,5 @@
 
-<div [ngClass]="showLayers ? 'selected-div' : ''">
+<div [ngClass]="{'selected-div': showLayers, 'blink-animation': isBlinking}">
     <div class="m-2">
         <div class="h4 row">
             <div class="col-9">
@@ -14,88 +14,89 @@
         </div>
 
         <div [hidden]="!showLayers" dnd-sortable-container [sortableData]="allLayers">
-            <div 
-                class="panel-body p-0 b-0 mb-1 sidebar-item" 
-                *ngFor="let layer of allLayers; index as i">
+
+            <div class="text-center mb-2">
+                <button class="btn btn-md btn-labeled bg-blue" (click)="showHideMoreLayers()">Show/hide more layers</button>
+            </div>
+
+            <div *ngFor="let layer of allLayers; index as i" class="panel-body p-0 b-0 mb-1 sidebar-item">
                 <div *ngIf="layer">
-                <div dnd-sortable (onDragEnd)="dropSuccess()" [sortableIndex]="i" (mouseover)="showLayerIcon[i]=true" (mouseout)="showLayerIcon[i]=false">
-                    <span class="col-1 mr-0">
-                        <em class="fa icon-menu mt-1" *ngIf="showLayerIcon[i]"></em>
-                        <em class="fa icon-menu mt-1" style="color: transparent;" *ngIf="!showLayerIcon[i]"></em> 
-                    </span>
-                    <label class="col-7 ml-0 pl-0"  (click)="layer.showFilter = !layer.showFilter"
-                    >
-                        <em *ngIf="layer?.layerType == 'special'" [ngClass]="layer.showFilter ? 'fas fa-angle-up' : 'fas fa-angle-down'" class="pr-sm"></em>     
-                        {{layer?.name}}
-                    </label>
-                    <span class="col-3" style="float: right; display: flex;">
-                            <label class="switch switch-sm mr-1">
-                                <input #cadastreShow type="checkbox" [checked]="layer.showMap" (click)="showOrHideLayersOnMap(layer, true)">
-                                <span></span> 
-                            </label>
+                    <div dnd-sortable (onDragEnd)="dropSuccess()" [sortableIndex]="i" (mouseover)="showLayerIcon[i]=true" (mouseout)="showLayerIcon[i]=false">
+                        <span class="col-1 mr-0">
+                            <em class="fa icon-menu mt-1" *ngIf="showLayerIcon[i]"></em>
+                            <em class="fa icon-menu mt-1" style="color: transparent;" *ngIf="!showLayerIcon[i]"></em> 
+                        </span>
+                        <label (click)="layer.showFilter = !layer.showFilter"
+                               [ngClass]="'col-7 ml-0 ' + (layer.code == 'sites' ? '' : 'pr-0')" 
+                               [ngStyle]="{'padding-left': layer.code == 'sites' ? '0px' : '10px'}"
+                               >
+                            <em *ngIf="layer.code == 'sites'" [ngClass]="layer.showFilter ? 'fas fa-angle-up' : 'fas fa-angle-down'" class="pr-sm"></em>     
+                            {{layer?.name}}
+                        </label>
+                        <span class="col-3" style="float: right; display: flex;">
+                                <label class="switch switch-sm mr-1">
+                                    <input #cadastreShow type="checkbox" [checked]="layer.showMap" (click)="showOrHideLayersOnMap(layer, true)">
+                                    <span></span> 
+                                </label>
 
-                            <a type="button" (click)="changeMarkedLayer(layer)">
-                                <em [ngClass]="getIconClassForMarkedLayer(layer)" class="text-white"></em>
-                            </a>
-                    </span>
+                                <a type="button" (click)="changeMarkedLayer(layer)">
+                                    <em [ngClass]="getIconClassForMarkedLayer(layer)" class="text-white"></em>
+                                </a>
+                        </span>
 
 
-                <div [hidden]="!(layer.showFilter && layer.code == 'sites')">
-                    <label class="ml-2 mb-0 mt-1">Title</label>
-                    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="titles" name="name" [(ngModel)]="siteFilterDTO.title"
-                        name="titles" bindLabel="item" bindValue="item">
-            
-                        <ng-template ng-label-tmp let-item="item">
-                            {{item}}
-                        </ng-template>
-                        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
-                            {{item}}
-                        </ng-template>
-                    </ng-select>
-            
-                    <label class="ml-2 mb-0 mt-2">Contries</label>
-                    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="countries" name="countries"
-                        [(ngModel)]="siteFilterDTO.countriesId" name="countries"
-                        bindLabel="name" bindValue="id" [multiple]="true">
-            
-                        <ng-template ng-label-tmp let-item="item">
-                            {{item.name}}
-                        </ng-template>
-                        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
-                            {{item.name}}
-                        </ng-template>
-                    </ng-select>
-            
-                    <label class="ml-2 mb-0 mt-2">Activities</label>
-                    <ng-select class="ml-1 mr-2" [clearable]="true" [items]="activities" name="name"
-                        [(ngModel)]="siteFilterDTO.activitiesId" name="activities"
-                        bindLabel="name" bindValue="id" [multiple]="true"
-                        >
-            
-                        <ng-template ng-label-tmp let-item="item">
-                            {{item.name}}
-                        </ng-template>
-                        <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
-                            {{item.name}}
-                        </ng-template>
-                    </ng-select>
-            
-                    <div class="text-right mr-1 mt-3">
-                        <button  class="d-inline mb-2 btn btn-sm bg-orange btn-xs"
-                            (click)="fiterSites(layer)">
-                            <em class="fa fas fa-search"></em>
-                            Filter
-                        </button>
+                        <div [hidden]="!(layer.showFilter && layer.code == 'sites')">
+                            <label class="ml-2 mb-0 mt-1">Title</label>
+                            <ng-select class="ml-1 mr-2" [clearable]="true" [items]="titles" name="name" [(ngModel)]="siteFilterDTO.title"
+                                name="titles" bindLabel="item" bindValue="item">
+                    
+                                <ng-template ng-label-tmp let-item="item">
+                                    {{item}}
+                                </ng-template>
+                                <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+                                    {{item}}
+                                </ng-template>
+                            </ng-select>
+                    
+                            <label class="ml-2 mb-0 mt-2">Contries</label>
+                            <ng-select class="ml-1 mr-2" [clearable]="true" [items]="countries" name="countries"
+                                [(ngModel)]="siteFilterDTO.countriesId" name="countries"
+                                bindLabel="name" bindValue="id" [multiple]="true">
+                    
+                                <ng-template ng-label-tmp let-item="item">
+                                    {{item.name}}
+                                </ng-template>
+                                <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+                                    {{item.name}}
+                                </ng-template>
+                            </ng-select>
+                    
+                            <label class="ml-2 mb-0 mt-2">Activities</label>
+                            <ng-select class="ml-1 mr-2" [clearable]="true" [items]="activities" name="name"
+                                [(ngModel)]="siteFilterDTO.activitiesId" name="activities"
+                                bindLabel="name" bindValue="id" [multiple]="true"
+                                >
+                    
+                                <ng-template ng-label-tmp let-item="item">
+                                    {{item.name}}
+                                </ng-template>
+                                <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+                                    {{item.name}}
+                                </ng-template>
+                            </ng-select>
+                    
+                            <div class="text-right mr-1 mt-3">
+                                <button  class="d-inline mb-2 btn btn-sm bg-orange btn-xs"
+                                    (click)="filterSites(layer)">
+                                    <em class="fa fas fa-search"></em>
+                                    Filter
+                                </button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
-            </div>
-        </div>
-
-            </div>
-
-            <div class="text-center">
-                <button class="btn btn-md btn-labeled bg-blue" (click)="showHideMoreLayers()">Show/hide more layers</button>
             </div>
   
         </div>

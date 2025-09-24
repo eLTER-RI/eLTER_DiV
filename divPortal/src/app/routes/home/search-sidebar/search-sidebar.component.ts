@@ -39,7 +39,7 @@ export class SearchSidebarComponent implements OnInit {
   showDivFilterAndSearch: boolean;
 
   siteLayer: Layer; 
-  datasetSiteLayer: Layer; 
+  datasetSiteLayer: Layer;
 
   showFilter: boolean;
   showSearch: boolean;
@@ -133,6 +133,7 @@ export class SearchSidebarComponent implements OnInit {
     const resp3 = await this.layersService.getLayers(['special'], 'sitesDataset');
     this.datasetSiteLayer = resp3.entity[0];
     this.datasetSiteLayer.searchFilterType = true;
+
   }
 
   async filterAndSearch(type: string) {
@@ -153,10 +154,12 @@ export class SearchSidebarComponent implements OnInit {
 
     this.filterAndSearchSite(type);
     this.filterAndSearchDataset(type);
+    this.filterAndSearchDatasetLayer();
   }
 
-  // search site
   async filterAndSearchSite(type: string) {
+    this.offsidebarService.datasetsOrSitesOffsidebarLoading({isLoading: true, type: "site"});
+
     this.hideLayer(this.siteLayer);
 
     const responseSites = await this.sharedService.post('site/filterAndSearch', this.divFilter)
@@ -186,11 +189,14 @@ export class SearchSidebarComponent implements OnInit {
     }
   }
 
-  // search dataset invenio
   async filterAndSearchDataset(type: string, paginationSearch: boolean = false) {
+    if (!paginationSearch) {
+      this.offsidebarService.datasetsOrSitesOffsidebarLoading({isLoading: true, type: "dataset"});
+    }
+
     let showLayer = this.offsidebarService.getLayerCodeForSidebar() == null || this.offsidebarService.getLayerCodeForSidebar() == 'search-sidebar';
     if (showLayer) {
-      this.hideLayer(this.datasetSiteLayer);
+      // this.hideLayer(this.datasetSiteLayer); // TODO timeio - ODAVDE SE POZIVA hideLayer --> hideallLayers --> turn on off
     }
 
     this.divFilter.page = this.pageForDatasetSite.currentPage;
@@ -241,6 +247,16 @@ export class SearchSidebarComponent implements OnInit {
     }
   }
 
+  async filterAndSearchDatasetLayer() {
+    const responseLayers = await this.sharedService.post('layer/filterAndSearch', this.divFilter)
+    let datasetLayersFiltered = responseLayers.entity;
+
+    this.offsidebarService.showDatasetLayers({
+      action: 'showDatasetLayers',  
+      datasetLayers: datasetLayersFiltered
+    });
+  }
+
   offsidebarOpen() {
     if (!this.settings.getLayoutSetting('offsidebarOpen')) {
         this.settings.toggleLayoutSetting('offsidebarOpen');
@@ -266,6 +282,7 @@ export class SearchSidebarComponent implements OnInit {
       }
       this.homeService.turnOnOffLayer(state);
     }
+
   }
 
   async hideLayer(layer: Layer) { 

@@ -11,19 +11,19 @@ public class EbvPublisherDetailNodeDTO  implements Serializable {
     private String publisherName;
     private String publisherEmail;
     private String publisherInstitution;
-    private String publisherCountry;
+    private String publisherUrl;
 	   
     public EbvPublisherDetailNodeDTO() {
 		// TODO Auto-generated constructor stub
 	}
 	   
 	public EbvPublisherDetailNodeDTO(String publisherName, String publisherEmail, String publisherInstitution,
-			String publisherCountry) {
+			String publisherUrl) {
 		super();
 		this.publisherName = publisherName;
 		this.publisherEmail = publisherEmail;
 		this.publisherInstitution = publisherInstitution;
-		this.publisherCountry = publisherCountry;
+		this.publisherUrl = publisherUrl;
 	}
 	public String getPublisherName() {
 		return publisherName;
@@ -34,8 +34,8 @@ public class EbvPublisherDetailNodeDTO  implements Serializable {
 	public String getPublisherInstitution() {
 		return publisherInstitution;
 	}
-	public String getPublisherCountry() {
-		return publisherCountry;
+	public String getPublisherUrl() {
+		return publisherUrl;
 	}
 	public void setPublisherName(String publisherName) {
 		this.publisherName = publisherName;
@@ -46,8 +46,8 @@ public class EbvPublisherDetailNodeDTO  implements Serializable {
 	public void setPublisherInstitution(String publisherInstitution) {
 		this.publisherInstitution = publisherInstitution;
 	}
-	public void setPublisherCountry(String publisherCountry) {
-		this.publisherCountry = publisherCountry;
+	public void setPublisherUrl(String publisherUrl) {
+		this.publisherUrl = publisherUrl;
 	}
 	   
 	   

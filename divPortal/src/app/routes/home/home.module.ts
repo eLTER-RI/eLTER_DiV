@@ -25,8 +25,11 @@ import { SiteDetailsListComponent } from './site-details-list/site-details-list.
 import { DatasetDetailsListComponent } from './dataset-details-list/dataset-details-list.component';
 import { DatasetDetailsComponent } from './dataset-details/dataset-details.component';
 import { DiagramSidebarComponent } from './diagram-sidebar/diagram-sidebar.component';
-
-
+import { StationDetailsListComponent } from './station-details-list/station-details-list.component';
+import { StationDetailsComponent } from './station-details/station-details.component';
+import { DatasetLayerDetailsListComponent } from './dataset-layer-details-list/dataset-layer-details-list.component';
+import { DatasetLayerDetailsComponent } from './dataset-layer-details/dataset-layer-details.component';
+import { LayerDatasetInfoComponent } from './dialog/layer-dataset-info/layer-dataset-info.component';
 
 
 @NgModule({
@@ -41,13 +44,44 @@ import { DiagramSidebarComponent } from './diagram-sidebar/diagram-sidebar.compo
         NgxPaginationModule,
         TooltipModule,
         MalihuScrollbarModule.forRoot() ,
-        RouterModule,
+        RouterModule
     ],
-    declarations: [HomeComponent, HomeSidebarComponent, BaseMapSidebarComponent, LayersSidebarComponent, EbvSidebarComponent, 
-        EbvDetailsComponent, SiteDetailsComponent, DiagramComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent, SearchSidebarComponent, SiteDetailsListComponent, DatasetDetailsListComponent, DatasetDetailsComponent,
-        ],
+    declarations: [
+        HomeComponent, 
+        HomeSidebarComponent, 
+        BaseMapSidebarComponent, 
+        LayersSidebarComponent, 
+        EbvSidebarComponent, 
+        EbvDetailsComponent, 
+        SiteDetailsComponent, 
+        DiagramComponent, 
+        DiagramSidebarComponent, 
+        ShowLayaresDetailsComponent, 
+        MetadataCatalogueComponent, 
+        SearchSidebarComponent, 
+        SiteDetailsListComponent, 
+        DatasetDetailsListComponent, 
+        DatasetDetailsComponent, 
+        StationDetailsListComponent, 
+        StationDetailsComponent, 
+        DatasetLayerDetailsListComponent, 
+        DatasetLayerDetailsComponent,
+        LayerDatasetInfoComponent
+    ],
     exports: [
-        RouterModule,HomeSidebarComponent, EbvDetailsComponent, SiteDetailsComponent, DiagramSidebarComponent, ShowLayaresDetailsComponent, MetadataCatalogueComponent, SiteDetailsListComponent, DatasetDetailsListComponent
+        RouterModule,
+        HomeSidebarComponent, 
+        EbvDetailsComponent, 
+        SiteDetailsComponent, 
+        DiagramSidebarComponent, 
+        ShowLayaresDetailsComponent, 
+        MetadataCatalogueComponent, 
+        SiteDetailsListComponent, 
+        DatasetDetailsListComponent,
+        StationDetailsListComponent,
+        DatasetLayerDetailsListComponent,
+        DatasetDetailsComponent,
+        LayerDatasetInfoComponent
     ],
     providers: [ DatePipe, SlicePipe ]
 })

@@ -30,6 +30,9 @@ export class HomeService {
 	private filterLayerBehaviorSubject = new BehaviorSubject<any>(undefined);
 	filterLayerObservable = this.filterLayerBehaviorSubject.asObservable();
 
+	private loadingGlobalBehaviorSubject = new BehaviorSubject<any>(undefined);
+	loadingGlobalObservable = this.loadingGlobalBehaviorSubject.asObservable();
+
   	constructor() { }
 
 	changeBaseMap(basemap) {
@@ -62,6 +65,10 @@ export class HomeService {
 
 	filterLayer(layer) {
 		this.filterLayerBehaviorSubject.next(layer);
+	}
+
+	isLoading(isLoading: boolean) {
+		this.loadingGlobalBehaviorSubject.next(isLoading);
 	}
 
 }

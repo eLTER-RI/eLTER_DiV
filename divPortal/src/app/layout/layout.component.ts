@@ -3,6 +3,9 @@ import { Component, OnInit, ElementRef, ViewChild, Renderer2 } from '@angular/co
 import { Html } from '../shared/model/html-db';
 import { Settings } from 'http2';
 import { SettingsService } from '../core/settings/settings.service';
+import { Subscription } from 'rxjs';
+import { HomeService } from '../routes/home/home/home.service';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
     selector: 'app-layout',
@@ -18,12 +21,23 @@ export class LayoutComponent implements OnInit {
 
     @ViewChild('offsidebarElement') offsidebarElement: ElementRef;
 
+    isLoading = true;
+    dialogOpen = false;
+
+    loadingSubscription: Subscription;
+
 
     constructor(private sharedService: SharedService,
-        private settings: SettingsService) { 
+        private settings: SettingsService,
+        private homeService: HomeService,
+        private modalService: BsModalService) { 
     }
 
     clickOutsideOffsidebar() {
+        if (this.dialogOpen) {
+            return;
+        }
+        
         if (this.settings.getLayoutSetting('offsidebarOpen')) {
             this.settings.toggleLayoutSetting('offsidebarOpen');
         }
@@ -35,6 +49,24 @@ export class LayoutComponent implements OnInit {
 
         const response1 = await this.sharedService.get('getHtml?partOfApp=footer_hover');
         this.footerOnHoverHtml = response1.entity;
+
+        this.initSubscriptions();
+    }
+
+    initSubscriptions() {
+        this.loadingSubscription = this.homeService.loadingGlobalObservable.subscribe( obj => {
+            if (obj != null) {
+                this.isLoading = obj;
+            }
+        });
+
+        this.modalService.onShown.subscribe(() => {
+            this.dialogOpen = true;
+        });
+
+        this.modalService.onHidden.subscribe(() => {
+            this.dialogOpen = false;
+        });
     }
 
     getStyleForFooter() {

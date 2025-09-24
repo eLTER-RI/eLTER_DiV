@@ -22,6 +22,7 @@ import com.ecosense.dto.output.ActivityODTO;
 import com.ecosense.dto.output.CountryODTO;
 import com.ecosense.dto.output.SitesODTO;
 import com.ecosense.dto.output.SiteDetailsODTO;
+import com.ecosense.dto.output.SiteODTO;
 import com.ecosense.exception.SimpleException;
 import com.ecosense.service.SiteService;
 
@@ -88,6 +89,26 @@ public class SiteController {
 		}
 		if (response.getStatus() == SimpleResponseDTO.OK) {
 			return Response.ok(siteInfoDTO, MediaType.APPLICATION_JSON).build();
+		} else {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
+		}
+	}
+
+	@RequestMapping(value = "/getSite", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
+	public Response getSite(@QueryParam("siteId") Integer siteId) {
+		SimpleResponseDTO response = new SimpleResponseDTO();
+		SiteODTO siteODTO = new SiteODTO();
+		try {
+			siteODTO = siteService.getSite(siteId);
+
+		} catch (SimpleException se) {
+			response.setStatus(se.getSimpleResponseStatus());
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(SimpleResponseDTO.GENERAL_SERVER_ERROR);
+		}
+		if (response.getStatus() == SimpleResponseDTO.OK) {
+			return Response.ok(siteODTO, MediaType.APPLICATION_JSON).build();
 		} else {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
 		}

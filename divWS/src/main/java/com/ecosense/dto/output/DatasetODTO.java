@@ -2,8 +2,17 @@ package com.ecosense.dto.output;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class DatasetODTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -11,42 +20,12 @@ public class DatasetODTO implements Serializable {
     private String title;
 
     private MetadataODTO metadata;
+    private LinkODTO links;
+    
+    private Map<String, Object> jsonDataset;
 
     private List<SiteODTO> sites;
 
-    public DatasetODTO() { }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public List<SiteODTO> getSites() {
-        return sites;
-    }
-
-    public void setSites(List<SiteODTO> sites) {
-        this.sites = sites;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public MetadataODTO getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(MetadataODTO metadata) {
-        this.metadata = metadata;
-    }
 
     @Override
 	public final int hashCode() {

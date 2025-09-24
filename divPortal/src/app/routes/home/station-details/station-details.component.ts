@@ -1,13 +1,15 @@
-import { Timeseries } from './../../../shared/model/timeseries-db';
-import { Router } from '@angular/router'; 
-import {  ToastrService } from 'ngx-toastr';
-import { Station } from './../../../shared/model/station-db';
-import { DiagramTimeseries } from './../../../shared/model/diagram-timeseries';
-
-import { StationTimeseries } from './../../../shared/model/station-timeseries-db';
-import { SharedService } from './../../../shared/service/shared.service';
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { TimeseriesIDTO } from 'src/app/shared/model/timeseries-ib';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { OffsidebarService } from 'src/app/layout/offsidebar/offsidebar.service';
+import { TimeIODatastream } from 'src/app/shared/model/timeio-datastream';
+import { TimeIOLocation } from 'src/app/shared/model/timeio-location';
+import { TimeIOThing } from 'src/app/shared/model/timeio-thing';
+import { SharedService } from 'src/app/shared/service/shared.service';
+import { TimeIOService } from 'src/app/shared/service/time-io.service';
+import { DiagramService } from '../diagram/diagram.service';
 
 @Component({
   selector: 'app-station-details',
@@ -16,120 +18,113 @@ import { TimeseriesIDTO } from 'src/app/shared/model/timeseries-ib';
 })
 export class StationDetailsComponent implements OnInit, OnChanges {
 
-  @Input() stationId: number; 
-  
-  scrollbarOptions = {  theme: 'dark-thick', scrollButtons: { enable: true },  setHeight: '70vh'};
+  @Input() stationId: number;
+  @Input() open: boolean;
 
-  stationTimeSeries: StationTimeseries;
-  checkedTimeseries: boolean[][];
-  selectAllTimeseries: boolean;
+  stationDetails: TimeIOLocation;
 
-  constructor(private sharedService: SharedService,
-              private toastr: ToastrService,
-              private router: Router) { 
+  stationOpenDetailsSubscription: Subscription;
+  closeAllStationDetailsSubscription: Subscription;
+  unselectDatastreamsSubscription: Subscription;
+
+  scrollbarOptions = {  theme: 'dark-thick', scrollButtons: { enable: true },  setHeight: '80vh'};
+
+  constructor(private offsidebarService: OffsidebarService,
+              private sharedService: SharedService,
+              private toastrService: ToastrService,
+              private translateService: TranslateService,
+              private timeioService: TimeIOService,
+              private router: Router,
+              private diagramService: DiagramService
+  ) { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+      this.loadStations();
   }
 
   ngOnInit(): void {
+    this.initSubscriptions();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.loadStation();
-  }
-
-  async loadStation() {
-    // this.stationTimeSeries = undefined;
-    const timeseriesDTO: TimeseriesIDTO = new TimeseriesIDTO();
-    timeseriesDTO.stationId = this.stationId;
-    // timeseriesDTO.phenomenLabels = this.usedPhenomenonsLabelEnFilter;
-
-    const response = await this.sharedService.post('sos/loadTimeSeries', timeseriesDTO);
-    this.stationTimeSeries = response.entity;
-
-    this.checkedTimeseries = [];
-    this.selectAllTimeseries = false;
-
-    this.stationTimeSeries?.timeseriesPhenomenon?.forEach( (tsPh, i) => {
-        this.checkedTimeseries[i] = [];
-        tsPh.timeseries.forEach((ts,j) => {
-              this.checkedTimeseries[i][j] = false;
-        });
+  initSubscriptions() {
+    this.closeAllStationDetailsSubscription = this.offsidebarService.closeAllStationDetailsObservable.subscribe( obj => {
+      if (this.stationDetails) {
+        this.stationDetails.open = false;
+      }
     });
 
-  }
-
-  btn_addTimeSeriesToGraph() {
-    const newTimeseries: DiagramTimeseries[] = [];
-
-    let timeSeries: Timeseries[] = [];
-    this.stationTimeSeries.timeseriesPhenomenon.forEach( tsPh => {
-            timeSeries = timeSeries.concat(tsPh.timeseries);
-    });
-
-    for (let i = 0; i < this.checkedTimeseries.length ; i++) {
-        for (let j = 0; j < this.checkedTimeseries[i].length ; j++) {
-            if (this.checkedTimeseries[i][j] === true) {
-                const ts = new DiagramTimeseries();
-                ts.timeseriesId = this.stationTimeSeries.timeseriesPhenomenon[i].timeseries[j].id;
-                ts.firstTime = this.stationTimeSeries.timeseriesPhenomenon[i].timeseries[j].firstValueDate;
-                ts.lastTime = this.stationTimeSeries.timeseriesPhenomenon[i].timeseries[j].lastValueDate;
-                ts.firstValue = this.stationTimeSeries.timeseriesPhenomenon[i].timeseries[j].firstValue;
-                ts.lastValue = this.stationTimeSeries.timeseriesPhenomenon[i].timeseries[j].lastValue;
-                ts.procedure = this.stationTimeSeries.timeseriesPhenomenon[i].timeseries[j].procedure;
-                ts.uom = this.stationTimeSeries.timeseriesPhenomenon[i].timeseries[j].uom;
-                ts.phenomenon.id = this.stationTimeSeries.timeseriesPhenomenon[i].timeseries[j].phenomenon.id;
-                ts.phenomenon.label = this.stationTimeSeries.timeseriesPhenomenon[i].timeseries[j].phenomenon.label;
-
-                const station = new Station();
-                station.id = this.stationTimeSeries.stationId;
-                station.name = this.stationTimeSeries.title;
-                station.point = this.stationTimeSeries.point;
-                ts.station = station;
-
-                newTimeseries.push(ts);
-            }
-        }
-    }
-
-    let allTimeSeries;
-    let timeseries = sessionStorage.getItem('diagramTimeseries');
-    if (timeseries) {
-      allTimeSeries =  JSON.parse(timeseries);
-    }
-
-    if (allTimeSeries == null || allTimeSeries.length === 0) {
-        allTimeSeries = newTimeseries;
-    } else {
-        newTimeseries.forEach( newTS => {
-            if (!allTimeSeries.some( (ts) =>  ts.timeseriesId === newTS.timeseriesId ) ) {
-                allTimeSeries.push(newTS);
-            }
+    this.unselectDatastreamsSubscription = this.offsidebarService.unselectDatastreamsObservable.subscribe( datastreamIds => {
+      if (datastreamIds && this.stationDetails?.things?.length > 0) {
+        this.stationDetails.things.forEach(thing => {
+          if (thing.fkDatastreams) {
+            thing.fkDatastreams.forEach(datastream => {
+              if (datastreamIds.includes(datastream.id)) {
+                datastream.checked = false;
+              }
+            });
+          }
         });
-    }
+      }
+    });
+  }
 
-    sessionStorage.setItem('diagramTimeseries', JSON.stringify(allTimeSeries));
-
-    if (allTimeSeries.length > 0) {
-        this.router.navigate(['/diagram']);
+  async loadStations() {
+    const response = await this.sharedService.get('timeio/location/getLocationDetails?id=' + this.stationId);
+    if (response.status != 200) {
+      this.toastrService.error(this.translateService.instant('exception.' + response.entity.status + ''), "Error"); 
     } else {
-        this.toastr.error('You have selected no timeseries.');
+      this.stationDetails = response.entity;
+      this.stationDetails.open = this.open;
     }
-
   }
 
-  change_selectAllTimeseries() {
-    for (let i = 0; i < this.checkedTimeseries.length ; i++) {
-        for (let j = 0; j < this.checkedTimeseries[i].length ; j++) {
-            if (this.selectAllTimeseries === false) {
-                this.checkedTimeseries[i][j] = false;
-            } else {
-                this.checkedTimeseries[i][j] = true;
+  checkForSelectedDatastreams() {
+    if (this.stationDetails?.things?.length > 0) {
+      this.stationDetails.things.forEach(thing => {
+        if (thing.fkDatastreams) {
+          thing.fkDatastreams.forEach(datastream => {
+            if (this.timeioService.isSelected(datastream)) {
+              datastream.checked = true;
             }
+          });
         }
+      });
     }
   }
 
-  clickOnTab(timeseriesPhenomenon) {
-    timeseriesPhenomenon.selected = !timeseriesPhenomenon.selected;
+  openCloseStationDetail() {
+    this.stationDetails.open = !this.stationDetails.open;
+  }
+
+  async openCloseThing(thing: TimeIOThing) {
+    thing.open = !thing.open;
+    
+    if (thing.open && !thing.fkDatastreams) {
+      await this.loadThingDetails(thing);
+    }
+  }
+
+  async loadThingDetails(thing: TimeIOThing) {
+    const response = await this.sharedService.get('timeio/thing/getThingDetails?id=' + thing.id);
+    thing.fkDatastreams = response.entity.fkDatastreams;
+  }
+
+  checkDatastream(datastream: TimeIODatastream, thing: TimeIOThing) {
+    datastream.checked = !datastream.checked;
+
+    if (datastream.checked) {
+      datastream.fkThing = thing;
+      this.timeioService.addDatastream(datastream);
+    }
+  }
+
+  showTimeIOObservations() {
+    const currentUrl = this.router.url;
+    if (currentUrl === '/diagram') { // refresh
+      this.diagramService.getRefreshEvent().next({});
+    } else { // navigate
+      this.router.navigate(['/diagram']);
+    }
   }
 
 }

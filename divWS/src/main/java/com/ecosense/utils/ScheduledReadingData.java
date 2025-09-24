@@ -1,6 +1,7 @@
 package com.ecosense.utils;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ecosense.exception.SimpleException;
 import com.ecosense.service.EbvService;
@@ -31,6 +32,7 @@ public class ScheduledReadingData {
 	private LayerService layerService;
 	
 	@Scheduled(cron = "0 0 0 * * *")  //svaki dan u ponoc 
+	@Transactional
 	public void refreshDEIMS() {
 		try {
 			log.info("The time before refreshDatabase", dateFormat.format(new Date()));

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.ws.rs.QueryParam;
+
 import org.springframework.stereotype.Service;
 
 import com.ecosense.dto.DivFilterDTO;
@@ -37,8 +39,12 @@ public interface SiteService {
 
 	SiteDetailsODTO getSiteInfo(Integer siteId) throws SimpleException, SQLException, IOException;
 
+	SiteODTO getSite(Integer siteId) throws SimpleException;
+
 	String getGeoJsonPolygon(Integer id);
 
 	SitesODTO filterAndSearchSites(DivFilterDTO divFilterDTO) throws SimpleException, IOException;
+
+	String createUrlFromDivFilter(DivFilterDTO divFilterDTO);
 
 }

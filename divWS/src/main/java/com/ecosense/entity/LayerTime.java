@@ -1,8 +1,6 @@
 package com.ecosense.entity;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,12 +9,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
 @Table(name="layer_time")
+@Getter
+@Setter
+@NoArgsConstructor
 public class LayerTime implements Serializable {
 	private static final long serialVersionUID = -6796027104630905161L;
 	
@@ -32,40 +36,10 @@ public class LayerTime implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "id_layer")
 	private Layer layer;
-	
-	public LayerTime() {
-		// TODO Auto-generated constructor stub
-	}
 
 	public LayerTime(Layer layer, String availableTime) {
 		this.layer = layer;
 		this.availableTime = availableTime;
 	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public String getAvailableTime() {
-		return availableTime;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public void setAvailableTime(String availableTime) {
-		this.availableTime = availableTime;
-	}
-
-	public Layer getLayer() {
-		return layer;
-	}
-
-	public void setLayer(Layer layer) {
-		this.layer = layer;
-	}
-	
-	
 
 }

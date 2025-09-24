@@ -1,61 +1,54 @@
-<app-loading *ngIf="!stationTimeSeries"></app-loading>
+<app-loading *ngIf="!stationDetails"></app-loading>
 
-<div *ngIf="stationTimeSeries"> 
-    <div malihu-scrollbar [scrollbarOptions]="scrollbarOptions" id="detailsTimeseriesScroll">
-        <div class="tabs">
-            <div class="tab"  *ngFor="let timeseriesPhenomenon of stationTimeSeries?.timeseriesPhenomenon; index as i">
-                <input type="checkbox" [checked]="timeseriesPhenomenon.selected">
-                <label class="tab-label" (click)="clickOnTab(timeseriesPhenomenon)">
-                    {{timeseriesPhenomenon.phenomenonLabelEn}}
+<div class="card-body pb-1 pt-1" *ngIf="stationDetails !== undefined">
+
+    <div class="tabs">
+        <div class="tab">
+            <input type="checkbox" [checked]="stationDetails.open">
+            <label class="tab-label" (click)="openCloseStationDetail()">
+                <label class="pointer">
+                    <b>{{stationDetails?.name}}</b>
                 </label>
-                <div class="tab-content" *ngIf="timeseriesPhenomenon.selected">
-                    <div *ngFor="let timeseries of timeseriesPhenomenon.timeseries; index as j" class="mt-1 mb-2 ml-4">
-                        <div class="ml-1">
-                            <label class="checkbox c-checkbox c-checkbox-rounded h5 text-secundary-color-green-dark mb-0 mt-1">
-                                <input type="checkbox"  [(ngModel)]="checkedTimeseries[i][j]" [disabled]="!stationTimeSeries.isProviderValid"/>
-                                <span class="fa fa-check"></span>{{timeseries.phenomenon.label}}
-                            </label>
+            </label>
+
+            <div *ngIf="stationDetails.open" class="tab-content">
+                <div [hidden]="!stationDetails.open" id="detailsTimeseriesScroll" malihu-scrollbar [scrollbarOptions]="scrollbarOptions" class="mt-0 pt-0">
+                    
+                    <div *ngFor="let thing of stationDetails?.things">
+                        <div class="tabs">
+                            <div class="tab">
+                                <input type="checkbox" [checked]="thing.open">
+                                <label class="tab-label" (click)="openCloseThing(thing)">
+                                    {{thing?.name}}
+                                </label>
+                                <div *ngIf="thing.open" class="tab-content">
+                                    <div class="h6 text-secundary-color-green-dark mb-3 mt-2">
+                                        {{thing.description}}
+                                    </div>
+                                    <div *ngFor="let datastream of thing.fkDatastreams">
+                                        <div style="display: flex">
+                                            <label class="switch switch-sm mr-1">
+                                                <input type="checkbox" [checked]="datastream.checked" (click)="checkDatastream(datastream, thing)">
+                                                <span></span>
+                                            </label>
+                                            <span> {{datastream.name}} </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <label class="mr-1 mt-0 mb-3 ml-4">{{timeseries.lastValue}}</label>
-                        <label class="mr-1 mt-0 mb-3">{{timeseries.uom}}</label>
-                        <label class="mt-0 mb-3">({{timeseries.lastValueDate | date:'medium'}})</label>
                     </div>
+
+                    <div class="text-right mr-1 mt-3">
+                        <button  class="d-inline mb-2 btn btn-sm bg-orange btn-md"
+                            (click)="showTimeIOObservations()">
+                            Show
+                            <em class="fas fa-angle-right pl-3"></em>
+                        </button>
+                    </div>
+
                 </div>
             </div>
-
-        </div>
-        
-        <div class="mt-2 mb-0 ml-1" [hidden]="stationTimeSeries.timeseriesPhenomenon.length > 0">
-            <div class="h6 text-primary-color-orange ml-3 mt-4">
-                I'm sorry, but currently there are no available data for display.
-            </div>
         </div>
     </div>
-
-
-   
-
-
-
-    <div class="mt-2 mb-0 ml-1" [hidden]="!(stationTimeSeries.timeseriesPhenomenon && stationTimeSeries.timeseriesPhenomenon.length > 1 && stationTimeSeries.isProviderValid)">
-        <label class="checkbox c-checkbox c-checkbox-rounded">
-            <input type="checkbox" [(ngModel)]="selectAllTimeseries"  (change)="change_selectAllTimeseries()" />
-            <span class="fa fa-check"></span> 
-            <label *ngIf="!selectAllTimeseries" class="mt-0 mb-0"> Select all</label>
-            <label *ngIf="selectAllTimeseries" class="mt-0 mb-0"> Deselect all</label>
-        </label>
-    </div>
-
-
-    <div *ngIf="!stationTimeSeries.isProviderValid" class="mt-2 mb-0 ml-1">
-        <label class="text-white badge-danger"> Data is currently unavailable. </label>
-    </div>
-
-    <div class="text-right mr-1 mt-2 mb-2"  [hidden]="!(stationTimeSeries.timeseriesPhenomenon && stationTimeSeries.timeseriesPhenomenon.length >= 1 && stationTimeSeries.isProviderValid)">
-        <button  class="d-inline mb-2 btn btn-xs bg-blue" (click)="btn_addTimeSeriesToGraph()" [disabled]="!stationTimeSeries.isProviderValid">
-        Ok
-            <em class="fa fas fa-chart-bar"></em>
-        </button>
-    </div>
-
 </div>

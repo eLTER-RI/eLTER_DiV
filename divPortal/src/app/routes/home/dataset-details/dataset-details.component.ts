@@ -5,6 +5,8 @@ import { Dataset } from 'src/app/shared/model/dataset';
 import { HomeService } from '../home/home.service';
 import { SettingsService } from 'src/app/core/settings/settings.service';
 import { DatasetDetailsListService } from '../dataset-details-list/dataset-details-list.service';
+import { Layer } from 'src/app/shared/model/layer';
+import { DatasetLayerDetailsListService } from '../dataset-layer-details-list/dataset-layer-details-list.service';
 
 @Component({
   selector: 'app-dataset-details',
@@ -14,6 +16,7 @@ import { DatasetDetailsListService } from '../dataset-details-list/dataset-detai
 export class DatasetDetailsComponent implements OnInit {
 
   @Input() datasetDetail: Dataset;
+  @Input() layer: Layer;
   @Input() open: boolean;
 
   pinActive: boolean = false;
@@ -31,7 +34,8 @@ export class DatasetDetailsComponent implements OnInit {
   constructor(private offsidebarService: OffsidebarService,
               private homeService: HomeService,
               private settings: SettingsService,
-              private datasetDetailsListService: DatasetDetailsListService) { }
+              private datasetDetailsListService: DatasetDetailsListService,
+              private datasetLayerDetailsListService: DatasetLayerDetailsListService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.menuItem = 'basic';
@@ -40,7 +44,11 @@ export class DatasetDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.open) {
+      this.datasetDetail.open = this.open;
+    }
     this.initSubscriptions();
+    this.checkForSelectedLayers();
   }
 
 
@@ -71,6 +79,16 @@ export class DatasetDetailsComponent implements OnInit {
         this.pinActive = false;
       }
     });
+  }
+
+  checkForSelectedLayers() {
+    const selectedLayersStr = sessionStorage.getItem('selectedLayers');
+    const selectedLayers = JSON.parse(selectedLayersStr);
+    
+    let selectedLayer = selectedLayers.filter(sl => sl.id == this.layer?.id);
+    if (selectedLayer.length > 0) {
+      this.datasetDetail.datasetLayerChecked = true;
+    }
   }
 
   openCloseDatasetDetail() {
@@ -127,6 +145,14 @@ export class DatasetDetailsComponent implements OnInit {
 
       this.openOffsidebar();
     }
+  }
+
+  checkDatasetLayer(dataset: Dataset) {
+    dataset.datasetLayerChecked = !dataset.datasetLayerChecked;
+
+    this.datasetLayerDetailsListService.checkDatasetLayer({
+      layer: this.layer
+    });
   }
 
   navigateToExternal(url: string) {

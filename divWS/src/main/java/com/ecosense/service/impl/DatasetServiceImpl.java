@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -37,6 +38,7 @@ import com.ecosense.dto.output.FileODTO;
 import com.ecosense.dto.output.HabitatReferenceODTO;
 import com.ecosense.dto.output.KeywordODTO;
 import com.ecosense.dto.output.LicenseODTO;
+import com.ecosense.dto.output.LinkODTO;
 import com.ecosense.dto.output.MetadataODTO;
 import com.ecosense.dto.output.MethodODTO;
 import com.ecosense.dto.output.ProjectODTO;
@@ -47,23 +49,36 @@ import com.ecosense.dto.output.SiteODTO;
 import com.ecosense.dto.output.StepODTO;
 import com.ecosense.dto.output.TaxonomicClassificationODTO;
 import com.ecosense.dto.output.TaxonomicCoverageODTO;
+import com.ecosense.entity.Layer;
 import com.ecosense.entity.Site;
 import com.ecosense.exception.SimpleException;
+import com.ecosense.repository.LayerRepository;
 import com.ecosense.repository.SiteRepo;
 import com.ecosense.service.DatasetService;
 import com.ecosense.service.SiteService;
+import com.ecosense.utils.APICallService;
 import com.ecosense.utils.InvenioData;
 import com.ecosense.utils.Utils;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class DatasetServiceImpl implements DatasetService {
     
 	@Autowired
+	private RestTemplate restTemplate;
+
+	@Autowired
 	private SiteRepo siteRepo;
 
 	@Autowired
+	private LayerRepository layerRepository;
+
+	@Autowired
 	private SiteService siteService;
+
+	@Autowired
+	private APICallService apiCallService;
 
 	public DatasetsODTO filterAndSearchDataset(DivFilterDTO divFilterDTO) throws SimpleException, IOException {
 		String url = InvenioData.BASE_URL;
@@ -82,8 +97,8 @@ public class DatasetServiceImpl implements DatasetService {
 
 		while (datasetResponse == null) {
 			try {
-				RestTemplate restTemplate1 = new RestTemplate();
-				datasetResponse = restTemplate1.exchange(url, HttpMethod.GET, null, JsonNode.class);
+				System.out.println(url);
+				datasetResponse = restTemplate.exchange(url, HttpMethod.GET, null, JsonNode.class);
 				resultNode = datasetResponse.getBody();
 			} catch (Exception e) {
 				System.out.println(url + " <- SERVIS KOJI PUKNE");
@@ -94,7 +109,7 @@ public class DatasetServiceImpl implements DatasetService {
 
 		JsonNode hitListNode = resultNode.get("hits").get("hits");
 
-		DatasetsODTO response = extractDatasetsFromResponse(hitListNode);
+		DatasetsODTO response = extractDatasetsFromResponse(hitListNode, false);
 
 		PageDTO pageDTO = new PageDTO();
 		pageDTO.setCurrentPage(divFilterDTO.getPage());
@@ -115,6 +130,31 @@ public class DatasetServiceImpl implements DatasetService {
         return response;
 	}
 
+	public List<DatasetODTO> getAllExternalDatasets() throws SimpleException, IOException {
+		Integer pageNum = 1;
+		Integer pageSize = 50;
+		String url = InvenioData.BASE_URL_EXTERNAL + InvenioData.PAGING_NUMBER_PARAM + pageNum + InvenioData.PAGING_SIZE_PARAM + pageSize;
+
+		DatasetsODTO responseDatasets = new DatasetsODTO();
+		responseDatasets.setDatasets(new ArrayList<>());
+
+		boolean hasResults = true;
+		while (hasResults) {
+			JsonNode resultNode = apiCallService.getRequest(url);
+
+			JsonNode hitListNode = resultNode.get("hits").get("hits");
+
+			DatasetsODTO tmpResponseDatasets = extractDatasetsFromResponse(hitListNode, true);
+			hasResults = tmpResponseDatasets.getDatasets() != null && !tmpResponseDatasets.getDatasets().isEmpty();
+
+			if (hasResults)		responseDatasets.getDatasets().addAll(tmpResponseDatasets.getDatasets());
+
+			pageNum++;
+			url = InvenioData.BASE_URL_EXTERNAL + InvenioData.PAGING_NUMBER_PARAM + pageNum + InvenioData.PAGING_SIZE_PARAM + pageSize;
+		}
+
+		return responseDatasets.getDatasets();
+	}
 
     private String buildUrlWithParams(DivFilterDTO divFilterDTO, String url) {
         List<String> searchParameters = new ArrayList<>(); // for full text
@@ -174,60 +214,94 @@ public class DatasetServiceImpl implements DatasetService {
         return url;
     }
 
-	private DatasetsODTO extractDatasetsFromResponse(JsonNode hitListNode) {
+	private DatasetsODTO extractDatasetsFromResponse(JsonNode hitListNode, Boolean setDatasetJson) {
 		DatasetsODTO response = new DatasetsODTO();
 
 		Set<DatasetODTO> datasets = new HashSet<>();
 
 		for (JsonNode hitNode : hitListNode) {
-			JsonNode metadataNode = hitNode.get("metadata");
+			DatasetODTO datasetODTO = parseDatasetFromNode(hitNode, setDatasetJson);
+			datasets.add(datasetODTO);
+		}
+
+		response.setDatasets(new ArrayList<>(datasets));
+
+		return response;
+
+	}
+
+	@Override
+	public DatasetODTO parseDatasetFromNode(JsonNode hitNode, Boolean setDatasetJson) {
+		JsonNode metadataNode = hitNode.get("metadata");
 			MetadataODTO metadata = new MetadataODTO();
 
 			DatasetODTO dataset = new DatasetODTO();
 
+			if (setDatasetJson) {
+				dataset.setJsonDataset(Utils.mapFromJsonNode(hitNode));
+			}
+
 			setFieldSafely(hitNode, dataset::setId, JsonNode::asText, "id");
+
+
+			// links
+			LinkODTO link = new LinkODTO();
+			JsonNode linkNode = hitNode.get("links");
+			if (linkNode != null) {
+				setFieldSafely(linkNode, link::setOar, JsonNode::asText, "oar");
+			} else {
+				link = null;
+			}
+
+			dataset.setLinks(link);
+
 
 			// sites
 			Set<SiteODTO> sites = new HashSet<>();
 			JsonNode siteReferenceNodeList = metadataNode.get("siteReferences");
 
-			for (JsonNode siteReferenceNode : siteReferenceNodeList) {
-				try {
-					String siteSuffix = siteReferenceNode.get("siteID").asText();
+			if (siteReferenceNodeList != null) {
+				for (JsonNode siteReferenceNode : siteReferenceNodeList) {
+					try {
+						String siteSuffix = siteReferenceNode.get("siteID").asText();
 
-					Site site = siteRepo.getSite(siteSuffix);
-		
-					if (site != null) {
-		
-						SiteODTO siteDTO = new SiteODTO();
-						siteDTO.setId(site.getId());
-						siteDTO.setIdSuffix(site.getIdSuffix());
-						siteDTO.setTitle(site.getTitle());
-		
-						Point point  = (Point) site.getPoint();
-						double lng = point.getCoordinate().x;
-						double lat = point.getCoordinate().y;
-						siteDTO.setPoint(new PointDTO(lat, lng));
-		
-						Geometry polygon = site.getPolygon();
-						Boolean isPoygon = true;
-		
-						siteDTO.setArea(polygon.getArea());
-						
-						StringWriter writer = new StringWriter();
-						GeoJsonWriter geoJsonWriter = new GeoJsonWriter();
-						geoJsonWriter.write(polygon, writer);
-						String polygonJson = writer.toString();
-						
-						BoundingBoxDTO siteBbox = new BoundingBoxDTO(polygon.getEnvelopeInternal().getMinX(), polygon.getEnvelopeInternal().getMinY(),
-								polygon.getEnvelopeInternal().getMaxX(), polygon.getEnvelopeInternal().getMaxY());
-						
-						siteDTO.setPolygon(new PolygonDTO(polygonJson, siteBbox, isPoygon));
-		
-						sites.add(siteDTO);
+						Site site = siteRepo.getSite(siteSuffix);
+			
+						if (site != null) {
+			
+							SiteODTO siteDTO = new SiteODTO();
+							siteDTO.setId(site.getId());
+							siteDTO.setIdSuffix(site.getIdSuffix());
+							siteDTO.setTitle(site.getTitle());
+			
+							Point point  = (Point) site.getPoint();
+							double lng = point.getCoordinate().x;
+							double lat = point.getCoordinate().y;
+							siteDTO.setPoint(new PointDTO(lat, lng));
+			
+							Geometry polygon = site.getPolygon();
+							if (polygon != null) {
+								
+								Boolean isPoygon = true;
+				
+								siteDTO.setArea(polygon.getArea());
+								
+								StringWriter writer = new StringWriter();
+								GeoJsonWriter geoJsonWriter = new GeoJsonWriter();
+								geoJsonWriter.write(polygon, writer);
+								String polygonJson = writer.toString();
+								
+								BoundingBoxDTO siteBbox = new BoundingBoxDTO(polygon.getEnvelopeInternal().getMinX(), polygon.getEnvelopeInternal().getMinY(),
+										polygon.getEnvelopeInternal().getMaxX(), polygon.getEnvelopeInternal().getMaxY());
+								
+								siteDTO.setPolygon(new PolygonDTO(polygonJson, siteBbox, isPoygon));
+							}
+			
+							sites.add(siteDTO);
+						}
+					} catch(IOException e) {
+						e.printStackTrace();
 					}
-				} catch(IOException e) {
-					e.printStackTrace();
 				}
 			}
 
@@ -511,25 +585,18 @@ public class DatasetServiceImpl implements DatasetService {
 			}
 			metadata.setFiles(files);
 
+
 			dataset.setMetadata(metadata);
 
 			JsonNode titles = metadataNode.get("titles");
 			if (titles != null) {
 				for (JsonNode titleNode : titles) {
-					if (titleNode.get("titleLanguage") != null && titleNode.get("titleLanguage").asText().equals("en")) {
-						setFieldSafely(titleNode, dataset::setTitle, JsonNode::asText, "titleText");
-						break;
-					}
+					setFieldSafely(titleNode, dataset::setTitle, JsonNode::asText, "titleText");
+					break;
 				}
 			}
 
-			datasets.add(dataset);
-		}
-
-		response.setDatasets(Arrays.asList(datasets.toArray(DatasetODTO[]::new)));
-
-		return response;
-
+			return dataset;
 	}
 
 	private <T> void setFieldSafely(JsonNode node, Consumer<T> setter, Function<JsonNode, T> extractor, String... paths) {
@@ -548,6 +615,25 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 		
 		return (node != null && !node.isNull()) ? extractor.apply(node) : null;
+	}
+
+	public DatasetODTO getForLayer(Integer layerId) throws SimpleException {
+		Layer layer = layerRepository.findById(layerId).orElse(null);
+		if (layer == null) {
+			throw new SimpleException(SimpleResponseDTO.DATA_NOT_EXIST);
+		}
+
+		Map<String, Object> jsonDataset = layer.getJsonDataset();
+		if (jsonDataset == null || jsonDataset.isEmpty()) {
+			return null;
+		}
+
+		ObjectMapper objectMapper = new ObjectMapper();
+    	JsonNode jsonDatasetNode = objectMapper.valueToTree(jsonDataset);
+
+		DatasetODTO datasetODTO = parseDatasetFromNode(jsonDatasetNode, false);
+
+		return datasetODTO;
 	}
     
 }

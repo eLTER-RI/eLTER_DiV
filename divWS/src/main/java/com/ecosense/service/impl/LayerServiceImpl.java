@@ -1,12 +1,17 @@
 package com.ecosense.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
@@ -15,8 +20,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.ecosense.dto.CapabilitiesRequestDTO;
+import com.ecosense.dto.DivFilterDTO;
 import com.ecosense.dto.LayerDTO;
+import com.ecosense.dto.DatasetLayerDTO;
+import com.ecosense.dto.SimpleResponseDTO;
 import com.ecosense.dto.input.FeatureInfoRequestIDTO;
+import com.ecosense.dto.output.DatasetODTO;
 import com.ecosense.dto.output.LayerGroupDTO;
 import com.ecosense.entity.Layer;
 import com.ecosense.entity.LayerGroup;
@@ -24,8 +33,14 @@ import com.ecosense.entity.LayerTime;
 import com.ecosense.exception.SimpleException;
 import com.ecosense.repository.LayerRepository;
 import com.ecosense.repository.LayerTimeRepository;
+import com.ecosense.service.DatasetService;
 import com.ecosense.service.LayerService;
+import com.ecosense.service.SiteService;
+import com.ecosense.utils.APICallService;
+import com.ecosense.utils.JsonNodeConverter;
 import com.ecosense.utils.SnowcoverData;
+import com.ecosense.utils.SolrData;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @Service
 public class LayerServiceImpl implements LayerService {
@@ -35,9 +50,23 @@ public class LayerServiceImpl implements LayerService {
 	
 	@Autowired
 	LayerTimeRepository layerTimeRepository;
+
+	@Autowired
+	private SiteService siteService;
+
+	@Autowired
+	private DatasetService datasetService;
+
+	private static final Logger log = LoggerFactory.getLogger(LayerServiceImpl.class);
 	
 	@Autowired
-	private @Qualifier("nonSSLRestTemplate") RestTemplate restTemplate;
+	private @Qualifier("nonSSLRestTemplate") RestTemplate restTemplateNonSSL;
+
+	// @Autowired
+	// private RestTemplate restTemplate;
+
+	@Autowired
+	private APICallService apiCallService;
 	
 	private final Double LAT_LNG_RADIUS = 0.005;
 
@@ -46,10 +75,7 @@ public class LayerServiceImpl implements LayerService {
 		List<LayerDTO> layers = new ArrayList<>();
 		List<Layer> layersFromDB = null;
 		
-		
-
 		layersFromDB = layerRepository.getAllActive(layertypes, code, ids);
-		
 		
 		for (Layer layer : layersFromDB) {
 			layers.add(new LayerDTO(layer, true, true));
@@ -72,7 +98,7 @@ public class LayerServiceImpl implements LayerService {
 		
 		
 		System.out.println(url);
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+		ResponseEntity<String> response = restTemplateNonSSL.exchange(url, HttpMethod.GET, null, String.class);
 		Document doc = Jsoup.parse(response.getBody());
 		
 		return doc.toString();
@@ -85,7 +111,7 @@ public class LayerServiceImpl implements LayerService {
 		
 		System.out.println(url);
 		
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+		ResponseEntity<String> response = restTemplateNonSSL.exchange(url, HttpMethod.GET, null, String.class);
 		Document doc = Jsoup.parse(response.getBody());
 		
 		Elements capability = doc.getElementsByTag("Capability");
@@ -150,7 +176,7 @@ public class LayerServiceImpl implements LayerService {
 
 	@Override
 	public String getCapabilities(CapabilitiesRequestDTO capabilitiesRequestDTO) {
-		ResponseEntity<String> response = restTemplate.exchange(capabilitiesRequestDTO.getUrl(), HttpMethod.GET, null, String.class);
+		ResponseEntity<String> response = restTemplateNonSSL.exchange(capabilitiesRequestDTO.getUrl(), HttpMethod.GET, null, String.class);
 		Document doc = Jsoup.parse(response.getBody());
 		
 		String xml = doc.toString();
@@ -160,5 +186,65 @@ public class LayerServiceImpl implements LayerService {
 		return xml;
 	}
 
+	public List<DatasetLayerDTO> filterAndSearch(DivFilterDTO divFilterDTO) throws SimpleException{
+		Set<DatasetLayerDTO> datasetLayerDTOs = new HashSet<>();
+
+		String url = SolrData.BASE_URL + "/select?q=json_dataset:(";
+
+		String filterUrl = siteService.createUrlFromDivFilter(divFilterDTO);
+		url += filterUrl;
+
+		url += ")";
+		url += "&rows=1000&start=0";
+
+		JsonNode resultNode = apiCallService.getRequest(url);
+		JsonNode datasetLayerListNode = resultNode.get("response").get("docs");
+
+		for (JsonNode datasetLayerNode : datasetLayerListNode) {
+			try {
+				DatasetLayerDTO datasetLayerDTO = createDatasetLayerDTO(datasetLayerNode);
+				datasetLayerDTOs.add(datasetLayerDTO);
+			} catch (Exception e) {
+				continue;
+			}
+		}
+
+		return new ArrayList<>(datasetLayerDTOs);
+	}
+
+	private DatasetLayerDTO createDatasetLayerDTO(JsonNode datasetLayerNode) throws SimpleException {
+		DatasetLayerDTO datasetLayerDTO = new DatasetLayerDTO();
+
+		Integer layerId = datasetLayerNode.get("id").asInt();
+		String jsonDataset = datasetLayerNode.get("json_dataset").asText();
+
+		Layer layer = layerRepository.findById(layerId).orElse(null);
+		if (layer != null) {
+			LayerDTO layerDTO = new LayerDTO();
+			layerDTO.setId(layerId);
+			layerDTO.setLayerType(layer.getLayerType());
+			layerDTO.setName(layer.getName());
+			layerDTO.setUuid(layer.getUuid());
+
+			datasetLayerDTO.setLayer(layerDTO);
+		}
+
+		JsonNode jsonDatasetNode = null;
+		
+		try {
+			jsonDatasetNode = JsonNodeConverter.convertStringToJsonNode(jsonDataset);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SimpleException(SimpleResponseDTO.GENERAL_API_ERROR);
+		}
+
+		DatasetODTO datasetODTO = datasetService.parseDatasetFromNode(jsonDatasetNode, false);
+		
+		datasetLayerDTO.setDataset(datasetODTO);
+
+		return datasetLayerDTO;
+		
+	}
 
 }
+

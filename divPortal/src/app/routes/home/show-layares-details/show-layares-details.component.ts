@@ -9,6 +9,8 @@ import WMSCapabilities from 'ol/format/WMSCapabilities';
 import _, { add } from 'lodash';
 import { ToastrService } from 'ngx-toastr';
 import * as uuid from 'uuid';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { LayerDatasetInfoComponent } from '../dialog/layer-dataset-info/layer-dataset-info.component';
 
 @Component({
   selector: 'app-show-layares-details',
@@ -42,7 +44,8 @@ export class ShowLayaresDetailsComponent implements OnInit {
   constructor(private sharedService: SharedService,
               private offsidebarService: OffsidebarService,
               private settings: SettingsService,
-              private toastrService: ToastrService) { }
+              private toastrService: ToastrService,
+              private modalService: BsModalService) { }
 
   ngOnInit(): void {
     this.capabilitiesRequest = new CapabilitiesRequest();
@@ -314,6 +317,27 @@ export class ShowLayaresDetailsComponent implements OnInit {
         this.selectLayer(j, indexGroup, typeOfLayers, selectAll);
       });
     }
+  }
+
+  showLayerInfo(layer: Layer) {
+    layer.clickedForInfo = true;
+
+    const initialState = {
+			layer: layer
+		};
+
+		let layerDatasetInfoDialog = this.modalService.show(LayerDatasetInfoComponent, {
+			initialState,
+      class: 'large-modal'
+		});
+
+		layerDatasetInfoDialog.content.onClose.subscribe((result: string) => {
+      layer.clickedForInfo = false;
+    });
+
+    this.modalService.onHidden.subscribe(() => {
+      layer.clickedForInfo = false;
+    });
   }
 
   getTypeForShowPassword(){

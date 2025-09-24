@@ -55,6 +55,11 @@
                                     <strong>
                                       {{ layer.name }}
                                     </strong>
+                                    <button (click)="showLayerInfo(layer); $event.stopPropagation()" *ngIf="layer.hasJsonDataset" class="btn btn-xs p-0 m-0 float-right">
+                                      <em class="fas fa-info-circle layer-info-icon"
+                                          [ngClass]="{'clicked': layer.clickedForInfo}" 
+                                          style="font-size: 1.5em; padding: 2px;"></em>
+                                    </button>
                                   </div>
                                 </div>
                               </div>

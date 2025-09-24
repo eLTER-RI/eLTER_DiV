@@ -10,6 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { SearchSidebarService } from 'src/app/routes/home/search-sidebar/search-sidebar.service';
 import { Dataset } from 'src/app/shared/model/dataset';
 import { Page } from 'src/app/shared/model/Page';
+import { DatasetLayer } from 'src/app/shared/model/dataset-layer';
 
 @Component({
     selector: 'app-offsidebar',
@@ -29,6 +30,12 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
     datasetSubscription: Subscription;
     datasetPage: Page;
 
+    datasetLayers: DatasetLayer[];
+    datasetLayerSubscription: Subscription;
+
+    stationIds?: number[];
+    stationSubscription: Subscription;
+
     ebvs?: EbvDB[];
     ebvSubscription: Subscription;
 
@@ -39,6 +46,8 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
     showHideLayersSubscription: Subscription;
 
     tabNameSubscription: Subscription;
+
+    datasetsLoadingSubscription: Subscription;
 
     constructor(public themes: ThemesService, 
                 public offsidebarService: OffsidebarService,
@@ -67,6 +76,16 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
                 this.showDatasets(datasets.datasets);
             }
         });
+        this.datasetLayerSubscription = this.offsidebarService.currDatasetLayers.subscribe( datasetLayers => {
+            if (datasetLayers && datasetLayers.action == 'showDatasetLayers') {
+                this.showDatasetLayers(datasetLayers.datasetLayers);
+            }
+        });
+        this.stationSubscription = this.offsidebarService.currStations.subscribe( stations => {
+            if (stations && stations.action == 'showStations') {
+                this.showStations(stations.stations);
+            }
+        });
         this.htmlSubscription = this.offsidebarService.htmlObservable.subscribe( info => {
             if (info && info.action == 'showHTML') {
                 this.showHtml(info.html);
@@ -77,6 +96,16 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
                 this.showHideAllLayers(state.layers);
             }
         });
+        this.datasetsLoadingSubscription = this.offsidebarService.datasetsOrSitesLoadingObservable.subscribe(loading => {
+            if (loading && loading.isLoading) {
+                if (loading.type === 'dataset') {
+                    this.datasetPage = null;
+                } else if (loading.type === 'site') {
+                    this.siteIds = null;
+                }
+            }
+        });
+
     }
 
     async showHideAllLayers(layers) {
@@ -112,7 +141,7 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
         });
     }
 
-    showSites(siteIds) {
+    showSites(siteIds: number[]) {
         this.siteIds = siteIds;
         if (this.siteIds && this.siteIds.length > 1) {
             this.offsidebarService.closeAllSiteDetails();
@@ -136,6 +165,31 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
         delete this.html;
     }
 
+    showDatasetLayers(datasetLayers) {
+        this.datasetLayers = datasetLayers;
+        if (this.datasetLayers && this.datasetLayers.length > 1) {
+            // this.offsidebarService.closeAllDatasetLayerDetails(); TODO datasetLayer
+        }
+
+        delete this.showHideLayers;
+        delete this.ebvs;
+        delete this.html;
+    }
+
+    showStations(stations) {
+        this.stationIds = stations;
+
+        if (this.stationIds && this.stationIds.length > 1) {
+            this.offsidebarService.closeAllStationDetails();
+        }
+
+        this.visibleTab = 'stations';
+
+        delete this.showHideLayers;
+        delete this.ebvs;
+        delete this.html;
+    }
+
     openOffsidebar(){
         if (!this.settings.getLayoutSetting('offsidebarOpen')) {
             this.settings.toggleLayoutSetting('offsidebarOpen');
@@ -143,6 +197,8 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
     }
 
     showHtml(info) {
+        this.visibleTab = null;
+
         this.html = info;
         
         delete this.showHideLayers;

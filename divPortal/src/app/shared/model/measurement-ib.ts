@@ -1,5 +1,5 @@
 export class MeasurementRequestsPhenomenon {
-    phenomenonId: number;
+    phenomenonId: string;
     measurementRequests: MeasurementRequest[];
 
     constructor() { }

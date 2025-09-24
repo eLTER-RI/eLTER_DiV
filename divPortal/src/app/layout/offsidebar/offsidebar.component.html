@@ -2,7 +2,7 @@
     <app-ebv-details [ebvs]="ebvs" [hidden]="ebvs.length == 0"></app-ebv-details>
 </div>
 
-<div *ngIf="visibleTab && (visibleTab == 'sites' || visibleTab == 'datasets')" class="row mx-0 mt-2 ps-0 border-bottom border-secondary mb-3" style="margin-left: 1.6rem !important">
+<div *ngIf="visibleTab && (visibleTab == 'sites' || visibleTab == 'datasets' || visibleTab == 'datasetLayers')" class="row mx-0 mt-2 ps-0 border-bottom border-secondary mb-3" style="margin-left: 1.6rem !important">
     <button 
         [ngClass]="['btn btn-sm col-2 ms-0 me-0 ps-0 pe-0 border-warning', visibleTab === 'sites'?'bg-warning':'btn-default']"
         type="button"
@@ -10,7 +10,9 @@
         <span class="btn-label">
             <i class="fas fa-list"></i>
         </span>
-        Sites
+        Sites 
+        <span *ngIf="siteIds"> {{siteIds.length}} </span>
+        <span *ngIf="!siteIds"><i class="fa fa-spinner fa-spin mr-2" st></i></span>
     </button>
     <button 
         [ngClass]="['btn btn-sm col-2 ms-0 me-0 ps-0 pe-0 border-warning', visibleTab === 'datasets'?'bg-warning':'btn-default']"
@@ -19,10 +21,26 @@
         <span class="btn-label">
             <i class="fas fa-list"></i>
         </span>
-        Datasets
+        
+        Datasets 
+        <span *ngIf="datasetPage"> {{datasetPage.totalElements}} </span>
+        <span *ngIf="!datasetPage"><i class="fa fa-spinner fa-spin mr-2" st></i></span>
     </button>
 
-    <div class="col-8">
+    <button 
+        [ngClass]="['btn btn-sm col-2 ms-0 me-0 ps-0 pe-0 border-warning', visibleTab === 'datasetLayers'?'bg-warning':'btn-default']"
+        type="button"
+        (click)="tabClicked('datasetLayers')">
+        <span class="btn-label">
+            <i class="fas fa-list"></i>
+        </span>
+        
+        Layers 
+        <span *ngIf="datasetLayers"> {{datasetLayers.length}} </span>
+        <span *ngIf="!datasetLayers"><i class="fa fa-spinner fa-spin mr-2" st></i></span>
+    </button>
+
+    <div class="col-6">
         <button class="btn btn-xs float-right" tooltip="Close"
             (click)="closeOffsidebar();">
             <span>
@@ -33,12 +51,41 @@
 
 </div>
 
+<div *ngIf="visibleTab && visibleTab == 'stations'" class="row mx-0 mt-2 ps-0 border-bottom border-secondary mb-3" style="margin-left: 1.6rem !important">
+    <button 
+        [ngClass]="['btn btn-sm col-2 ms-0 me-0 ps-0 pe-0 border-warning', visibleTab === 'stations'?'bg-warning':'btn-default']"
+        type="button"
+        (click)="tabClicked('stations')">
+        <span class="btn-label">
+            <i class="fas fa-list"></i>
+        </span>
+        Stations
+    </button>
+
+    <div class="col-10">
+        <button class="btn btn-xs float-right" tooltip="Close"
+            (click)="closeOffsidebar();">
+            <span>
+                <i class="fa-2x mr-2 fas fa-window-close"></i>
+            </span>
+        </button>
+    </div>
+</div>
+
 <div *ngIf="visibleTab == 'sites'">
     <app-site-details-list [siteIds]="siteIds" ></app-site-details-list>
 </div>
 
 <div *ngIf="visibleTab == 'datasets'">
     <app-dataset-details-list [datasets]="datasets" [page]="datasetPage"></app-dataset-details-list> 
+</div>
+
+<div *ngIf="visibleTab == 'datasetLayers'">
+    <app-dataset-layer-details-list [datasetLayers]="datasetLayers" ></app-dataset-layer-details-list>
+</div>
+
+<div *ngIf="visibleTab == 'stations'">
+    <app-station-details-list [stationIds]="stationIds"></app-station-details-list> 
 </div>
 
 <div *ngIf="html" class="m-4">

@@ -11,7 +11,7 @@ public class EbvCreatorDetailNodeDTO implements Serializable {
 	private String creatorName;
 	private String creatorEmail;
 	private String creatorInstitution;
-	private String creatorCountry;
+	private String creatorUrl;
 	
 	public EbvCreatorDetailNodeDTO() {
 		
@@ -19,12 +19,12 @@ public class EbvCreatorDetailNodeDTO implements Serializable {
 	
 	
 
-	public EbvCreatorDetailNodeDTO(String creatorName, String creatorEmail, String creatorInstitution, String creatorCountry) {
+	public EbvCreatorDetailNodeDTO(String creatorName, String creatorEmail, String creatorInstitution, String creatorUrl) {
 		super();
 		this.creatorName = creatorName;
 		this.creatorEmail = creatorEmail;
 		this.creatorInstitution = creatorInstitution;
-		this.creatorCountry = creatorCountry;
+		this.creatorUrl = creatorUrl;
 	}
 
 
@@ -41,8 +41,8 @@ public class EbvCreatorDetailNodeDTO implements Serializable {
 		return creatorInstitution;
 	}
 
-	public String getCreatorCountry() {
-		return creatorCountry;
+	public String getCreatorUrl() {
+		return creatorUrl;
 	}
 
 	public void setCreatorName(String creatorName) {
@@ -57,8 +57,8 @@ public class EbvCreatorDetailNodeDTO implements Serializable {
 		this.creatorInstitution = creatorInstitution;
 	}
 
-	public void setCreatorCountry(String creatorCountry) {
-		this.creatorCountry = creatorCountry;
+	public void setCreatorUrl(String creatorUrl) {
+		this.creatorUrl = creatorUrl;
 	}
 	
 	

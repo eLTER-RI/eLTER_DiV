@@ -68,6 +68,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     urlMarkedLayerLegend;
     urlMarkedLayerLegendBiggerZoom;
 
+    stationPoygonLayer: any;
+
     scrollbarOptionsLegend = { theme: 'dark-thick', scrollButtons: { enable: true }, scrollInertia: 0, mouseWheelPixels: 170};
 
     //layer with times
@@ -246,6 +248,8 @@ export class HomeComponent implements OnInit, OnDestroy {
                             let idStr = feature.features[0].id;
                             idStr = idStr.substring(6);
                             this.showAndOpenSiteAndDatasetDetails(idStr); // open both site and dataset results
+
+                            // TODO timeio - ovde se moze i zatvoriti
                         }
                       });
                   }
@@ -256,7 +260,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                 const features = f.values_.features;
 
                 let feature;
-                if (features && features.length == 1 && (this.markedLayer?.code == 'sites' || this.markedLayer?.code == 'sitesDataset')) {
+                if (features && features.length == 1 && (this.markedLayer?.code == 'sites' || this.markedLayer?.code == 'sitesDataset' || this.markedLayer?.code == 'station')) {
                     feature = features[0].id_;
                 } else {
                     feature = f.getId()?.toString();
@@ -264,7 +268,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
                 if (feature) {
                     if (feature.indexOf('site_points') > -1) {
+                        
                         const id = feature.substring(12);
+                        
                         if (this.markedLayer?.code == 'sites') {
                             this.offsidebarService.setLayerCodeForSidebar(this.markedLayer?.codeForSidebar);
                             if (this.markedLayer?.codeForSidebar == 'layers-sidebar') { // polygon from layer-sidebar clicked
@@ -274,6 +280,9 @@ export class HomeComponent implements OnInit, OnDestroy {
                         } else if (this.markedLayer?.code == 'sitesDataset') {
                             this.showAndOpenSiteDatasetDetails(id);
                         }
+                    } else if (feature.indexOf('station') > -1) {
+                        const id = feature.substring(8);
+                        this.showAndOpenStationDetails(id);
                     }
                 }
             });
@@ -399,6 +408,17 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
     }
 
+    showAndOpenStationDetails(idStr: string) {
+        const id = Number(idStr);
+
+        this.offsidebarService.showStations({
+            action: 'showStations',
+            stations: [id]
+        });
+
+        this.offsidebarOpen();
+    }
+
     removeSitePolygonLayer() {
         if (this.sitePoygonLayer) {
             this.layers.splice(this.sitePoygonLayer);
@@ -450,7 +470,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (this.map == null || this.map == undefined) {
             this.initMap();
         }
-
         if (action == 'turnOn') {
             if (layer?.layerTile != null && layer?.layerTile != undefined && this.layers.indexOf(layer?.layerTile) == -1) {
                 this.layers.push(layer?.layerTile);
@@ -463,6 +482,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             }
 
             if (layer?.layerVector != null && layer?.layerVector != undefined  && this.layers.indexOf(layer?.layerVector) == -1) {
+
                 this.layers.push(layer?.layerVector);
                 this.map.addLayer(layer?.layerVector);
                 // if (!bbox) {
@@ -604,7 +624,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                     i++;
                     j = i % layer?.times?.length;
                     this.config.currentPage = j;
-                }, 4000); //TODO 10k
+                }, 4000);
             } else if (operation =='stop') {
                 this.stopIntervalForLayerWithTime();
             } else if (operation == 'start') {

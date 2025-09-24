@@ -16,26 +16,20 @@
 
             </div> 
 
-            <div id="timeseriesScroll" malihu-scrollbar [scrollbarOptions]="scrollbarOptionsTimeseries">
+            <div id="timeseriesScroll" malihu-scrollbar [scrollbarOptions]="scrollbarOptionsDatastreams">
                 <div class="showFilter mb-2" 
-                    *ngFor="let ts of timeseries; index as i" type="button" 
-                    [ngStyle]="getStyleForTimeseries(ts)" 
-                    (click)="btn_selectOrDeselectTimeseries(ts, i)">
-
-                    <div class="mb-1 ml-1 mr-1 pt-1 location" type="button" (click)="btn_showStationOnMap(ts)" [ngStyle]="{color: ts.color}">
-                         <em class="fa fas icon-location-pin"></em><b> {{ts.station.name}} </b>
+                    *ngFor="let ds of getFilteredDatastreams(); index as i" 
+                    type="button"
+                    [ngStyle]="getStyleForDatastream(ds)"
+                    (click)="btn_selectOrDeselectDatastreams(ds, i)">
+                    <div class="mb-1 ml-1 mr-1 pt-1 location"
+                        [ngStyle]="{color: ds.color}">
+                         <em class="fa fas icon-location-pin"></em><b> {{ds.fkThing.name}} </b>
                     </div>
-                    <div class="mb-1 ml-1 mr-1"> ({{ts.uom}}) </div>
-                    <div class="mb-1 ml-1 mr-1 procedure">{{ts.phenomenon.label}} </div>
-                    <div class="mb-1 ml-1 mr-1 procedure">{{ts.procedure}} </div>
+                    <div class="mb-1 ml-1 mr-1"> ({{ds.unitMeasName}}) </div>
+                    <div class="mb-1 ml-1 mr-1 procedure">{{ds.name}} </div>
                     <div class="mb-1 ml-2 mr-1">
-                        <span (click)="showValues[i] = !showValues[i]" class="ml-0 mr-1">info<em class="fa fas fa-info mr-2 ml-1 location" ></em> </span>
-                        <span (click)="btn_removeTimeseries(ts, i)" class="ml-1" >remove <em class="fa fas fa-times mr-1 location"></em></span>
-                    </div>
-                    <div  *ngIf="showValues[i]">
-                        <hr class="mt-0 mb-1"/>
-                        <div class="mb-1 ml-2 mr-1 pt-0"> First value at {{ts.firstTime | date:'medium'}}  ({{ts.firstValue}} {{ts.uom}})</div>
-                        <div class="pb-1 ml-2 mr-1"> Last value at {{ts.lastTime | date:'medium'}} ({{ts.lastValue}} {{ts.uom}})</div>
+                        <span (click)="btn_removeDatastreams(ds, i, $event)" class="ml-1" > remove <em class="fa fas fa-times mr-1 location"></em></span>
                     </div>
                 </div>
             </div> 

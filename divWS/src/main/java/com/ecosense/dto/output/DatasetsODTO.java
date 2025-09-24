@@ -2,10 +2,18 @@ package com.ecosense.dto.output;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import com.ecosense.dto.BoundingBoxDTO;
 import com.ecosense.dto.PageDTO;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class DatasetsODTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -13,32 +21,6 @@ public class DatasetsODTO implements Serializable {
 	private List<DatasetODTO> datasets;
 
 	private PageDTO page;
-
-    public DatasetsODTO() { }    
-
-    public BoundingBoxDTO getBoundingBox() {
-        return boundingBox;
-    }
-
-    public void setBoundingBox(BoundingBoxDTO boundingBox) {
-        this.boundingBox = boundingBox;
-    }
-
-    public List<DatasetODTO> getDatasets() {
-        return datasets;
-    }
-
-    public void setDatasets(List<DatasetODTO> datasets) {
-        this.datasets = datasets;
-    }
-
-    public PageDTO getPage() {
-        return page;
-    }
-
-    public void setPage(PageDTO page) {
-        this.page = page;
-    }
 
 }
 

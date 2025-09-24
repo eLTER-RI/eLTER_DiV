@@ -14,6 +14,8 @@ export class Dataset {
 
     open: boolean = false;
 
+    datasetLayerChecked: boolean = false;
+
     constructor() {}
 
 }

@@ -2,7 +2,6 @@ package com.ecosense.repository;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.ecosense.dto.BoundingBoxDTO;
@@ -18,6 +17,8 @@ public interface SiteRepo {
     List<Site> getAllPolygons() throws SimpleException;
 
 	Site getSite(String idSuffix);
+	
+	Site getSite(Integer id);
 
 	void updateSite(Site siteFromDB);
 
@@ -32,6 +33,5 @@ public interface SiteRepo {
 	void createCircle(Site site, Double r);
 
 	BoundingBoxDTO getBoundingBox4326(Integer siteId) throws SimpleException;
-	
 
 }

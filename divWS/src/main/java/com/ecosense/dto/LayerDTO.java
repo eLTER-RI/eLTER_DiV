@@ -2,8 +2,6 @@ package com.ecosense.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import com.ecosense.dto.output.LayerGroupDTO;
@@ -30,6 +28,8 @@ public class LayerDTO implements Serializable {
 	private String time;
 	private String imgUrl;
 	private BoundingBoxDTO bbox;
+
+	private boolean hasJsonDataset;
 	
 	private List<String> times;
 	
@@ -43,6 +43,7 @@ public class LayerDTO implements Serializable {
 		this.uuid = layer.getUuid();
 		this.name = layer.getName();
 		this.layerType = layer.getLayerType();
+		this.hasJsonDataset = layer.getJsonDataset() != null && !layer.getJsonDataset().isEmpty();
 	}
 	
 	
@@ -250,7 +251,14 @@ public class LayerDTO implements Serializable {
 	public void setBbox(BoundingBoxDTO bbox) {
 		this.bbox = bbox;
 	}
-	
+
+	public boolean isHasJsonDataset() {
+		return hasJsonDataset;
+	}
+
+	public void setHasJsonDataset(boolean hasJsonDataset) {
+		this.hasJsonDataset = hasJsonDataset;
+	}
 	
 
 }

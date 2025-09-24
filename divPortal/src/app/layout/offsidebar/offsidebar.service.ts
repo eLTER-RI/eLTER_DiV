@@ -1,7 +1,5 @@
-import { EbvDB } from './../../shared/model/ebv-db';
-import { EbvDetail } from './../../shared/model/ebvdetail';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +29,7 @@ export class OffsidebarService {
   private closeAllSitesDetailsBehaviorSubject = new BehaviorSubject<any>(undefined);
   closeAllSiteDetailsObservable = this.closeAllSitesDetailsBehaviorSubject.asObservable();
 
-  private closeAllDatasetDetailsBehaviorSubject = new BehaviorSubject<any>(undefined);
+  private closeAllDatasetDetailsBehaviorSubject = new Subject<any>();
   closeAllDatasetDetailsObservable = this.closeAllDatasetDetailsBehaviorSubject.asObservable();
 
   private datasetsBehaviorSubject = new BehaviorSubject<any>(undefined);
@@ -42,6 +40,21 @@ export class OffsidebarService {
 
   private clearSitesAndDatasetsBehaviorSubject = new BehaviorSubject<any>(null);
   clearSitesAndDatasetsObservable = this.clearSitesAndDatasetsBehaviorSubject.asObservable();
+
+  private stationsDetailsBehaviorSubject = new BehaviorSubject<any>(undefined);
+  currStations = this.stationsDetailsBehaviorSubject.asObservable();
+
+  private closeAllStationDetailsBehaviorSubject = new BehaviorSubject<any>(undefined);
+  closeAllStationDetailsObservable = this.closeAllStationDetailsBehaviorSubject.asObservable();
+
+  private unselectDatastreamsBehaviorSubject = new BehaviorSubject<any>(undefined);
+  unselectDatastreamsObservable = this.unselectDatastreamsBehaviorSubject.asObservable();
+
+  private datasetsOrSitesLoadingBehaviorSubject = new BehaviorSubject<any>(undefined);
+  datasetsOrSitesLoadingObservable = this.datasetsOrSitesLoadingBehaviorSubject.asObservable();
+  
+  private datasetLayersBehaviorSubject = new BehaviorSubject<any>(undefined);
+  currDatasetLayers = this.datasetLayersBehaviorSubject.asObservable();
 
   constructor() { }
 
@@ -97,5 +110,25 @@ export class OffsidebarService {
   clearSitesAndDatasets() {
 		this.clearSitesAndDatasetsBehaviorSubject.next({});
 	}
+
+  showStations(stations) {
+    this.stationsDetailsBehaviorSubject.next(stations);
+  }
+
+  closeAllStationDetails() {
+    this.closeAllStationDetailsBehaviorSubject.next({});
+  }
+
+  unselectDatastreams(datastreamIds) {
+    this.unselectDatastreamsBehaviorSubject.next(datastreamIds);
+  }
+
+  datasetsOrSitesOffsidebarLoading(loading: any) {
+    this.datasetsOrSitesLoadingBehaviorSubject.next(loading);
+  }
+
+  showDatasetLayers(datasetLayers) {
+    this.datasetLayersBehaviorSubject.next(datasetLayers);
+  }
 
 }

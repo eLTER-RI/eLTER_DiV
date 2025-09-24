@@ -91,9 +91,11 @@ public class DeimsApiRepositoryImpl implements DeimsApiRepository {
 			Point geom = null;
 			try {
 				geom = (Point) reader.read(point);
+				geom.setSRID(4326);
 			} catch (ParseException e) {
 				throw new SimpleException(SimpleResponseDTO.PARSE_EXCEPTION);
 			}
+			
 			site.setPoint(geom);
 			
 	    	sites.add(site);
@@ -118,6 +120,9 @@ public class DeimsApiRepositoryImpl implements DeimsApiRepository {
 		}
 
 	    JsonNode siteNode = siteResponse.getBody();
+		if (siteNode == null || siteNode.get("title") == null) {
+			throw new SimpleException(SimpleResponseDTO.DEIMS_API_ERROR);
+		}
 	    siteInfoDTO.setTitle(siteNode.get("title").asText());
 	    
 	    String changedFromApi = siteNode.get("changed").asText();
@@ -528,7 +533,7 @@ public class DeimsApiRepositoryImpl implements DeimsApiRepository {
 		JsonNode attributes = siteNode.get("attributes");
 		JsonNode geographic = attributes.get("geographic");
 		String polygonFromApi = geographic.get("boundaries").asText();
-		
+
 		JsonNode sizeNode = geographic.get("size");
 		if (sizeNode != null && !sizeNode.get("value").isNull()) {
 			Double area = Double.parseDouble(sizeNode.get("value").asText());
@@ -539,8 +544,8 @@ public class DeimsApiRepositoryImpl implements DeimsApiRepository {
 			boolean isMultiPolygon = polygonFromApi.contains("MULTIPOLYGON");
 			boolean isMultiLineString = polygonFromApi.contains("MULTILINESTRING");
 			boolean isLineString = polygonFromApi.contains("LINESTRING");
-			boolean isPoint = polygonFromApi.contains("POINT");
 			boolean isMultiPoint = polygonFromApi.contains("MULTIPOINT");
+			boolean isPoint = polygonFromApi.contains("POINT");
 			
 			WKTReader reader = new WKTReader();
 			
@@ -552,25 +557,30 @@ public class DeimsApiRepositoryImpl implements DeimsApiRepository {
 			MultiPoint multiPoint = null;
 			
 			try {
-				if (!isMultiPolygon && !isLineString && !isMultiLineString && !isPoint && !isMultiPoint) {
-					polygon = (Polygon) reader.read(polygonFromApi);
-					site.setPolygon(polygon);
+				if (isMultiPoint) {
+					multiPoint = (MultiPoint) reader.read(polygonFromApi);
+					multiPoint.setSRID(4326);
+					site.setPolygon(multiPoint);
 				} else if (isPoint) {
 					point = (Point) reader.read(polygonFromApi);
+					point.setSRID(4326);
 					site.setPolygon(point);
 				} else if (isMultiPolygon) { 
 					multiPolygon = (MultiPolygon) reader.read(polygonFromApi);
+					multiPolygon.setSRID(4326);
 					site.setPolygon(multiPolygon);
 				} else if (isMultiLineString) {
 					multiLineString = (MultiLineString) reader.read(polygonFromApi);
+					multiLineString.setSRID(4326);
 					site.setPolygon(multiLineString);
 				} else if (isLineString) {
 					lineString = (LineString) reader.read(polygonFromApi);
+					lineString.setSRID(4326);
 					site.setPolygon(lineString);
-				}
-				else {
-					multiPoint = (MultiPoint) reader.read(polygonFromApi);
-					site.setPolygon(multiPoint);
+				} else {
+					polygon = (Polygon) reader.read(polygonFromApi);
+					polygon.setSRID(4326);
+					site.setPolygon(polygon);
 				}
 			} catch (ParseException e) {
 				throw new SimpleException(SimpleResponseDTO.PARSE_EXCEPTION);
