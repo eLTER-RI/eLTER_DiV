@@ -31,6 +31,7 @@
                                [ngStyle]="{'padding-left': layer.code == 'sites' ? '0px' : '10px'}"
                                >
                             <em *ngIf="layer.code == 'sites'" [ngClass]="layer.showFilter ? 'fas fa-angle-up' : 'fas fa-angle-down'" class="pr-sm"></em>     
+                            <i *ngIf="layer.loading" class="fa fa-spinner fa-spin mx-1" style="color:#ED9632"></i>
                             {{layer?.name}}
                         </label>
                         <span class="col-3" style="float: right; display: flex;">

@@ -43,4 +43,5 @@ export class Layer {
 
     hasJsonDataset: boolean;
 
+    loading: boolean = false;
 }

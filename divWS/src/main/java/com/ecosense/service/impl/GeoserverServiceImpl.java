@@ -223,7 +223,7 @@ public class GeoserverServiceImpl implements GeoserverService {
         String uuidNumber = UUID.randomUUID().toString();
 
         try {
-            String code = getTagValue("Name", geoserverLayerElement); // TODO po ovome je jedinstven layer
+            String code = getTagValue("Name", geoserverLayerElement); // layer is unique by this field
 
             String name = getTagValue("Title", geoserverLayerElement).replace("_", " ").replace(" - ", "-").replace("(", "").replace(")", "");
             boolean nameIsEmpty = name == null || name.isEmpty();

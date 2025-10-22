@@ -471,20 +471,41 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.initMap();
         }
         if (action == 'turnOn') {
+
+            const checkTileLayerLoading = (src) => {
+                let loadingCount = 0;
+                src.on('tileloadstart', () => {
+                    if (loadingCount === 0) {
+                        layer.loading = true;
+                    }
+                    loadingCount++;
+                });
+                src.on(['tileloadend', 'tileloaderror'], () => {
+                    loadingCount--;
+                    if (loadingCount <= 0) {
+                        layer.loading = false;
+                        loadingCount = 0;
+                    }
+                });
+            };
+    
             if (layer?.layerTile != null && layer?.layerTile != undefined && this.layers.indexOf(layer?.layerTile) == -1) {
                 this.layers.push(layer?.layerTile);
                 this.map.addLayer(layer?.layerTile);
+                checkTileLayerLoading(layer.layerTile.getSource());
             }
 
             if (layer?.layerTileBiggerZoom != null && layer?.layerTileBiggerZoom != undefined  && this.layers.indexOf(layer?.layerTileBiggerZoom) == -1) {
                 this.layers.push(layer?.layerTileBiggerZoom);
                 this.map.addLayer(layer?.layerTileBiggerZoom);
+                checkTileLayerLoading(layer.layerTileBiggerZoom.getSource());
             }
 
             if (layer?.layerVector != null && layer?.layerVector != undefined  && this.layers.indexOf(layer?.layerVector) == -1) {
 
                 this.layers.push(layer?.layerVector);
                 this.map.addLayer(layer?.layerVector);
+                checkTileLayerLoading(layer.layerVector.getSource());
                 // if (!bbox) {
                     // this.fitMapToExtent(layer); //TODO milica otkomentarisati ako zatreba za invenio
                 // }

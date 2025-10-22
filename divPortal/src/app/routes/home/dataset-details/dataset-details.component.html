@@ -7,7 +7,7 @@
             <input type="checkbox" [checked]="datasetDetail.open">
             <label class="tab-label" (click)="openCloseDatasetDetail(); $event.preventDefault();">
                 <label class="pointer">
-                    <em (click)="pinClick(); $event.stopPropagation();" 
+                    <em (click)="pinClick(); $event.stopPropagation(); $event.preventDefault();" 
                         class="fa-2x mr-2 fas fa-map-marker-alt pinIcon"
                         [ngClass]="{'pinIconActive' : pinActive}">
                     </em>

@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { Subscription } from 'rxjs';
 import { OffsidebarService } from 'src/app/layout/offsidebar/offsidebar.service';
@@ -11,7 +11,7 @@ import { DatasetLayerDetailsListService } from './dataset-layer-details-list.ser
   templateUrl: './dataset-layer-details-list.component.html',
   styleUrls: ['./dataset-layer-details-list.component.scss']
 })
-export class DatasetLayerDetailsListComponent implements OnInit, OnDestroy {
+export class DatasetLayerDetailsListComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() datasetLayers: DatasetLayer[];
 
@@ -26,6 +26,12 @@ export class DatasetLayerDetailsListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initSubscriptions();
     this.paginationInit();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['datasetLayers'] && this.datasetLayers) {
+      this.paginationInit();
+    }
   }
 
   initSubscriptions() {

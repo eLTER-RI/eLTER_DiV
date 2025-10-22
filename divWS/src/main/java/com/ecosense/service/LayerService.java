@@ -28,4 +28,6 @@ public interface LayerService {
 
 	List<DatasetLayerDTO> filterAndSearch(DivFilterDTO divFilterDTO) throws SimpleException;
 
+	List<LayerGroupDTO> searchLayerGroupsByDatasetData(String search, String layerType) throws SimpleException;
+
 }

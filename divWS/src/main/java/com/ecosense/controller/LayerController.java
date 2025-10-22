@@ -147,7 +147,7 @@ public class LayerController {
 	}
 
 	@RequestMapping(value = "/filterAndSearch", method = RequestMethod.POST,
-			produces = MediaType.APPLICATION_JSON)
+					produces = MediaType.APPLICATION_JSON)
 	public Response filterAndSearch(@RequestBody DivFilterDTO divFilterDTO) {
 		SimpleResponseDTO response = new SimpleResponseDTO();
 		
@@ -162,6 +162,27 @@ public class LayerController {
 		}
 		if (response.getStatus() == SimpleResponseDTO.OK) {
 			return Response.ok(layersWithDatasets).build();
+		} else {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
+		}
+	}
+
+	@RequestMapping(value = "/searchLayerGroupsByDatasetData", method = RequestMethod.GET,
+					produces = MediaType.APPLICATION_JSON)
+	public Response searchLayerGroupsByDatasetData(@RequestParam String search, @RequestParam String layerType) {
+		SimpleResponseDTO response = new SimpleResponseDTO();
+		
+		List<LayerGroupDTO> layerGroups = new ArrayList<>();
+		try {
+			
+			layerGroups = layerService.searchLayerGroupsByDatasetData(search, layerType);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(SimpleResponseDTO.GENERAL_SERVER_ERROR);
+		}
+		if (response.getStatus() == SimpleResponseDTO.OK) {
+			return Response.ok(layerGroups).build();
 		} else {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
 		}

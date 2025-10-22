@@ -3,11 +3,19 @@ package com.ecosense.dto.output;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.ecosense.dto.LayerDTO;
 import com.ecosense.entity.Layer;
 import com.ecosense.entity.LayerGroup;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class LayerGroupDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -17,11 +25,6 @@ public class LayerGroupDTO implements Serializable {
 	private LayerGroupDTO layerGroupParent;
 	
 	private List<LayerDTO> layers;
-	
-	
-	public LayerGroupDTO() {
-		// TODO Auto-generated constructor stub
-	}
 
 	public LayerGroupDTO(LayerGroup layerGroup) {
 		this.id = layerGroup.getId();
@@ -46,56 +49,19 @@ public class LayerGroupDTO implements Serializable {
 			}
 		}
 	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public LayerGroupDTO getLayerGroupParent() {
-		return layerGroupParent;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setLayerGroupParent(LayerGroupDTO layerGroupParent) {
-		this.layerGroupParent = layerGroupParent;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	public List<LayerDTO> getLayers() {
-		return layers;
-	}
-
-	public void setLayers(List<LayerDTO> layers) {
-		this.layers = layers;
-	}
-
-	public String getIconClass() {
-		return iconClass;
-	}
-
-	public void setIconClass(String iconClass) {
-		this.iconClass = iconClass;
-	}
-
-
 	
 	
-	
-	
-	
+	@Override
+	public final int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		LayerGroupDTO other = (LayerGroupDTO) obj;
+		if (!id.equals(other.id))
+			return false;
+		return true;
+	}
 
 }

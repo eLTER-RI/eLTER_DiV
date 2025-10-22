@@ -85,8 +85,8 @@ export class DatasetDetailsComponent implements OnInit {
     const selectedLayersStr = sessionStorage.getItem('selectedLayers');
     const selectedLayers = JSON.parse(selectedLayersStr);
     
-    let selectedLayer = selectedLayers.filter(sl => sl.id == this.layer?.id);
-    if (selectedLayer.length > 0) {
+    let selectedLayer = selectedLayers?.filter(sl => sl.id == this.layer?.id);
+    if (selectedLayer?.length > 0) {
       this.datasetDetail.datasetLayerChecked = true;
     }
   }

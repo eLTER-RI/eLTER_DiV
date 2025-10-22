@@ -1,5 +1,4 @@
 import { CapabilitiesRequest } from './../../../shared/model/capabilities-request-db';
-import { SettingsService } from './../../../core/settings/settings.service';
 import { OffsidebarService } from './../../../layout/offsidebar/offsidebar.service';
 import { SharedService } from './../../../shared/service/shared.service';
 import { Layer } from 'src/app/shared/model/layer';
@@ -43,7 +42,6 @@ export class ShowLayaresDetailsComponent implements OnInit {
 
   constructor(private sharedService: SharedService,
               private offsidebarService: OffsidebarService,
-              private settings: SettingsService,
               private toastrService: ToastrService,
               private modalService: BsModalService) { }
 
@@ -130,7 +128,7 @@ export class ShowLayaresDetailsComponent implements OnInit {
   }
 
   
-  onFilter(): void {  
+  async onFilter() {  
     const search = this.filter.toLowerCase().trim();
     if (!search || search.length === 0) {
       this.layerGroups = [...this.layerGroupsOrig];
@@ -140,11 +138,14 @@ export class ShowLayaresDetailsComponent implements OnInit {
       }
     } else {
       
-      //filter for layers from database
-      this.layerGroups = [];
+      // filter for layers from db with json_dataset
+      const layerGroupsResult = this.sharedService.get("layer/searchLayerGroupsByDatasetData?search=" + search + "&layerType=selection");
+      this.layerGroups = (await layerGroupsResult).entity;
+
+      // filter for global layers
       for (const lg of this.layerGroupsOrig) {
         for (const layer of lg.layers) {
-          if (this.doesContains(layer, search)) {
+          if (!layer.hasJsonDataset && this.doesContains(layer, search)) {
 
             if (this.layerGroups.find(el => el.id == lg.id) == undefined) {
               const layerGroup = new LayerGroup();
@@ -162,7 +163,7 @@ export class ShowLayaresDetailsComponent implements OnInit {
         }
       }
 
-      //filter for layers from get capabilities link
+      // filter for layers from get capabilities link
       if (this.fromGetCapabilitiesLayers) {
         this.fromGetCapabilitiesLayers = [];
         for(const layer of this.fromGetCapabilitiesLayersOrig) {

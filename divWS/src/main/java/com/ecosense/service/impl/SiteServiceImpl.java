@@ -399,8 +399,6 @@ public class SiteServiceImpl implements SiteService {
 		Set<SiteODTO> sites = new HashSet<>();
 		BoundingBoxDTO boundingBox = new BoundingBoxDTO(Double.MAX_VALUE, Double.MAX_VALUE, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
-		// JsonNode resultNode = null;
-
 		String urlData = SolrData.BASE_URL + "/select?q=data:(";
 		String urlJsonDataset = SolrData.BASE_URL + "/select?q=json_dataset:(";
 

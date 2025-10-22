@@ -10,9 +10,11 @@
           placeholder="Filter..."
           class="form-control"
           [(ngModel)]="filter"
-          (input)="onFilter()"
           type="text"
         />
+        <div class="input-group-append pointer" (click)="onFilter()">
+          <div class="input-group-text bg-blue">Filter</div>
+        </div>
     </div>
      
     </div>
@@ -45,6 +47,7 @@
                                 *ngFor="let layer of layergroup.layers; index as j"
                               >
                                 <div
+                                  style="border-radius: 8px;"
                                   [ngClass]="[
                                     'card b m-1 p-0',
                                     layer.selected ? 'selectedLayer' : ''

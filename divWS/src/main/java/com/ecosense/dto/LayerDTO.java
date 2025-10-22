@@ -3,6 +3,7 @@ package com.ecosense.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.ecosense.dto.output.LayerGroupDTO;
 import com.ecosense.entity.BoundingBox;
@@ -10,6 +11,13 @@ import com.ecosense.entity.Layer;
 import com.ecosense.entity.LayerTime;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class LayerDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -35,8 +43,7 @@ public class LayerDTO implements Serializable {
 	
 	private String geoUrlLegendBiggerZoom;
 	private String layerNameBiggerZoom;
-	
-	public LayerDTO() {	}
+
 	
 	public LayerDTO(Layer layer) {
 		this.id = layer.getId();
@@ -86,179 +93,18 @@ public class LayerDTO implements Serializable {
 			}
 		}
 	}
-
-
-	public Integer getId() {
-		return id;
-	}
-
-
-	public String getUuid() {
-		return uuid;
-	}
-
-
-	public String getName() {
-		return name;
-	}
-
-
-	public String getLayerName() {
-		return layerName;
-	}
-
-
-	public String getGeoUrlWms() {
-		return geoUrlWms;
-	}
-
-
-	public String getGeoUrlWfs() {
-		return geoUrlWfs;
-	}
-
-
-	public String getGeoUrlLegend() {
-		return geoUrlLegend;
-	}
-
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-
-	public void setLayerName(String layerName) {
-		this.layerName = layerName;
-	}
-
-
-	public void setGeoUrlWms(String geoUrlWms) {
-		this.geoUrlWms = geoUrlWms;
-	}
-
-
-	public void setGeoUrlWfs(String geoUrlWfs) {
-		this.geoUrlWfs = geoUrlWfs;
-	}
-
-
-	public void setGeoUrlLegend(String geoUrlLegend) {
-		this.geoUrlLegend = geoUrlLegend;
-	}
-
-
-	public String getGeoUrlLegendBiggerZoom() {
-		return geoUrlLegendBiggerZoom;
-	}
-
-
-	public String getLayerNameBiggerZoom() {
-		return layerNameBiggerZoom;
-	}
-
-
-	public void setGeoUrlLegendBiggerZoom(String geoUrlLegendBiggerZoom) {
-		this.geoUrlLegendBiggerZoom = geoUrlLegendBiggerZoom;
-	}
-
-
-	public void setLayerNameBiggerZoom(String layerNameBiggerZoom) {
-		this.layerNameBiggerZoom = layerNameBiggerZoom;
-	}
-
-
-	public String getCode() {
-		return code;
-	}
-
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-
-	public String getVersion() {
-		return version;
-	}
-
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
-
-	public String getTime() {
-		return time;
-	}
-
-
-	public void setTime(String time) {
-		this.time = time;
-	}
-
-	public List<String> getTimes() {
-		return times;
-	}
-
-
-	public void setTimes(List<String> times) {
-		this.times = times;
-	}
-
-
-	public String getImgUrl() {
-		return imgUrl;
-	}
-
-
-	public void setImgUrl(String imgUrl) {
-		this.imgUrl = imgUrl;
-	}
-
-
-	public LayerGroupDTO getLayerGroup() {
-		return layerGroup;
-	}
-
-
-	public void setLayerGroup(LayerGroupDTO layerGroup) {
-		this.layerGroup = layerGroup;
-	}
-
-	public String getLayerType() {
-		return layerType;
-	}
-
-	public void setLayerType(String layerType) {
-		this.layerType = layerType;
-	}
-
-	public BoundingBoxDTO getBbox() {
-		return bbox;
-	}
-
-	public void setBbox(BoundingBoxDTO bbox) {
-		this.bbox = bbox;
-	}
-
-	public boolean isHasJsonDataset() {
-		return hasJsonDataset;
-	}
-
-	public void setHasJsonDataset(boolean hasJsonDataset) {
-		this.hasJsonDataset = hasJsonDataset;
-	}
 	
+	@Override
+	public final int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		LayerDTO other = (LayerDTO) obj;
+		if (!id.equals(other.id))
+			return false;
+		return true;
+	}
 
 }

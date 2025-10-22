@@ -246,5 +246,44 @@ public class LayerServiceImpl implements LayerService {
 		
 	}
 
+	public List<LayerGroupDTO> searchLayerGroupsByDatasetData(String search, String layerType) throws SimpleException {
+		List<LayerGroupDTO> layerGroupDTOs = new ArrayList<>();
+
+		String url = SolrData.BASE_URL + "/select?q=json_dataset:(" + '"' + search + '"' + ")";
+		url += "&rows=1000&start=0";
+
+		JsonNode resultNode = apiCallService.getRequest(url);
+		JsonNode datasetLayerListNode = resultNode.get("response").get("docs");
+
+		for (JsonNode datasetLayerNode : datasetLayerListNode) {
+			try {
+				Integer layerId = datasetLayerNode.get("id").asInt();
+
+
+				Layer layer = layerRepository.findById(layerId).orElse(null);
+				if (layer != null && layer.getLayerGroup() != null && layer.getLayerType().equals(layerType)) {
+					LayerGroupDTO layerGroupDTO = new LayerGroupDTO(layer.getLayerGroup());
+					if (!layerGroupDTOs.contains(layerGroupDTO)) {
+						layerGroupDTO.setLayers(new ArrayList<>());
+						layerGroupDTOs.add(layerGroupDTO);
+					} else {
+						layerGroupDTO = layerGroupDTOs.get(layerGroupDTOs.indexOf(layerGroupDTO));
+					}
+
+					LayerDTO layerDTO = new LayerDTO(layer);
+
+					if (!layerGroupDTO.getLayers().contains(layerDTO)) {
+						layerGroupDTO.getLayers().add(new LayerDTO(layer));
+					}
+				}
+
+			} catch (Exception e) {
+				continue;
+			}
+		}
+
+		return layerGroupDTOs;
+	}
+
 }
 
