@@ -22,7 +22,6 @@ import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
-import { DatepickerModule } from 'ngx-bootstrap/datepicker';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 import { FlotDirective } from './directives/flot/flot.directive';
@@ -36,6 +35,8 @@ import { ScrollableDirective } from './directives/scrollable/scrollable.directiv
 import { JqcloudDirective } from './directives/jqcloud/jqcloud.directive';
 import { SafePipe } from './pipe/safe.pipe';
 import { NullPipe } from './pipe/null.pipe';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 // https://angular.io/styleguide#!#04-10
 @NgModule({
@@ -49,7 +50,6 @@ import { NullPipe } from './pipe/null.pipe';
     ButtonsModule.forRoot(),
     CarouselModule.forRoot(),
     CollapseModule.forRoot(),
-    DatepickerModule.forRoot(),
     BsDatepickerModule.forRoot(),
     BsDropdownModule.forRoot(),
     ModalModule.forRoot(),
@@ -62,12 +62,14 @@ import { NullPipe } from './pipe/null.pipe';
     PopoverModule.forRoot(),
     TypeaheadModule.forRoot(),
     ToastrModule.forRoot({
-      positionClass: 'toast-bottom-right'
+      positionClass: 'toast-bottom-right',
     }),
-    
-
+    NgSelectModule,
+    DragDropModule,
   ],
-  providers: [ColorsService],
+  providers: [
+    ColorsService
+  ],
   declarations: [
     FlotDirective,
     SparklineDirective,
@@ -80,7 +82,7 @@ import { NullPipe } from './pipe/null.pipe';
     LoadingComponent,
     ClickOutsideDirective,
     SafePipe,
-    NullPipe
+    NullPipe,
   ],
   exports: [
     CommonModule,
@@ -93,7 +95,6 @@ import { NullPipe } from './pipe/null.pipe';
     ButtonsModule,
     CarouselModule,
     CollapseModule,
-    DatepickerModule,
     BsDatepickerModule,
     BsDropdownModule,
     ModalModule,
@@ -117,7 +118,9 @@ import { NullPipe } from './pipe/null.pipe';
     LoadingComponent,
     ClickOutsideDirective,
     SafePipe,
-    NullPipe
+    NullPipe,
+    NgSelectModule,
+    DragDropModule,
   ],
 })
 
@@ -126,6 +129,7 @@ export class SharedModule {
   static forRoot(): ModuleWithProviders<SharedModule> {
     return {
       ngModule: SharedModule,
+      providers: [],
     };
   }
 }

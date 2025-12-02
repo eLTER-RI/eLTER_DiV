@@ -1,4 +1,5 @@
-// Bootstrap
+.theme-a {
+    // Bootstrap
 @import "../bootstrap/functions";
 @import "../bootstrap/variables";
 @import "../bootstrap/mixins";
@@ -177,4 +178,5 @@ body, .wrapper .section-container {
 .offsidebar {
     background-color:rgb(240,240,245,0.9);
     color: $offsidebar-color;
+}
 }

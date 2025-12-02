@@ -16,7 +16,7 @@
 
             </div> 
 
-            <div id="timeseriesScroll" malihu-scrollbar [scrollbarOptions]="scrollbarOptionsDatastreams">
+            <div id="timeseriesScroll"  style="height: 80vh;" class="scrollable dark">
                 <div class="showFilter mb-2" 
                     *ngFor="let ds of getFilteredDatastreams(); index as i" 
                     type="button"

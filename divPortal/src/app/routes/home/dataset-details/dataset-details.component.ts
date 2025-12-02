@@ -9,9 +9,10 @@ import { Layer } from 'src/app/shared/model/layer';
 import { DatasetLayerDetailsListService } from '../dataset-layer-details-list/dataset-layer-details-list.service';
 
 @Component({
-  selector: 'app-dataset-details',
-  templateUrl: './dataset-details.component.html',
-  styleUrls: ['./dataset-details.component.scss']
+    selector: 'app-dataset-details',
+    templateUrl: './dataset-details.component.html',
+    styleUrls: ['./dataset-details.component.scss'],
+    standalone: false
 })
 export class DatasetDetailsComponent implements OnInit {
 
@@ -28,8 +29,6 @@ export class DatasetDetailsComponent implements OnInit {
   datasetOpenDetailsSubscription: Subscription;
   closeAllDatasetDetailsSubscription: Subscription;
   pinClickedSubscription: Subscription;
-
-  scrollbarOptions = {  theme: 'dark-thick', scrollButtons: { enable: true },  setHeight: '70vh'};
 
   constructor(private offsidebarService: OffsidebarService,
               private homeService: HomeService,

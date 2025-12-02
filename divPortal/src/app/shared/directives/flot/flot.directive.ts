@@ -3,7 +3,8 @@ import { OnInit, OnChanges, OnDestroy, Directive, ElementRef, Input, Output, Sim
 declare var $: any;
 
 @Directive({
-    selector: '[flot]'
+    selector: '[flot]',
+    standalone: false
 })
 export class FlotDirective implements OnInit, OnChanges, OnDestroy {
 

@@ -2,10 +2,7 @@ package com.ecosense.entity;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
+import jakarta.persistence.*;
 
 @Entity
 @NamedQuery(name="Html.findAll", query="SELECT e FROM Html e")

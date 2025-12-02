@@ -6,6 +6,7 @@ import java.net.Proxy.Type;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -14,11 +15,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.http.HttpHost;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,7 +26,19 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
-
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.core5.ssl.SSLContexts;
+import org.apache.hc.core5.ssl.TrustStrategy;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.core5.http.HttpHost;
 @SpringBootApplication
 @EnableScheduling
 public class EcosenseApplication {
@@ -60,21 +69,35 @@ public class EcosenseApplication {
             .loadTrustMaterial((chain, authType) -> true)  // Trust all certificates
             .build();
 
-        // Define the proxy 
-        HttpHost proxy = new HttpHost("proxy.uns.ac.rs", 8080, "http");
+        HttpHost proxy = new HttpHost("http","proxy.uns.ac.rs", 8080);
+        // 2. Build the SSLConnectionSocketFactory
+        SSLConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactoryBuilder.create()
+                .setSslContext(sslContext)
+                .setHostnameVerifier(
+                        NoopHostnameVerifier.INSTANCE) // Set verifier here
+                .build();
 
-        // Create an HttpClient that uses the SSLContext
+        // 3. Create a connection manager and set the SSL factory on it
+        HttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+                .setSSLSocketFactory(sslSocketFactory) // Correct method for this version
+                .build();
+
+        RequestConfig requestConfig = RequestConfig.custom()
+        .setResponseTimeout(
+                        10000000, TimeUnit.MILLISECONDS) // 10-second read timeout
+        .build();
+
+        // 4. Build the HttpClient with the connection manager
         CloseableHttpClient httpClient = HttpClients.custom()
-            .setSSLContext(sslContext)
-            .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)  // Disable hostname verification
-            .setProxy(proxy)
-            .build();
+                .setConnectionManager(connectionManager)
+                .setProxy(proxy)
+                .setDefaultRequestConfig(requestConfig)
+                .build();
 
         // Create HttpComponentsClientHttpRequestFactory and set the custom HttpClient
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
 
         // Set timeout values (optional)
-        factory.setReadTimeout(10000000); // Set a long read timeout, per your comment
         factory.setConnectTimeout(10000000); // Optional connect timeout
 
         // Build the RestTemplate using the factory with SSL and proxy configuration
@@ -122,9 +145,26 @@ public class EcosenseApplication {
         };
         SSLContext sslContext = SSLContext.getInstance("SSL");
         sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+        SSLConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactoryBuilder.create()
+                .setSslContext(sslContext)
+                .setHostnameVerifier(
+                        NoopHostnameVerifier.INSTANCE) // Set verifier here
+                .build();
+
+                RequestConfig requestConfig = RequestConfig.custom()
+                .setResponseTimeout(
+                        0, TimeUnit.MILLISECONDS) // 10-second read timeout
+                .build();
+
+        // 3. Create a connection manager and set the SSL factory on it
+        HttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+                .setSSLSocketFactory(sslSocketFactory) // Correct method for this version
+                .build();
+
         CloseableHttpClient httpClient = HttpClients.custom()
-                .setSSLContext(sslContext)
-                .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                .setConnectionManager(connectionManager)
+                .setDefaultRequestConfig(requestConfig)
                 .build();
 
         HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
@@ -134,7 +174,6 @@ public class EcosenseApplication {
         });
 
         customRequestFactory.setHttpClient(httpClient);
-        customRequestFactory.setReadTimeout(0);
         return builder.requestFactory(() -> customRequestFactory).build();
     }
 

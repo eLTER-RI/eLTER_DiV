@@ -6,9 +6,10 @@ import { Layer } from 'src/app/shared/model/layer';
 import { SharedService } from 'src/app/shared/service/shared.service';
 
 @Component({
-  selector: 'app-layer-dataset-info',
-  templateUrl: './layer-dataset-info.component.html',
-  styleUrls: ['./layer-dataset-info.component.scss']
+    selector: 'app-layer-dataset-info',
+    templateUrl: './layer-dataset-info.component.html',
+    styleUrls: ['./layer-dataset-info.component.scss'],
+    standalone: false
 })
 export class LayerDatasetInfoComponent implements OnInit {
 

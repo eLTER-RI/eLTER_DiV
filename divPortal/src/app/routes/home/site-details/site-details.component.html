@@ -16,7 +16,7 @@
             </label>
 
             <div *ngIf="siteDetails.open" class="tab-content">
-                <div [hidden]="!siteDetails.open" id="detailsTimeseriesScroll"  malihu-scrollbar [scrollbarOptions]="scrollbarOptions" class="mt-0 pt-0">
+                <div [hidden]="!siteDetails.open" id="detailsTimeseriesScroll" class="mt-0 pt-0 scrollable dark" style="height: 80vh;">
                     <div class="tabs">
                         <div class="tab">
                             <input type="checkbox" [checked]="menuItem == 'basic'">

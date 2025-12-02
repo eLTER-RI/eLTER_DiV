@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-metadata-catalogue',
-  templateUrl: './metadata-catalogue.component.html',
-  styleUrls: ['./metadata-catalogue.component.scss']
+    selector: 'app-metadata-catalogue',
+    templateUrl: './metadata-catalogue.component.html',
+    styleUrls: ['./metadata-catalogue.component.scss'],
+    standalone: false
 })
 export class MetadataCatalogueComponent implements OnInit {
 

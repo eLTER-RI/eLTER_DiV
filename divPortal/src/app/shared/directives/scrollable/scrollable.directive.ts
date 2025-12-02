@@ -2,7 +2,8 @@ import { OnInit, Directive, Input, ElementRef } from '@angular/core';
 declare var $: any;
 
 @Directive({
-    selector: 'scrollable'
+    selector: 'scrollable',
+    standalone: false
 })
 export class ScrollableDirective implements OnInit {
 

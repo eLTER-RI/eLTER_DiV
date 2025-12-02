@@ -12,7 +12,7 @@
             </label>
 
             <div *ngIf="stationDetails.open" class="tab-content">
-                <div [hidden]="!stationDetails.open" id="detailsTimeseriesScroll" malihu-scrollbar [scrollbarOptions]="scrollbarOptions" class="mt-0 pt-0">
+                <div [hidden]="!stationDetails.open" id="detailsTimeseriesScroll"  style="height: 80vh;" class="mt-0 pt-0 scrollable dark">
                     
                     <div *ngFor="let thing of stationDetails?.things">
                         <div class="tabs">

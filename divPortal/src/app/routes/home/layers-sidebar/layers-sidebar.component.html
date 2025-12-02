@@ -13,15 +13,16 @@
             </div>
         </div>
 
-        <div [hidden]="!showLayers" dnd-sortable-container [sortableData]="allLayers">
+        <div [hidden]="!showLayers" cdkDropList [cdkDropListData]="allLayers" (cdkDropListDropped)="dropSuccess($event)">
 
             <div class="text-center mb-2">
                 <button class="btn btn-md btn-labeled bg-blue" (click)="showHideMoreLayers()">Show/hide more layers</button>
             </div>
 
-            <div *ngFor="let layer of allLayers; index as i" class="panel-body p-0 b-0 mb-1 sidebar-item">
+            <div *ngFor="let layer of allLayers; index as i" class="panel-body p-0 b-0 mb-1 sidebar-item" 
+            (mouseover)="showLayerIcon[i]=true" (mouseout)="showLayerIcon[i]=false" cdkDrag>
                 <div *ngIf="layer">
-                    <div dnd-sortable (onDragEnd)="dropSuccess()" [sortableIndex]="i" (mouseover)="showLayerIcon[i]=true" (mouseout)="showLayerIcon[i]=false">
+                    <div >
                         <span class="col-1 mr-0">
                             <em class="fa icon-menu mt-1" *ngIf="showLayerIcon[i]"></em>
                             <em class="fa icon-menu mt-1" style="color: transparent;" *ngIf="!showLayerIcon[i]"></em> 

@@ -2,7 +2,7 @@
 
 import { TestBed, async, inject } from '@angular/core/testing';
 import { TranslateService, TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { TranslatorService } from './translator.service';
 import { createTranslateLoader } from '../../app.module';
@@ -10,18 +10,15 @@ import { createTranslateLoader } from '../../app.module';
 describe('Service: Translator', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [
-                HttpClientModule,
-                TranslateModule.forRoot({
-                    loader: {
-                        provide: TranslateLoader,
-                        useFactory: (createTranslateLoader),
-                        deps: [HttpClient]
-                    }
-                })
-            ],
-            providers: [TranslatorService]
-        });
+    imports: [TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: (createTranslateLoader),
+                deps: [HttpClient]
+            }
+        })],
+    providers: [TranslatorService, provideHttpClient(withInterceptorsFromDi())]
+});
     });
 
     it('should ...', inject([TranslatorService], (service: TranslatorService) => {

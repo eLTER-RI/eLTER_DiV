@@ -31,7 +31,9 @@
             "inlineStyleLanguage": "scss",
             "allowedCommonJsDependencies": [
               "lodash",
-              "chart.js"
+              "chart.js",
+              "canvg",
+              "pdfmake"
             ],
             "assets": [
               "src/favicon.ico",
@@ -41,13 +43,13 @@
               "src/app/core/preloader/preloader.scss",
               "src/styles.scss",
               "node_modules/ol/ol.css",
-              "node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css"
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": [
               "src/app/core/wrapper/wrapper.js",
               "src/app/core/preloader/preloader.js",
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"
+              "src/modernizr.js",
+              "node_modules/jquery/dist/jquery.min.js"
             ]
           },
           "configurations": {
@@ -94,10 +96,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "ng2angle:build:production"
+              "buildTarget": "ng2angle:build:production"
             },
             "development": {
-              "browserTarget": "ng2angle:build:development"
+              "buildTarget": "ng2angle:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -105,7 +107,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ng2angle:build"
+            "buildTarget": "ng2angle:build"
           }
         },
         "test": {
@@ -132,6 +134,5 @@
         }
       }
     }
-  },
-  "defaultProject": "ng2angle"
+  }
 }

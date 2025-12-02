@@ -3,9 +3,10 @@ import { Subscription } from 'rxjs';
 import { AppBlockerService } from './app-blocker.service';
 
 @Component({
-  selector: 'app-overlay',
-  templateUrl: './app-overlay.component.html',
-  styleUrls: ['./app-overlay.component.scss']
+    selector: 'app-overlay',
+    templateUrl: './app-overlay.component.html',
+    styleUrls: ['./app-overlay.component.scss'],
+    standalone: false
 })
 export class AppOverlayComponent implements OnInit, OnDestroy {
 

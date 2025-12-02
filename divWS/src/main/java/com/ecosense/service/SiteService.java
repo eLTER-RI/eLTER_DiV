@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.ws.rs.QueryParam;
-
 import org.springframework.stereotype.Service;
 
 import com.ecosense.dto.DivFilterDTO;

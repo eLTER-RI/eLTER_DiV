@@ -5,12 +5,11 @@ import { MeasurementsPhenomenon } from './../../../shared/model/measurements-phe
 import { MeasurementsODTO } from './../../../shared/model/measurements-response-db';
 import { MeasurementRequest, MeasurementRequestsPhenomenon } from './../../../shared/model/measurement-ib';
 import { ChartDetails } from './../../../shared/model/chartDetails';
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
-import { MalihuScrollbarService } from 'ngx-malihu-scrollbar';
 import { TimeIOService } from 'src/app/shared/service/time-io.service';
 import { TimeIODatastream } from 'src/app/shared/model/timeio-datastream';
 import { ToastrService } from 'ngx-toastr';
@@ -18,9 +17,10 @@ import { SettingsService } from 'src/app/core/settings/settings.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-diagram',
-  templateUrl: './diagram.component.html',
-  styleUrls: ['./diagram.component.scss']
+    selector: 'app-diagram',
+    templateUrl: './diagram.component.html',
+    styleUrls: ['./diagram.component.scss'],
+    standalone: false
 })
 export class DiagramComponent implements OnInit, OnDestroy {
 
@@ -29,8 +29,8 @@ export class DiagramComponent implements OnInit, OnDestroy {
 
   measurementsPhenom: MeasurementsPhenomenon[] = [];
 
-  
-  scrollbarOptionsGraph = {  theme: 'dark-thick', scrollButtons: { enable: true }, scrollInertia: 0,  setHeight: '85vh'};
+  @ViewChild('graphScroll', { static: false }) graphScroll!: ElementRef;
+
   maxDate: any = moment();
   ranges: any = {
       Today: [moment().startOf('day'), moment()],
@@ -55,7 +55,6 @@ export class DiagramComponent implements OnInit, OnDestroy {
               private sharedService: SharedService,
               private zone: NgZone,
               private diagramService: DiagramService,
-              private mScrollbarService: MalihuScrollbarService,
               private timeioService: TimeIOService,
               private toastr: ToastrService,
               private settings: SettingsService) { 
@@ -191,8 +190,7 @@ export class DiagramComponent implements OnInit, OnDestroy {
 
     if (datastream.color == null) {
       datastream.color = this.colors[i % this.colors.length];
-        this.mScrollbarService.scrollTo('#graphScroll', '#' + datastream.unitMeasName, this.scrollbarOptionsGraph);
-
+        this.scrollToElement(datastream.unitMeasName);
         //@ts-ignore
         this.chartsDetails[chartIndex].chart.series.getIndex(indexStation).fill = am4core.color(datastream.color);
         //@ts-ignore
@@ -210,6 +208,20 @@ export class DiagramComponent implements OnInit, OnDestroy {
         //@ts-ignore
         this.chartsDetails[chartIndex].chart.series.getIndex(indexStation).strokeWidth = 1;
     }
+}
+
+scrollToElement(elementId: string): void {
+  const container = this.graphScroll.nativeElement;
+  const targetElement = document.getElementById(elementId);
+  if (targetElement) {
+    const isInsideContainer = container.contains(targetElement);
+    if (isInsideContainer) {
+      targetElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+    }
+  }
 }
 
 // group measurements requests with same phenomenom

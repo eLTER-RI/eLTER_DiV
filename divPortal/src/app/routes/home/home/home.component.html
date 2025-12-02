@@ -1,7 +1,7 @@
 <div id="map" [ngStyle]="{'height': mapHeight+'px'}" ></div>
 
-<div *ngIf="markedLayer?.geoUrlLegend" style="flex-direction: column;" class="form-row m-0 p-1 legend" malihu-scrollbar [scrollbarOptions]="scrollbarOptionsLegend">
-    <div>
+<div *ngIf="markedLayer?.geoUrlLegend" style="flex-direction: column;" class="form-row m-0 p-1 legend">
+    <div style="overflow-x: hidden;" class="scrollable dark">
         <img *ngIf="urlMarkedLayerLegend && !showBiggerZoom" [src]="urlMarkedLayerLegend | safe"/>
         <img *ngIf="urlMarkedLayerLegend && !urlMarkedLayerLegendBiggerZoom && showBiggerZoom" [src]="urlMarkedLayerLegend | safe"/>
         <img *ngIf="urlMarkedLayerLegendBiggerZoom && showBiggerZoom" [src]="urlMarkedLayerLegendBiggerZoom | safe"/>

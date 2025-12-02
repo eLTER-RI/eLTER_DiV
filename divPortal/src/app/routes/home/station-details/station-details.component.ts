@@ -12,9 +12,10 @@ import { TimeIOService } from 'src/app/shared/service/time-io.service';
 import { DiagramService } from '../diagram/diagram.service';
 
 @Component({
-  selector: 'app-station-details',
-  templateUrl: './station-details.component.html',
-  styleUrls: ['./station-details.component.scss']
+    selector: 'app-station-details',
+    templateUrl: './station-details.component.html',
+    styleUrls: ['./station-details.component.scss'],
+    standalone: false
 })
 export class StationDetailsComponent implements OnInit, OnChanges {
 
@@ -26,8 +27,6 @@ export class StationDetailsComponent implements OnInit, OnChanges {
   stationOpenDetailsSubscription: Subscription;
   closeAllStationDetailsSubscription: Subscription;
   unselectDatastreamsSubscription: Subscription;
-
-  scrollbarOptions = {  theme: 'dark-thick', scrollButtons: { enable: true },  setHeight: '80vh'};
 
   constructor(private offsidebarService: OffsidebarService,
               private sharedService: SharedService,

@@ -1,7 +1,5 @@
 package com.ecosense.controller;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,6 +15,9 @@ import com.ecosense.dto.output.DatasetODTO;
 import com.ecosense.dto.output.DatasetsODTO;
 import com.ecosense.exception.SimpleException;
 import com.ecosense.service.DatasetService;
+
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController

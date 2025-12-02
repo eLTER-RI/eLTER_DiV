@@ -2,7 +2,8 @@ import { Directive, ElementRef } from '@angular/core';
 declare var $: any;
 
 @Directive({
-    selector: '[checkAll]'
+    selector: '[checkAll]',
+    standalone: false
 })
 export class CheckallDirective {
 

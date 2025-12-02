@@ -25,7 +25,7 @@
             </label>
             <div *ngIf="datasetDetail.open" class="tab-content">
 
-                <div [hidden]="!datasetDetail.open" id="detailsTimeseriesScroll"  malihu-scrollbar [scrollbarOptions]="scrollbarOptions" class="mt-0 pt-0">
+                <div [hidden]="!datasetDetail.open" id="detailsTimeseriesScroll" style="height: 70vh;" class="mt-0 pt-0 scrollable dark">
                     <div class="tabs">
                         <div class="tab">
                             <input type="checkbox" [checked]="menuItem == 'basic'">

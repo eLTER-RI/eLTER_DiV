@@ -5,9 +5,10 @@ import { Layer } from '../../../shared/model/layer';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 @Component({
-  selector: 'app-basemap-sidebar',
-  templateUrl: './basemap-sidebar.component.html',
-  styleUrls: ['./basemap-sidebar.component.scss']
+    selector: 'app-basemap-sidebar',
+    templateUrl: './basemap-sidebar.component.html',
+    styleUrls: ['./basemap-sidebar.component.scss'],
+    standalone: false
 })
 export class BaseMapSidebarComponent implements OnInit, OnDestroy {
 

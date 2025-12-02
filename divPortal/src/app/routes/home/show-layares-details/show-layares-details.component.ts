@@ -7,14 +7,15 @@ import { Component, Input, OnInit } from '@angular/core';
 import WMSCapabilities from 'ol/format/WMSCapabilities';
 import _, { add } from 'lodash';
 import { ToastrService } from 'ngx-toastr';
-import * as uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { LayerDatasetInfoComponent } from '../dialog/layer-dataset-info/layer-dataset-info.component';
 
 @Component({
-  selector: 'app-show-layares-details',
-  templateUrl: './show-layares-details.component.html',
-  styleUrls: ['./show-layares-details.component.scss']
+    selector: 'app-show-layares-details',
+    templateUrl: './show-layares-details.component.html',
+    styleUrls: ['./show-layares-details.component.scss'],
+    standalone: false
 })
 export class ShowLayaresDetailsComponent implements OnInit {
 
@@ -37,8 +38,7 @@ export class ShowLayaresDetailsComponent implements OnInit {
   showPassword: boolean;
 
   addAuthenticationGetCap: boolean;
-  
- scrollbarOptions = {  theme: 'dark-thick', scrollButtons: { enable: true },  setHeight: '70vh'};
+
 
   constructor(private sharedService: SharedService,
               private offsidebarService: OffsidebarService,
@@ -270,7 +270,7 @@ export class ShowLayaresDetailsComponent implements OnInit {
           capLayer.layerName = layer.Name;
           capLayer.geoUrlWms = geoUrlWms;
           capLayer.selected = false;
-          capLayer.idHash = uuid.v4();
+          capLayer.idHash = uuidv4();
 
           if (layer?.Dimension && layer?.Dimension?.length > 0 && layer?.Dimension[0]?.values) {
             capLayer.times = layer.Dimension[0].values.split(",");

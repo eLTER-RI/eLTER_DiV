@@ -4,17 +4,15 @@ import { Component, Input, OnInit } from '@angular/core';
 import { EbvDetailsService } from './ebv-details.service';
 
 @Component({
-  selector: 'app-ebv-details',
-  templateUrl: './ebv-details.component.html',
-  styleUrls: ['./ebv-details.component.scss']
+    selector: 'app-ebv-details',
+    templateUrl: './ebv-details.component.html',
+    styleUrls: ['./ebv-details.component.scss'],
+    standalone: false
 })
 export class EbvDetailsComponent implements OnInit {
 
   @Input() ebvs: EbvDB[];
 
-  scrollbarOptions = {  theme: 'dark-thick', scrollButtons: { enable: true },  setHeight: '85vh'};
-
-  
   openEbv: boolean[];
   ebvDetails: EbvDetail[];
 

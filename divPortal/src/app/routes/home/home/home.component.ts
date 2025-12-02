@@ -33,7 +33,8 @@ import Cluster from 'ol/source/Cluster';
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
-    styleUrls: ['./home.component.scss']
+    styleUrls: ['./home.component.scss'],
+    standalone: false
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
@@ -71,6 +72,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     stationPoygonLayer: any;
 
     scrollbarOptionsLegend = { theme: 'dark-thick', scrollButtons: { enable: true }, scrollInertia: 0, mouseWheelPixels: 170};
+
+    opts: any = {
+        forceVisible: true
+    }
 
     //layer with times
     interval: any;

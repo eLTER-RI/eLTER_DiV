@@ -7,9 +7,10 @@ import { Page } from 'src/app/shared/model/Page';
 import { DatasetLayerDetailsListService } from './dataset-layer-details-list.service';
 
 @Component({
-  selector: 'app-dataset-layer-details-list',
-  templateUrl: './dataset-layer-details-list.component.html',
-  styleUrls: ['./dataset-layer-details-list.component.scss']
+    selector: 'app-dataset-layer-details-list',
+    templateUrl: './dataset-layer-details-list.component.html',
+    styleUrls: ['./dataset-layer-details-list.component.scss'],
+    standalone: false
 })
 export class DatasetLayerDetailsListComponent implements OnInit, OnChanges, OnDestroy {
 

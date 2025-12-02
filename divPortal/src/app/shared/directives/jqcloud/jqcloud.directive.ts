@@ -2,7 +2,8 @@ import { Directive, Input, OnInit, OnDestroy, ElementRef, OnChanges, SimpleChang
 declare var $: any;
 
 @Directive({
-    selector: '[jqcloud]'
+    selector: '[jqcloud]',
+    standalone: false
 })
 export class JqcloudDirective implements OnInit, OnDestroy, OnChanges {
 

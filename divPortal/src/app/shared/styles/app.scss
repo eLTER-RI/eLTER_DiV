@@ -40,7 +40,7 @@
 @import "app/utils";
 @import "app/print";
 @import "~@ng-select/ng-select/themes/default.theme.css";
-@import '~ngx-toastr/toastr.css';
+
 
 // Elements
 // @import "app/spinner";
@@ -293,4 +293,65 @@ div.large-modal.modal-dialog {
 
 ::ng-deep .large-modal .modal-content {
   height: 100%;
+}
+/* Base scrollable styles */
+.scrollable {
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 30px;
+  box-sizing: border-box;
+  margin-top: 5px;
+  margin-right: 5px;
+  
+  /* Firefox scrollbar */
+  scrollbar-width: thin;
+}
+
+/* Light theme */
+.scrollable.light {
+  --scrollbar-thumb: #939DA5;
+  --scrollbar-thumb-hover: #6b7280;
+  --scrollbar-track: rgba(0, 0, 0, 0.1);
+  
+  scrollbar-color: #939DA5 rgba(0, 0, 0, 0.1);
+}
+
+/* Dark theme */
+.scrollable.dark {
+  --scrollbar-thumb: #6b7280;
+  --scrollbar-thumb-hover: #9ca3af;
+  --scrollbar-track: rgba(255, 255, 255, 0.1);
+  
+  scrollbar-color: #6b7280 rgba(255, 255, 255, 0.1);
+}
+
+/* Webkit scrollbar styles */
+.scrollable::-webkit-scrollbar {
+  width: 7px;
+}
+
+.scrollable.light::-webkit-scrollbar-thumb {
+  background-color: #939DA5;
+}
+
+.scrollable.dark::-webkit-scrollbar-thumb {
+  background-color: #6b7280;
+}
+
+.scrollable.light::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
+
+.scrollable.dark::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+}
+
+.scrollable.light::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
+}
+
+.scrollable.dark::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-top: 5px;
 }

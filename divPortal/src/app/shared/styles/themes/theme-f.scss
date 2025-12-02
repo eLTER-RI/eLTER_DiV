@@ -1,4 +1,5 @@
 // Bootstrap
+.theme-f {
 @import "../bootstrap/functions";
 @import "../bootstrap/variables";
 @import "../bootstrap/mixins";
@@ -177,4 +178,5 @@ body, .wrapper .section-container {
     border-left: 1px solid $offsidebar-border-color;
     background-color: $offsidebar-bg;
     color: $offsidebar-color;
+}
 }

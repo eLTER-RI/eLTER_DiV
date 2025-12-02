@@ -2,7 +2,8 @@ import { OnInit, OnDestroy, Directive, Input, ElementRef } from '@angular/core';
 declare var $: any;
 
 @Directive({
-    selector: '[sparkline]'
+    selector: '[sparkline]',
+    standalone: false
 })
 export class SparklineDirective implements OnInit, OnDestroy {
 

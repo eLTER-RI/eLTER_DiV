@@ -15,7 +15,8 @@ import { DatasetLayer } from 'src/app/shared/model/dataset-layer';
 @Component({
     selector: 'app-offsidebar',
     templateUrl: './offsidebar.component.html',
-    styleUrls: ['./offsidebar.component.scss']
+    styleUrls: ['./offsidebar.component.scss'],
+    standalone: false
 })
 export class OffsidebarComponent implements OnInit, OnDestroy {
 

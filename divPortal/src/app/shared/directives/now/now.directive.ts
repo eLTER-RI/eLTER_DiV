@@ -2,7 +2,8 @@ import { OnInit, OnDestroy, Directive, Input, ElementRef } from '@angular/core';
 import * as moment from 'moment';
 
 @Directive({
-    selector: '[now]'
+    selector: '[now]',
+    standalone: false
 })
 export class NowDirective implements OnInit, OnDestroy {
 

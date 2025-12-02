@@ -27,9 +27,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { BoundingBox } from 'src/app/shared/model/bounding-box-db';
 
 @Component({
-  selector: 'app-search-sidebar',
-  templateUrl: './search-sidebar.component.html',
-  styleUrls: ['./search-sidebar.component.scss']
+    selector: 'app-search-sidebar',
+    templateUrl: './search-sidebar.component.html',
+    styleUrls: ['./search-sidebar.component.scss'],
+    standalone: false
 })
 export class SearchSidebarComponent implements OnInit {
 

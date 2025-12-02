@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import com.ecosense.dto.EbvDTO;
 import com.ecosense.dto.input.EbvFilterIDTO;
 import com.ecosense.entity.Ebv;
 import com.ecosense.repository.EbvRepo;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 public class EbvRepositoryImpl implements EbvRepo {
 

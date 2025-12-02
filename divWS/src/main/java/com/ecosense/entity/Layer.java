@@ -4,22 +4,11 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+import jakarta.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +16,6 @@ import lombok.Setter;
 
 @Entity
 @Table(name="layer")
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -97,7 +85,7 @@ public class Layer implements Serializable {
 	@Column(name="error_on_last_update")
 	private Boolean errorOnLastUpdate;
 
-	@Type(type = "jsonb")
+	@JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private Map<String, Object> jsonDataset;
 

@@ -6,9 +6,10 @@ import { Dataset } from 'src/app/shared/model/dataset';
 import { DatasetDetailsListService } from './dataset-details-list.service';
 
 @Component({
-  selector: 'app-dataset-details-list',
-  templateUrl: './dataset-details-list.component.html',
-  styleUrls: ['./dataset-details-list.component.scss']
+    selector: 'app-dataset-details-list',
+    templateUrl: './dataset-details-list.component.html',
+    styleUrls: ['./dataset-details-list.component.scss'],
+    standalone: false
 })
 export class DatasetDetailsListComponent implements OnInit {
 

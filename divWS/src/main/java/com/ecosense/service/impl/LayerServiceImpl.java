@@ -2,6 +2,7 @@ package com.ecosense.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -74,9 +75,14 @@ public class LayerServiceImpl implements LayerService {
 	public List<LayerDTO> getAll(List<String> layertypes, List<Integer> ids, String code) throws SimpleException {
 		List<LayerDTO> layers = new ArrayList<>();
 		List<Layer> layersFromDB = null;
-		
-		layersFromDB = layerRepository.getAllActive(layertypes, code, ids);
-		
+
+		layersFromDB = layerRepository.getAllActive(
+				layertypes,
+				layertypes == null || layertypes.isEmpty(),
+				code,
+				ids,
+				ids == null || ids.isEmpty());
+
 		for (Layer layer : layersFromDB) {
 			layers.add(new LayerDTO(layer, true, true));
 		}

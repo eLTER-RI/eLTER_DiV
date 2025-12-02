@@ -2,7 +2,8 @@ import { OnInit, Directive, Input, ElementRef, OnDestroy } from '@angular/core';
 declare var $: any;
 
 @Directive({
-    selector: '[vectormap]'
+    selector: '[vectormap]',
+    standalone: false
 })
 export class VectormapDirective implements OnInit, OnDestroy {
 

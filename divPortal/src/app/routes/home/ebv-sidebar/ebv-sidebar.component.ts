@@ -12,9 +12,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-ebv-sidebar',
-  templateUrl: './ebv-sidebar.component.html',
-  styleUrls: ['./ebv-sidebar.component.scss']
+    selector: 'app-ebv-sidebar',
+    templateUrl: './ebv-sidebar.component.html',
+    styleUrls: ['./ebv-sidebar.component.scss'],
+    standalone: false
 })
 export class EbvSidebarComponent implements OnInit, OnDestroy {
 

@@ -10,9 +10,10 @@ import { SettingsService } from 'src/app/core/settings/settings.service';
 import { DatasetDetailsListService } from '../dataset-details-list/dataset-details-list.service';
 
 @Component({
-  selector: 'app-site-details',
-  templateUrl: './site-details.component.html',
-  styleUrls: ['./site-details.component.scss']
+    selector: 'app-site-details',
+    templateUrl: './site-details.component.html',
+    styleUrls: ['./site-details.component.scss'],
+    standalone: false
 })
 export class SiteDetailsComponent implements OnInit, OnChanges {
 
@@ -29,7 +30,6 @@ export class SiteDetailsComponent implements OnInit, OnChanges {
   closeAllSiteDetailsSubscription: Subscription;
   pinClickedSubscription: Subscription;
 
-  scrollbarOptions = {  theme: 'dark-thick', scrollButtons: { enable: true },  setHeight: '80vh'};
 
   constructor(private sharedService: SharedService,
               private offsidebarService: OffsidebarService,

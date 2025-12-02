@@ -1,6 +1,6 @@
 <app-loading *ngIf="isLoading" class="diagram-loading"></app-loading>
 
-<div id="graphScroll" class="graph-scroller m-2" malihu-scrollbar [scrollbarOptions]="scrollbarOptionsGraph">
+<div id="graphScroll" #graphScroll class="graph-scroller m-2 scrollable dark" style="height: 85vh;">
 
     <div *ngFor="let chartDetails of chartsDetails; index as i" id="chartDetails.phenomenon.id">
         <div class="pb-5">

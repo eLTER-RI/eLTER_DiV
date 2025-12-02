@@ -3,8 +3,7 @@ package com.ecosense.repository.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +12,9 @@ import com.ecosense.dto.SimpleResponseDTO;
 import com.ecosense.entity.Country;
 import com.ecosense.exception.SimpleException;
 import com.ecosense.repository.CountryRepo;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Repository
 @Transactional

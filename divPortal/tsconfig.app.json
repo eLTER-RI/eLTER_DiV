@@ -6,14 +6,13 @@
     "types": [
         "node",
         "jquery",
-        "mcustomscrollbar"
     ]
   },
   "files": [
     "src/main.ts",
     "src/polyfills.ts"
   ],
-  "include": [
+  "include": [ 
     "src/**/*.d.ts",
     "src/vendor.ts"
   ]

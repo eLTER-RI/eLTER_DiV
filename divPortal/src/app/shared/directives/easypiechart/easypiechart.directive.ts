@@ -4,7 +4,8 @@ declare var $: any;
 const EasyPieChart = require('easy-pie-chart');
 
 @Directive({
-    selector: '[easypiechart]'
+    selector: '[easypiechart]',
+    standalone: false
 })
 export class EasypiechartDirective implements OnInit, OnChanges {
 

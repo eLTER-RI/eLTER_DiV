@@ -20,11 +20,13 @@ import { Circle as CircleStyle, Fill, Stroke, Style, Icon, Text } from 'ol/style
 import GeoJSON from 'ol/format/GeoJSON.js';
 import { BoundingBox } from 'src/app/shared/model/bounding-box-db';
 import { TimeIOLocation } from 'src/app/shared/model/timeio-location';
+import { CdkDrag, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
-  selector: 'app-layers-sidebar',
-  templateUrl: './layers-sidebar.component.html',
-  styleUrls: ['./layers-sidebar.component.scss']
+    selector: 'app-layers-sidebar',
+    templateUrl: './layers-sidebar.component.html',
+    styleUrls: ['./layers-sidebar.component.scss'],
+    standalone: false
 })
 export class LayersSidebarComponent implements OnInit {
 
@@ -493,7 +495,8 @@ export class LayersSidebarComponent implements OnInit {
     }
   }
 
-  dropSuccess(): void {
+  dropSuccess(event: CdkDragDrop<Layer[]>): void {
+    moveItemInArray(this.allLayers, event.previousIndex, event.currentIndex);
     this.refreshZIndex();
   }
 

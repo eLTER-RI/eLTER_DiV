@@ -1,8 +1,12 @@
-<div [hidden]="!showHome" class="aside-inner sidebar" malihu-scrollbar [scrollbarOptions]="scrollbarOptions">
-        <app-home-sidebar></app-home-sidebar>
+
+<div [hidden]="!showHome" class="aside-inner sidebar" style="height: 95vh;">
+	<div class="scrollable light">
+		<app-home-sidebar></app-home-sidebar>
+	</div>
 </div>
 
-<!-- TODO timeio - [hidden]="!showDiagram" -->
-<div *ngIf="showDiagram" class="aside-inner sidebar" malihu-scrollbar [scrollbarOptions]="scrollbarOptions">
-        <app-diagram-sidebar></app-diagram-sidebar>
+<div *ngIf="showDiagram" class="aside-inner sidebar" style="height: 95vh;">
+	<div class="scrollable light">
+		<app-diagram-sidebar></app-diagram-sidebar>
+	</div>
 </div>

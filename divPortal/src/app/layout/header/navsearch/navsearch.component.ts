@@ -3,7 +3,8 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 @Component({
     selector: 'app-navsearch',
     templateUrl: './navsearch.component.html',
-    styleUrls: ['./navsearch.component.scss']
+    styleUrls: ['./navsearch.component.scss'],
+    standalone: false
 })
 export class NavsearchComponent implements OnInit, OnChanges {
 

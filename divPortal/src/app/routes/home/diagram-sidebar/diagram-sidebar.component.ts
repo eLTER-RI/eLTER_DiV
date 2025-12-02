@@ -6,16 +6,15 @@ import { TimeIODatastream } from 'src/app/shared/model/timeio-datastream';
 import { OffsidebarService } from 'src/app/layout/offsidebar/offsidebar.service';
 
 @Component({
-  selector: 'app-diagram-sidebar',
-  templateUrl: './diagram-sidebar.component.html',
-  styleUrls: ['./diagram-sidebar.component.scss']
+    selector: 'app-diagram-sidebar',
+    templateUrl: './diagram-sidebar.component.html',
+    styleUrls: ['./diagram-sidebar.component.scss'],
+    standalone: false
 })
 export class DiagramSidebarComponent implements OnInit {
 
   datastreams: TimeIODatastream[];
   showValues: boolean[] = [];
-
-  scrollbarOptionsDatastreams = {  theme: 'light-thick', scrollButtons: { enable: true },  setHeight: '95vh'};
 
   constructor(private diagramService: DiagramService,
               private router: Router,
