@@ -1,6 +1,6 @@
 <div class="wrapper">
     <!-- top navbar-->
-    <app-loading *ngIf="isLoading" class="fullscreen-loading"></app-loading>
+    <app-loading *ngIf="isLoading" class="fullscreen-loading" (click)="preventClick($event)"></app-loading>
 
     <app-header class="topnavbar-wrapper"></app-header>
 

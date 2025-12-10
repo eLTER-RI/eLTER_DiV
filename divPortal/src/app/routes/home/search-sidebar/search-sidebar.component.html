@@ -21,7 +21,8 @@
                     <div *ngIf="showFilter">
                         <label class="ml-2 mb-0 mt-1">Sites</label>
                         <ng-select class="ml-1 mr-2" [clearable]="true" [items]="sites" [(ngModel)]="divFilter.sites"
-                            [multiple]="true" name="sites" bindLabel="item" bindValue="item">
+                            [multiple]="true" name="sites" bindLabel="item" bindValue="item"
+                            placeholder="All">
             
                             <ng-template ng-label-tmp let-item="item">
                                 {{item}}
