@@ -50,7 +50,8 @@
                         <div [hidden]="!(layer.showFilter && layer.code == 'sites')">
                             <label class="ml-2 mb-0 mt-1">Title</label>
                             <ng-select class="ml-1 mr-2" [clearable]="true" [items]="titles" name="name" [(ngModel)]="siteFilterDTO.title"
-                                name="titles" bindLabel="item" bindValue="item">
+                                name="titles" bindLabel="item" bindValue="item"
+                                placeholder="All">
                     
                                 <ng-template ng-label-tmp let-item="item">
                                     {{item}}
@@ -63,7 +64,8 @@
                             <label class="ml-2 mb-0 mt-2">Contries</label>
                             <ng-select class="ml-1 mr-2" [clearable]="true" [items]="countries" name="countries"
                                 [(ngModel)]="siteFilterDTO.countriesId" name="countries"
-                                bindLabel="name" bindValue="id" [multiple]="true">
+                                bindLabel="name" bindValue="id" [multiple]="true"
+                                placeholder="All">
                     
                                 <ng-template ng-label-tmp let-item="item">
                                     {{item.name}}
@@ -77,6 +79,7 @@
                             <ng-select class="ml-1 mr-2" [clearable]="true" [items]="activities" name="name"
                                 [(ngModel)]="siteFilterDTO.activitiesId" name="activities"
                                 bindLabel="name" bindValue="id" [multiple]="true"
+                                placeholder="All"
                                 >
                     
                                 <ng-template ng-label-tmp let-item="item">

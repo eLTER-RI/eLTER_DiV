@@ -1,5 +1,8 @@
 <div *ngIf="ebvs">
     <app-ebv-details [ebvs]="ebvs" [hidden]="ebvs.length == 0"></app-ebv-details>
+    <div *ngIf="!ebvs || ebvs.length == 0" class="pl-3 pt-3 text-primary-color-orange">
+        <h3 class="text-center"> No search results </h3>
+    </div>
 </div>
 
 <div *ngIf="visibleTab && (visibleTab == 'sites' || visibleTab == 'datasets' || visibleTab == 'datasetLayers')" class="row mx-0 mt-2 ps-0 border-bottom border-secondary mb-3" style="margin-left: 1.6rem !important">

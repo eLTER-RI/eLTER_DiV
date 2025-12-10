@@ -9,7 +9,8 @@
         <div *ngIf="showEbv">
             <label class="ml-2 mb-0 mt-1">EBVs Class</label>
     <ng-select class="ml-1 mr-2" [clearable]="true" [items]="ebvClasses" [(ngModel)]="ebvFilter.ebvClass"
-        name="ebvClass"  bindLabel="name" (change)="ebvClassChanged()">
+        name="ebvClass"  bindLabel="name" (change)="ebvClassChanged()"
+        placeholder="All">
 
         <ng-template ng-label-tmp let-item="item">
             {{item.name}}
@@ -21,7 +22,8 @@
 
     <label class="ml-2 mb-0 mt-2">EBVs Name</label>
     <ng-select class="ml-1 mr-2" [clearable]="true" [items]="ebvNames" name="ebvNames" [(ngModel)]="ebvFilter.ebvName"
-         bindLabel="name" [disabled]="!ebvNames">
+         bindLabel="name" [disabled]="!ebvNames"
+         placeholder="All">
 
         <ng-template ng-label-tmp let-item="item">
             {{item.name}}
@@ -33,7 +35,8 @@
 
     <label class="ml-2 mb-0 mt-2">Entity Type</label>
     <ng-select class="ml-1 mr-2" [clearable]="true" [items]="entityTypes" [(ngModel)]="ebvFilter.entityType"
-        name="entityTypes"  bindLabel="name">
+        name="entityTypes"  bindLabel="name"
+        placeholder="All">
 
         <ng-template ng-label-tmp let-item="item">
             {{item.name}}
@@ -45,7 +48,8 @@
 
     <label class="ml-2 mb-0 mt-2">Spatial Scopes</label>
     <ng-select class="ml-1 mr-2" [clearable]="true" [items]="spatialScopes" [(ngModel)]="ebvFilter.spatialScope"
-        name="spatialScopes"  bindLabel="name">
+        name="spatialScopes"  bindLabel="name"
+        placeholder="All">
 
         <ng-template ng-label-tmp let-item="item">
             {{item.name}}
@@ -64,6 +68,7 @@
 
     <label class="ml-2 mb-0 mt-1">Creator</label>
     <ng-select class="ml-1 mr-2" [clearable]="true" [items]="creators" name="creators" [(ngModel)]="ebvFilter.creator"
+        placeholder="All"
         >
 
         <ng-template ng-label-tmp let-item="item">

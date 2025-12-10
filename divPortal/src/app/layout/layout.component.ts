@@ -6,6 +6,7 @@ import { SettingsService } from '../core/settings/settings.service';
 import { Subscription } from 'rxjs';
 import { HomeService } from '../routes/home/home/home.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { ToastBlinkService } from '../shared/service/toast-blink.service';
 
 @Component({
     selector: 'app-layout',
@@ -31,7 +32,8 @@ export class LayoutComponent implements OnInit {
     constructor(private sharedService: SharedService,
         private settings: SettingsService,
         private homeService: HomeService,
-        private modalService: BsModalService) { 
+        private modalService: BsModalService,
+        private toastBlinkService: ToastBlinkService) { 
     }
 
     clickOutsideOffsidebar() {
@@ -90,6 +92,12 @@ export class LayoutComponent implements OnInit {
 
     mouseoutFooter() {
         this.hoverFooter = false;
+    }
+
+    preventClick(event: MouseEvent) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.toastBlinkService.triggerBlink();
     }
 
 }
