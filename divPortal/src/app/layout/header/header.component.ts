@@ -59,27 +59,27 @@ export class HeaderComponent implements OnInit {
         const response2 = await this.sharedService.get('getHtml?partOfApp=terms_and_condititions');
         this.termsAndCondHtml = response2.entity.html;
 
-        this.appBlockerService.blockApp();
-        const disclaimerToast = this.toastrService.warning(
-            `
-            <div class="disclaimer-content">
-                <div class="toast-message">You are using a development system of the emerging eLTER Research Infrastructure (RI). Please note that this service is still under construction and may not yet be fully functional.</div>
-                <div class="hand-container">
-                    <i class="fas fa-hand-pointer"></i>
-                </div>
-            </div>
-            `,
-                                                           'Warning', 
-                                                           {
-                                                                disableTimeOut: true,
-                                                                tapToDismiss: true, // Allows user to dismiss the toast by clicking
-                                                                toastClass: 'ngx-toastr blink-toast',
-                                                                enableHtml: true
-                                                           });
-;
-        disclaimerToast.onHidden.subscribe(() => {
-            this.appBlockerService.unblockApp();
-        });
+        // this.appBlockerService.blockApp();
+//         const disclaimerToast = this.toastrService.warning(
+//             `
+//             <div class="disclaimer-content">
+//                 <div class="toast-message">You are using a development system of the emerging eLTER Research Infrastructure (RI). Please note that this service is still under construction and may not yet be fully functional.</div>
+//                 <div class="hand-container">
+//                     <i class="fas fa-hand-pointer"></i>
+//                 </div>
+//             </div>
+//             `,
+//                                                            'Warning', 
+//                                                            {
+//                                                                 disableTimeOut: true,
+//                                                                 tapToDismiss: true, // Allows user to dismiss the toast by clicking
+//                                                                 toastClass: 'ngx-toastr blink-toast',
+//                                                                 enableHtml: true
+//                                                            });
+// ;
+//         disclaimerToast.onHidden.subscribe(() => {
+//             this.appBlockerService.unblockApp();
+//         });
     }
 
     toggleUserBlock(event) {

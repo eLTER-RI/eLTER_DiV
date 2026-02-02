@@ -318,6 +318,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (this.markedLayer?.codeForSidebar == 'layers-sidebar') { // polygon from layer-sidebar clicked
             this.searchSidebarService.searchDatasets({searchParam: id});
         }
+        this.searchSidebarService.searchLayers({searchParam: id});
 
         this.removeSitePolygonLayer();  
         this.offsidebarService.showSites({

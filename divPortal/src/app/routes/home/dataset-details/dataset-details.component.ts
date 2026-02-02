@@ -54,16 +54,16 @@ export class DatasetDetailsComponent implements OnInit {
   initSubscriptions() {
     this.datasetOpenDetailsSubscription = this.offsidebarService.currOpenDataset.subscribe( event => {
       if (event && event.action == 'openDataset') {
-        let siteIds = this.datasetDetail.sites?.map(site => site.id);
-        if (siteIds.includes(event.sites[0])) {
-          if (this.datasetDetail) {
-            this.datasetDetail.open = true;
-          }
-        } else {
-          if (this.datasetDetail) {
-            this.datasetDetail.open = false;
-          }
-        }
+        // let siteIds = this.datasetDetail.sites?.map(site => site.id);
+        // if (siteIds.includes(event.sites[0])) {
+        //   if (this.datasetDetail) {
+        //     this.datasetDetail.open = true;
+        //   }
+        // } else {
+        //   if (this.datasetDetail) {
+        //     this.datasetDetail.open = false;
+        //   }
+        // }
       }
     });
 

@@ -493,6 +493,22 @@ public class SiteServiceImpl implements SiteService {
 	public String createUrlFromDivFilter(DivFilterDTO divFilterDTO) {
 		String url = "";
 		List<String> searchParameters = new ArrayList<>();
+
+		List<String> siteSearchParameters = new ArrayList<>(); // for keyword site
+
+		if (divFilterDTO.getSiteIds() != null && !divFilterDTO.getSiteIds().isEmpty()) {
+			for (Integer siteId : divFilterDTO.getSiteIds()) {
+				SiteDetailsODTO siteODTO = null;
+				try {
+					siteODTO = getSiteInfo(siteId);
+				} catch (Exception e) { }
+				if (siteODTO != null && siteODTO.getTitle() != null) {
+					searchParameters.add(siteODTO.getTitle());
+				}; 
+			}
+		}
+
+
 		if (divFilterDTO.getHabitats() != null && !divFilterDTO.getHabitats().isEmpty()) {
 			searchParameters.addAll(divFilterDTO.getHabitats());
 		}
@@ -504,6 +520,10 @@ public class SiteServiceImpl implements SiteService {
 		}
 		if (divFilterDTO.getSearchText() != null && !divFilterDTO.getSearchText().isEmpty()) {
 			searchParameters.addAll(Arrays.asList(divFilterDTO.getSearchText()));
+		}
+
+		if (searchParameters.isEmpty() && siteSearchParameters.isEmpty()) {
+			return null;
 		}
 
 		int i = 0;

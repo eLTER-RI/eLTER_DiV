@@ -57,6 +57,7 @@ export class SearchSidebarComponent implements OnInit {
   layerWithCodeSubscription: Subscription;
   paginationRefreshSubscription: Subscription;
   datasetSearchSubscription: Subscription;
+  layerSearchSubscription: Subscription;
   clearDatasetsAndSitesSubscription: Subscription;
 
   constructor(private sharedService: SharedService,
@@ -110,6 +111,14 @@ export class SearchSidebarComponent implements OnInit {
       }
     });
 
+    this.layerSearchSubscription = this.searchSidebarService.layerSearchObservable.subscribe( obj => {
+      if (obj) {
+        this.divFilter = new DivFilterAndSearch();
+        this.divFilter.siteIds = [obj.searchParam];
+        this.filterAndSearchDatasetLayer();
+      }
+    });
+
     this.clearDatasetsAndSitesSubscription = this.offsidebarService.clearSitesAndDatasetsObservable.subscribe( obj => {
       this.searchReset(false);
       this.filterReset(false);
@@ -159,7 +168,7 @@ export class SearchSidebarComponent implements OnInit {
   }
 
   async filterAndSearchSite(type: string) {
-    this.offsidebarService.datasetsOrSitesOffsidebarLoading({isLoading: true, type: "site"});
+    this.offsidebarService.datasetsOrSitesOrLayersOffsidebarLoading({isLoading: true, type: "site"});
 
     this.hideLayer(this.siteLayer);
 
@@ -192,7 +201,7 @@ export class SearchSidebarComponent implements OnInit {
 
   async filterAndSearchDataset(type: string, paginationSearch: boolean = false) {
     if (!paginationSearch) {
-      this.offsidebarService.datasetsOrSitesOffsidebarLoading({isLoading: true, type: "dataset"});
+      this.offsidebarService.datasetsOrSitesOrLayersOffsidebarLoading({isLoading: true, type: "dataset"});
     }
 
     let showLayer = this.offsidebarService.getLayerCodeForSidebar() == null || this.offsidebarService.getLayerCodeForSidebar() == 'search-sidebar';
@@ -249,6 +258,7 @@ export class SearchSidebarComponent implements OnInit {
   }
 
   async filterAndSearchDatasetLayer() {
+    this.offsidebarService.datasetsOrSitesOrLayersOffsidebarLoading({isLoading: true, type: "layer"});
     const responseLayers = await this.sharedService.post('layer/filterAndSearch', this.divFilter)
     let datasetLayersFiltered = responseLayers.entity;
 

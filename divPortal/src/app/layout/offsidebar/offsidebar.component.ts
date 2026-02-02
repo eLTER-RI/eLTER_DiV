@@ -103,6 +103,8 @@ export class OffsidebarComponent implements OnInit, OnDestroy {
                     this.datasetPage = null;
                 } else if (loading.type === 'site') {
                     this.siteIds = null;
+                } else if (loading.type === 'layer') {
+                    this.datasetLayers = null;
                 }
             }
         });

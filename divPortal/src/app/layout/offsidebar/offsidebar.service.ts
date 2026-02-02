@@ -123,7 +123,7 @@ export class OffsidebarService {
     this.unselectDatastreamsBehaviorSubject.next(datastreamIds);
   }
 
-  datasetsOrSitesOffsidebarLoading(loading: any) {
+  datasetsOrSitesOrLayersOffsidebarLoading(loading: any) {
     this.datasetsOrSitesLoadingBehaviorSubject.next(loading);
   }
 

@@ -12,6 +12,9 @@ export class SearchSidebarService {
   private datasetSearchBehaviorSubject = new BehaviorSubject<any>(null);
   datasetSearchObservable = this.datasetSearchBehaviorSubject.asObservable();
 
+  private layerSearchBehaviorSubject = new BehaviorSubject<any>(null);
+  layerSearchObservable = this.layerSearchBehaviorSubject.asObservable();
+
   constructor() { }
 
   turnOnLayerWithCode(code) {
@@ -20,6 +23,10 @@ export class SearchSidebarService {
 
   searchDatasets(obj) {
 		this.datasetSearchBehaviorSubject.next(obj);
+	}
+
+  searchLayers(obj) {
+		this.layerSearchBehaviorSubject.next(obj);
 	}
 
 }
